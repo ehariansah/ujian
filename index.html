@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Judul</title>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <style>
+        .gambar-kepala {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+        }
+
+        .gambar-kepala img {
+            width: 100px;
+            height: 100px;
+            margin: 0 !important;
+        }
+
+        .scanner-container {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 15px;
+            background: rgb(255, 255, 255);
+            border-radius: 12px;
+            box-shadow: rgba(0, 0, 0, 0.15) 0px 10px 25px;
+            box-sizing: border-box;
+        }
+
+        .box-input {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: unset;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+            min-width: 150px;
+        }
+
+        .btn-action {
+            padding: 12px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .btn-action:hover {
+            background: #0056b3;
+        }
+
+        #btnToggleScan {
+            width: 100%;
+            background: #28a745;
+        }
+
+        #btnToggleScan:hover {
+            background: #218838;
+        }
+
+        #reader {
+            width: 100%;
+            max-width: 470px;
+            margin: 0 auto 15px auto;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            overflow: hidden;
+            display: none;
+            background: #000;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="halaman-beranda" style="align-items: center; background: linear-gradient(rgb(26, 97, 153) 33.33%, rgb(233, 231, 247) 33.33%); box-sizing: border-box; font-family: sans-serif; left: 0px; min-height: 100vh; padding: 20px; position: absolute; top: 0px; width: 100%; z-index: 9999999;">
+        
+        <div class="gambar-kepala">
+            <img src="https://blogger.googleusercontent.com/img/a/AVvXsEjo66nQHpyZ0fp3n9YykQufHZ588vRii8FtfWy7y8fO2wmCMaA3FoR6LBEKGO6avnztclQ6zwNBnkYOhiMcMQS0eLJtm_6p5mnp5JywiW-QnphUTcYfP0hFtVPhPqBpyHrZmYO_-_DMQTjTIHxwh4Wgc5S3o3u6Bscssv-GAg72vZqRKn2HJYpBMGAu6LQ=s200" alt="Logo Sekolah" />
+        </div>
+
+        <div class="scanner-container">
+            <h3>E-Ujian SMA Negeri 4 Barru</h3>
+            <p style="color: #666666; font-size: 13px; margin-bottom: 15px;">
+                Masukkan tautan atau scan QR Code untuk membuka halaman ujian.
+            </p>
+            
+            <div class="box-input">
+                <div class="input-group">
+                    <input id="urlInput" placeholder="Masukkan tautan ujian..." type="url" />
+                    <button class="btn-action" id="btnLoadManual">Buka</button>
+                </div>
+                <button class="btn-action" id="btnToggleScan">Scan QR Code</button>
+            </div>
+
+            <div id="reader"></div>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let html5QrcodeScanner = null;
+
+            // ==========================================
+            // SEBELUM DI-SAVE, GANTI DI BAWAH INI DENGAN URL HALAMAN B ANDA:
+            const halamanViewerUrl = "https://ehariansah.github.io/ujian/run/";
+
+            const btnLoadManual = document.getElementById('btnLoadManual');
+            const btnToggleScan = document.getElementById('btnToggleScan');
+            const urlInput = document.getElementById('urlInput');
+
+            if (btnLoadManual) btnLoadManual.addEventListener('click', loadIframeFromInput);
+            if (btnToggleScan) btnToggleScan.addEventListener('click', toggleScanner);
+
+            function kirimKeViewer(url) {
+                let targetUrl = url.trim();
+                // Bersihkan atau encode URL agar aman dilempar via address bar
+                let encodedUrl = encodeURIComponent(targetUrl);
+            
+                // Ambil waktu detik saat ini secara real-time saat siswa klik/scan
+                const tokenWaktuAktif = Math.floor(Date.now() / 1000);
+            
+                // Lempar pengguna ke Halaman B menggunakan .replace() + bawa Token Waktu Berlapis
+                window.location.replace(halamanViewerUrl + "?url=" + encodedUrl + "&auth=" + tokenWaktuAktif);
+            }
+
+            function loadIframeFromInput() {
+                const inputVal = urlInput.value;
+                if (inputVal) {
+                    kirimKeViewer(inputVal);
+                } else {
+                    alert("Harap masukkan tautan terlebih dahulu!");
+                }
+            }
+
+            function toggleScanner() {
+                const readerDiv = document.getElementById('reader');
+
+                if (!html5QrcodeScanner) {
+                    readerDiv.style.display = 'block';
+                    btnToggleScan.innerText = "Matikan Kamera QR";
+                    btnToggleScan.style.backgroundColor = "#dc3545";
+
+                    html5QrcodeScanner = new Html5QrcodeScanner(
+                        "reader", { fps: 10, qrbox: { width: 250, height: 250 } }, false
+                    );
+                    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+                } else {
+                    stopScanner();
+                }
+            }
+
+            function onScanSuccess(decodedText, decodedResult) {
+                stopScanner();
+                kirimKeViewer(decodedText);
+            }
+
+            function onScanFailure(error) {
+                // Abaikan error real-time scanning
+            }
+
+            function stopScanner() {
+                const readerDiv = document.getElementById('reader');
+                if (html5QrcodeScanner) {
+                    html5QrcodeScanner.clear().then(() => {
+                        html5QrcodeScanner = null;
+                        readerDiv.style.display = 'none';
+                        btnToggleScan.innerText = "Scan QR Code";
+                        btnToggleScan.style.backgroundColor = "#28a745";
+                    }).catch(err => {
+                        console.error(err);
+                    });
+                }
+            }
+        });
+          
+        // =========================================================================
+        // ANTI-BACK TOTAL: PENGUNCI GERBANG UTAMA (HALAMAN A)
+        // =========================================================================
+        (function () {
+            function kunciRiwayat() {
+                window.history.pushState(null, null, window.location.href);
+            }
+
+            kunciRiwayat();
+
+            window.addEventListener('popstate', function (event) {
+                kunciRiwayat();
+            });
+        })();
+    </script>
+</body>
+</html>

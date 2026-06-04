@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Judul</title>
+    <style>
+        .gambar-kepala {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+        }
+
+        .gambar-kepala img {
+            width: 100px;
+            height: 100px;
+            margin: 0 !important;
+        }
+
+        /* Memaksa Navigasi Bar mengunci di posisi paling bawah layar */
+        .bottom-navbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100vw !important;
+            height: 60px;
+            background: #1e1e1e;
+            color: #fff;
+            display: flex;
+            box-sizing: border-box;
+            border-top: 1px solid #333;
+            z-index: 9999; /* Z-index tinggi agar berada di atas elemen blog apapun */
+        }
+
+        .nav-btn {
+            flex: 1;
+            background: #ffbf00;
+            color: #000000;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .nav-btn:first-child {
+            border-right: 1px solid #333;
+        }
+
+        .nav-btn:hover {
+            background: #2a2a2a;
+            color: #fff;
+        }
+
+        .btn-exit {
+            color: #000000;
+            background: #dc3545;
+        }
+
+        .btn-exit:hover {
+            background: #2a2a2a;
+            color: #fff;
+        }
+
+        .nav-icon {
+            font-size: 18px;
+        }
+
+        /* =========================================================================
+           STYLE MODAL POPUP KUSTOM (PENGGANTI CONFIRM BROWSER AGAR ANTI-SALAH DETEKSI)
+           ========================================================================= */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999999; /* Sangat tinggi agar mengunci seluruh layar */
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+        }
+
+        .modal-box {
+            background: #fff;
+            padding: 22px;
+            border-radius: 12px;
+            width: 82%;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            box-sizing: border-box;
+        }
+
+        .modal-box h3 {
+            margin-top: 0;
+            color: #222;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .modal-box p {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-modal {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .btn-ya { background: #dc3545; color: white; }
+        .btn-tidak { background: #6c757d; color: white; }
+    </style>
+</head>
+<body>
+
+    <div id="gerbangTatib" style="align-items: center; background: linear-gradient(to bottom, #1a6199 33.33%, #e9e7f7 33.33%); box-sizing: border-box; font-family: sans-serif; min-height: 100vh; left: 0px; padding: 20px; position: absolute; top: 0px; width: 100%; z-index: 9999999;">
+        <div class="gambar-kepala">
+            <img src="https://blogger.googleusercontent.com/img/a/AVvXsEjo66nQHpyZ0fp3n9YykQufHZ588vRii8FtfWy7y8fO2wmCMaA3FoR6LBEKGO6avnztclQ6zwNBnkYOhiMcMQS0eLJtm_6p5mnp5JywiW-QnphUTcYfP0hFtVPhPqBpyHrZmYO_-_DMQTjTIHxwh4Wgc5S3o3u6Bscssv-GAg72vZqRKn2HJYpBMGAu6LQ=s200" alt="Logo Sekolah">
+        </div>
+        
+        <div style="background: rgb(255, 255, 255); border-radius: 12px; box-shadow: rgba(0, 0, 0, 0.15) 0px 10px 25px; box-sizing: border-box; max-width: 500px; padding: 25px; width: 100%; margin: 0 auto;">
+            <h3 style="color: #dc3545; font-size: 20px; letter-spacing: 0.5px; margin-top: 0px; text-align: center;">
+                TATA TERTIB &amp; ATURAN UJIAN
+            </h3>
+            <p style="color: #6c757d; font-size: 13px; margin-bottom: 20px; margin-top: 5px; text-align: center;">
+                SMAN 4 BARRU • SISTEM INTEGRASI DIGITAL
+            </p>
+            
+            <div style="color: #333333; font-size: 14px; line-height: 1.6; margin-bottom: 25px; max-height: 240px; overflow-y: auto; padding-right: 5px; text-align: left;">
+                <ol style="margin-left: 0px; padding-left: 20px; text-align: left;">
+                    <li style="margin-bottom: 8px;">Selama sesi ujian berlangsung, <strong>DILARANG:</strong> Menarik turun bilah notifikasi/status bar, keluar dari aplikasi, membagi layar (split screen), membuka tab baru, mengaktifkan floating apps, menekan navigasi kembali, dan mematikan layar.</li>
+                    <li style="margin-bottom: 8px;">Setiap bentuk interupsi atau hilangnya fokus layar akan dicatat oleh sistem sebagai <strong>PELANGGARAN</strong>.</li>
+                    <li style="margin-bottom: 8px;"><strong>SANKSI:</strong> Sistem akan langsung membatalkan sesi ujian Anda secara otomatis dan mengeluarkan Anda dari sesi ujian.</li>
+                </ol>
+            </div>
+            
+            <button id="btnMulaiUjian" style="background-color: #28a745; border: none; border-radius: 4px; color: white; cursor: pointer; font-size: 16px; font-weight: bold; padding: 14px; width: 100%;">
+                Saya Mengerti &amp; Mulai Ujian
+            </button>
+        </div>
+    </div>
+
+    <div id="layarB_Ujian" style="background: rgb(17, 17, 17); box-sizing: border-box; display: none; height: 100vh; left: 0px; overflow: hidden; position: fixed; top: 0px; width: 100vw; z-index: 99998;">
+        
+        <div id="customStatusBar" style="align-items: center; background-color: #333333; border-bottom: 2px solid rgb(51, 51, 51); box-sizing: border-box; color: white; display: flex; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 14px; font-weight: bold; height: 35px; justify-content: space-between; left: 0px; letter-spacing: 0.5px; padding: 0px 15px; position: fixed; top: 0px; width: 100%; z-index: 999999;">
+            <div id="statBaterai" style="align-items: center; display: flex; gap: 5px;">
+                🔋 --%
+            </div>
+            <div id="statJam" style="font-variant-numeric: tabular-nums;">
+                00:00:00
+            </div>
+            <div id="statJaringan" style="align-items: center; color: #2de25d; display: flex; gap: 5px;">
+                📶 ONLINE
+            </div>
+        </div>
+
+        <div class="app-container" style="height: calc(100vh - 35px); margin-top: 35px; position: relative; width: 100%;">
+            <iframe allowfullscreen="" id="contentFrame" onload="resetFokusIframe()" sandbox="allow-scripts allow-forms allow-same-origin" src="" style="background: #fff; border: none; display: block; height: calc(100vh - 35px - 60px) !important; left: 0; position: absolute; top: 0; width: 100%; z-index: 999;"></iframe>
+
+            <div class="bottom-navbar">
+                <button class="nav-btn" id="btnRefresh">
+                    <span class="nav-icon">↻</span>
+                    <span>Muat Ulang</span>
+                </button>
+                <button class="nav-btn btn-exit" id="btnExit">
+                    <span class="nav-icon">✕</span>
+                    <span>Keluar Sesi</span>
+                </button>
+            </div>
+        </div>
+
+        <div style="background: rgb(34, 34, 34); border-radius: 8px; border: 2px solid rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.5) 0px 4px 12px; height: 120px; overflow: hidden; position: fixed; right: 3%; top: 45px; width: 100px; z-index: 99999;">
+            <video autoplay id="webcamPreview" muted playsinline style="height: 100%; object-fit: cover; transform: scaleX(-1); width: 100%;"></video>
+        </div>
+
+    </div>
+
+    <div class="modal-overlay" id="customModal">
+        <div class="modal-box">
+            <h3 id="modalTitle">Konfirmasi Sesi</h3>
+            <p id="modalMessage">Apakah Anda yakin dengan tindakan ini?</p>
+            <div class="modal-buttons">
+                <button class="btn-modal btn-tidak" id="btnModalTidak">Batal</button>
+                <button class="btn-modal btn-ya" id="btnModalYa">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================================
+        // VALIDASI TOKEN GERBANG UTAMA (IIFE)
+        // =========================================================================
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tokenSiswa = urlParams.get('auth');
+            const waktuSekarang = Math.floor(Date.now() / 1000);
+            const batasToleransi = 15; 
+            
+            if (!tokenSiswa || (waktuSekarang - parseInt(tokenSiswa)) > batasToleransi) {
+                document.documentElement.innerHTML = `
+                    <div style="font-family: sans-serif; text-align: center; margin-top: 100px; padding: 20px;">
+                        <h1 style="color: #ff4d4d; font-size: 50px; margin-bottom: 10px;">404</h1>
+                        <h2 style="color: #333; margin-bottom: 20px;">Halaman Tidak Ditemukan</h2>
+                        <p style="color: #666; max-width: 400px; margin: 0 auto 30px auto; line-height: 1.6;">
+                            Tautan ini tidak valid, sudah kedaluwarsa, atau diakses secara ilegal di luar aplikasi ujian resmi SMAN 4 Barru.
+                        </p>
+                        <span style="font-size: 12px; color: #999;">Kode Keamanan: ERR_TOKEN_EXPIRED</span>
+                    </div>
+                `;
+                throw new Error("Akses Ditolak: Token kedaluwarsa.");
+            }
+        })();
+          
+        // =========================================================================
+        // LOGIKA CORE DAN PATROLI KEAMANAN RADAR
+        // =========================================================================
+        document.addEventListener("DOMContentLoaded", function() {
+            const halamanUtamaUrl = "https://ehariansah.github.io/ujian/";
+            const urlParams = new URLSearchParams(window.location.search);
+            let targetUrl = urlParams.get('url');
+            const iframe = document.getElementById('contentFrame');
+
+            let sudahKeluar = false;
+            let aksiTerpilih = ""; 
+            let dalamKonfirmasi = false; 
+            let radarUjianAktif = false;
+
+            // Inisialisasi status bar realtime
+            aktifkanJamMati();
+            aktifkanPantauanBaterai();
+            aktifkanPantauanKoneksi();
+          
+            // Pemicu Kamera Depan Pengawas
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+                .then(function(stream) {
+                    const videoBox = document.getElementById('webcamPreview');
+                    if (videoBox) videoBox.srcObject = stream;
+                })
+                .catch(function(err) {
+                    console.log("Akses kamera tidak tersedia: " + err.message);
+                });
+            }
+
+            // Aksi Klik Tombol Mulai (Masuk Fullscreen)
+            document.getElementById('btnMulaiUjian').addEventListener('click', function() {
+                const elemenDokumen = document.documentElement;
+                
+                if (elemenDokumen.requestFullscreen) {
+                    elemenDokumen.requestFullscreen();
+                } else if (elemenDokumen.webkitRequestFullscreen) {
+                    elemenDokumen.webkitRequestFullscreen();
+                } else if (elemenDokumen.msRequestFullscreen) {
+                    elemenDokumen.msRequestFullscreen();
+                }
+
+                setTimeout(function() {
+                    document.getElementById('gerbangTatib').style.display = 'none';
+                    document.getElementById('layarB_Ujian').style.display = 'block';
+                    
+                    if (targetUrl) {
+                        targetUrl = decodeURIComponent(targetUrl);
+                        if (!/^https?:\/\//i.test(targetUrl)) {
+                            targetUrl = 'https://' + targetUrl;
+                        }
+                        iframe.src = targetUrl;
+                    } else {
+                        alert("Tautan tidak ditemukan. Anda akan dikembalikan ke halaman beranda.");
+                        window.top.location.replace(halamanUtamaUrl);
+                    }
+
+                    radarUjianAktif = true;
+                }, 300);
+            });
+
+            // Sistem Eksekusi Keluar Paksa
+            function eksekusiKeluarPaksa() {
+                if (!radarUjianAktif || sudahKeluar) return; 
+                
+                sudahKeluar = true;
+                alert("KECURANGAN DIDETEKSI: Anda terdeteksi meninggalkan halaman ujian! Sesi Anda dibatalkan secara otomatis.");
+                window.top.location.replace(halamanUtamaUrl);
+            }
+
+            // Deteksi pembatalan manual Mode Fullscreen
+            function cekPerubahanFullscreen() {
+                if (!radarUjianAktif || sudahKeluar) return;
+                if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                    eksekusiKeluarPaksa();
+                }
+            }
+            document.addEventListener('fullscreenchange', cekPerubahanFullscreen);
+            document.addEventListener('webkitfullscreenchange', cekPerubahanFullscreen);
+
+            // Re-binding Fokus Iframe Utama
+            window.resetFokusIframe = function() {
+                if (sudahKeluar) return;
+                setTimeout(function() {
+                    if (iframe) iframe.focus();
+                }, 300);
+            };
+
+            // Patroli Agresif Fokus Elemen & Floating Apps (Interval 800ms)
+            function patroliFokusBerkala() {
+                if (!radarUjianAktif || dalamKonfirmasi || sudahKeluar) return;
+
+                if (!document.hasFocus()) {
+                    eksekusiKeluarPaksa();
+                    return;
+                }
+
+                const elemenAktif = document.activeElement;
+                if (elemenAktif && elemenAktif.tagName !== "IFRAME" && elemenAktif.id !== "contentFrame" && elemenAktif !== document.body && elemenAktif !== document.documentElement) {
+                    eksekusiKeluarPaksa();
+                }
+            }
+            const intervalPenjaga = setInterval(patroliFokusBerkala, 800);
+
+            // Deteksi Blur Layar Utama
+            window.addEventListener('blur', function() {
+                if (!radarUjianAktif || dalamKonfirmasi || sudahKeluar) return;
+                setTimeout(function() {
+                    const elemenAktif = document.activeElement;
+                    if (elemenAktif && (elemenAktif.tagName === "IFRAME" || elemenAktif.id === "contentFrame")) {
+                        return; 
+                    }
+                    eksekusiKeluarPaksa();
+                }, 150);
+            });
+
+            // Deteksi Anti Split-Screen (Resize Layout Vertikal Android)
+            const tinggiFisikLayarHP = window.screen.height;
+            function cekKecuranganLayar() {
+                if (!radarUjianAktif || sudahKeluar) return;
+                const batasToleransiSplit = tinggiFisikLayarHP * 0.60; 
+
+                if (window.innerHeight < batasToleransiSplit) {
+                    sudahKeluar = true;
+                    clearInterval(intervalPenjaga);
+                    alert("KECURANGAN DIDETEKSI: Mode Split Screen/Multi-Window dilarang saat ujian! Sesi Anda dibatalkan.");
+                    window.top.location.replace(halamanUtamaUrl);
+                }
+            }
+            window.addEventListener('resize', function() {
+                setTimeout(cekKecuranganLayar, 300);
+            });
+
+            // Deteksi Visibility Change (Tombol Home / Recent Apps Smartphone)
+            document.addEventListener("visibilitychange", function() {
+                if (document.hidden && radarUjianAktif) {
+                    setTimeout(function() {
+                        if (document.hidden && !sudahKeluar) {
+                            sudahKeluar = true;
+                            clearInterval(intervalPenjaga);
+                            alert("KECURANGAN DIDETEKSI: Anda terdeteksi meninggalkan halaman ujian! Sesi Anda dibatalkan secara otomatis.");
+                            setTimeout(function() {
+                                window.top.location.replace(halamanUtamaUrl);
+                            }, 1500);
+                        }
+                    }, 100);
+                }
+            });
+
+            // Manajemen Kontrol Modal Kustom Bar Bawah
+            const modal = document.getElementById('customModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalMessage = document.getElementById('modalMessage');
+
+            function bukaModalKustom(tipe) {
+                dalamKonfirmasi = true; 
+                aksiTerpilih = tipe;
+                if (tipe === "refresh") {
+                    modalTitle.innerText = "Muat Ulang Halaman?";
+                    modalMessage.innerText = "Apakah Anda yakin ingin memuat ulang halaman? Jawaban Anda mungkin tidak dipulihkan.";
+                } else if (tipe === "keluar") {
+                    modalTitle.innerText = "Keluar Sesi Ujian?";
+                    modalMessage.innerText = "Apakah Anda yakin ingin keluar dari sesi ujian ini dan kembali ke halaman beranda?";
+                }
+                modal.style.visibility = "visible";
+                modal.style.opacity = "1";
+            }
+
+            function tutupModalKustom() {
+                modal.style.visibility = "hidden";
+                modal.style.opacity = "0";
+                aksiTerpilih = "";
+                setTimeout(function() { dalamKonfirmasi = false; }, 300);
+            }
+
+            document.getElementById('btnRefresh').addEventListener('click', function() { bukaModalKustom("refresh"); });
+            document.getElementById('btnExit').addEventListener('click', function() { bukaModalKustom("keluar"); });
+            document.getElementById('btnModalTidak').addEventListener('click', function() { tutupModalKustom(); });
+
+            document.getElementById('btnModalYa').addEventListener('click', function() {
+                if (aksiTerpilih === "refresh") {
+                    tutupModalKustom();
+                    if (iframe.src) iframe.src = iframe.src;
+                } else if (aksiTerpilih === "keluar") {
+                    sudahKeluar = true;
+                    clearInterval(intervalPenjaga); 
+                    window.top.location.replace(halamanUtamaUrl);
+                }
+            });
+        });
+
+        // =========================================================================
+        // DATA REALTIME PADA STATUS BAR ATAS
+        // =========================================================================
+        function jamPad(n) { return n.toString().padStart(2, '0'); }
+
+        function aktifkanJamMati() {
+            const elemenJam = document.getElementById('statJam');
+            if (!elemenJam) return;
+            setInterval(function() {
+                const sekarang = new Date();
+                elemenJam.innerText = jamPad(sekarang.getHours()) + ":" + jamPad(sekarang.getMinutes()) + ":" + jamPad(sekarang.getSeconds());
+            }, 1000);
+        }
+
+        function aktifkanPantauanBaterai() {
+            const elemenBaterai = document.getElementById('statBaterai');
+            if (!elemenBaterai) return;
+
+            if (navigator.getBattery) {
+                navigator.getBattery().then(function(battery) {
+                    function perbaruiAngkaBaterai() {
+                        let level = Math.round(battery.level * 100);
+                        let ikonBaterai = (level <= 15) ? "🪫 " : "\uD83D\uDD0B ";
+                        
+                        elemenBaterai.innerText = ikonBaterai + level + "%";
+                        elemenBaterai.style.color = (level <= 15) ? "#ff4d4d" : "#ffffff";
+                    }
+                    
+                    perbaruiAngkaBaterai();
+                    battery.addEventListener('levelchange', perbaruiAngkaBaterai);
+                });
+            } else {
+                elemenBaterai.innerText = "\uD83D\uDD0B AKTIF";
+            }
+        }
+
+        function aktifkanPantauanKoneksi() {
+            const elemenJaringan = document.getElementById('statJaringan');
+            if (!elemenJaringan) return;
+            window.addEventListener('online', function() {
+                elemenJaringan.innerText = "📶 ONLINE";
+                elemenJaringan.style.color = "#2de25d";
+            });
+            window.addEventListener('offline', function() {
+                elemenJaringan.innerText = "\u26A0\uFE0F OFFLINE";
+                elemenJaringan.style.color = "#ff4d4d";
+            });
+        }
+    </script>
+</body>
+</html>
