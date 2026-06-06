@@ -380,46 +380,6 @@
                 }
             });
 
-            // =========================================================================
-            // JEBAKAN KOORDINAT V2: PELACAK USAPAN ATAS (ANTI-SWIPE DOWN NOTIFICATION)
-            // =========================================================================
-            (function() {
-                let koordinatY_Awal = 0;
-                let jumlahUsapanAtas = 0;
-                let waktuUsapanTerakhir = 0;
-    
-                const JEDA_MAKSIMAL = 3000;   // 3 detik dalam milidetik
-                const AMBANG_BATAS_Y = 15;    // Area sensitif pendaratan jari awal (0-15px dari paling atas)
-                const JARAK_MINIMAL_SWIPE = 10; // Jarak minimal usapan ke bawah untuk dianggap sebagai 'swipe' (dalam piksel)
-
-                window.addEventListener('touchstart', function(e) {
-                    koordinatY_Awal = e.touches[0].clientY;
-                }, { passive: true });
-
-                window.addEventListener('touchmove', function(e) {
-                    let koordinatY_Sekarang = e.touches[0].clientY;
-                    if (koordinatY_Awal <= AMBANG_BATAS_Y) {
-                        let jarakUsapanTurun = koordinatY_Sekarang - koordinatY_Awal;
-                        if (jarakUsapanTurun > JARAK_MINIMAL_SWIPE) {
-                            let waktuSekarang = Date.now();
-                            if (jumlahUsapanAtas === 1 && (waktuSekarang - waktuUsapanTerakhir <= JEDA_MAKSIMAL)) {
-                                jumlahUsapanAtas = 0;
-                                koordinatY_Awal = 999; // Kacaukan koordinat agar tidak memicu double eksekusi
-                                tendangSiswaKarenaTiraiNotifikasi();
-                            } else {
-                                jumlahUsapanAtas = 1;
-                                waktuUsapanTerakhir = waktuSekarang;
-                            }
-                            koordinatY_Awal = 999; 
-                        }
-                    }
-                }, { passive: true });
-                function tendangSiswaKarenaTiraiNotifikasi() {
-                    alert("PELANGGARAN DIDETEKSI: Anda terdeteksi mencoba menarik tirai notifikasi atas secara ilegal!");
-                    window.top.location.replace(halamanUtamaUrl);
-                }
-            })();
-
             // Manajemen Kontrol Modal Kustom Bar Bawah
             const modal = document.getElementById('customModal');
             const modalTitle = document.getElementById('modalTitle');
