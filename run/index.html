@@ -382,14 +382,17 @@
             // =========================================================================
             (function() {
                 let koordinatY_Awal = 0;
-                const AMBANG_BATAS_Y = 35;    
+                const AMBANG_BATAS_Y = 35;
                 const JARAK_MINIMAL_SWIPE = 10; 
+                
                 window.addEventListener('touchstart', function(e) {
                     koordinatY_Awal = e.touches[0].clientY;
                 }, { passive: true });
+                
                 window.addEventListener('touchmove', function(e) {
-                    let koordinatY_Sekarang = e.touches[0].clientY;
                     if (!radarUjianAktif || sudahKeluar) return;
+                    
+                    let koordinatY_Sekarang = e.touches[0].clientY;
                     if (koordinatY_Awal <= AMBANG_BATAS_Y) {
                         let jarakUsapanTurun = koordinatY_Sekarang - koordinatY_Awal;
                         if (jarakUsapanTurun > JARAK_MINIMAL_SWIPE) {
@@ -398,9 +401,11 @@
                         }
                     }
                 }, { passive: true });
+                
                 window.addEventListener('scroll', function() {
                     koordinatY_Awal = 999;
                 }, { passive: true });
+                
                 function tendangSiswaKarenaTiraiNotifikasi() {
                     sudahKeluar = true;
                     if (typeof intervalPenjaga !== 'undefined') clearInterval(intervalPenjaga);
