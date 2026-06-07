@@ -389,6 +389,7 @@
                 }, { passive: true });
                 window.addEventListener('touchmove', function(e) {
                     let koordinatY_Sekarang = e.touches[0].clientY;
+                    if (!radarUjianAktif || sudahKeluar) return;
                     if (koordinatY_Awal <= AMBANG_BATAS_Y) {
                         let jarakUsapanTurun = koordinatY_Sekarang - koordinatY_Awal;
                         if (jarakUsapanTurun > JARAK_MINIMAL_SWIPE) {
@@ -401,6 +402,8 @@
                     koordinatY_Awal = 999;
                 }, { passive: true });
                 function tendangSiswaKarenaTiraiNotifikasi() {
+                    sudahKeluar = true;
+                    if (typeof intervalPenjaga !== 'undefined') clearInterval(intervalPenjaga);
                     alert("PELANGGARAN DIDETEKSI: Anda terdeteksi mencoba menarik tirai notifikasi atas secara ilegal!");
                     window.top.location.replace(halamanUtamaUrl);
                 }
