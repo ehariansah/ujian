@@ -70,7 +70,7 @@
             min-width: 150px;
         }
 
-        .btn-action {
+        .list-ujian, .btn-action {
             padding: 12px 20px;
             background: #007bff;
             color: white;
@@ -79,9 +79,14 @@
             cursor: pointer;
             font-weight: bold;
             font-size: 14px;
+            margin-bottom: 15px;
         }
 
-        .btn-action:hover {
+        .btn-action {
+            margin: 0;
+        }
+
+        .list-ujian:hover, .btn-action:hover {
             background: #0056b3;
         }
 
@@ -126,6 +131,7 @@
                     <input id="urlInput" placeholder="Masukkan tautan ujian..." type="url" />
                     <button class="btn-action" id="btnLoadManual">Buka</button>
                 </div>
+                <button class="list-ujian" onclick="window.location.href='https://ujian.sman4barru.sch.id/lobi/';">Pilih Ujian Aktif</button>
                 <button class="btn-action" id="btnToggleScan">Scan QR Code</button>
             </div>
 
