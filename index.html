@@ -85,12 +85,16 @@
             background: #0056b3;
         }
 
-        #btnToggleScan {
+        #btnList {
+            margin-bottom: 15px;
+        }
+
+        #btnList, #btnToggleScan {
             width: 100%;
             background: #28a745;
         }
 
-        #btnToggleScan:hover {
+        #btnList:hover, #btnToggleScan:hover {
             background: #218838;
         }
 
@@ -126,7 +130,7 @@
                     <input id="urlInput" placeholder="Masukkan tautan ujian..." type="url" />
                     <button class="btn-action" id="btnLoadManual">Buka</button>
                 </div>
-                <button class="btn-action" onclick="window.location.href='https://ujian.sman4barru.sch.id/lobi/';">Pilih Ujian Aktif</button>
+                <button class="btn-action" id="btnList" onclick="window.location.href='https://ujian.sman4barru.sch.id/lobi/';">Pilih Ujian Aktif</button>
                 <button class="btn-action" id="btnToggleScan">Scan QR Code</button>
             </div>
 
