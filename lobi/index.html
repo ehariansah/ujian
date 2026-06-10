@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pilih Sesi Ujian - SMAN 4 Barru</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+    
+    <style>
+        :root {
+            --primary: #1a6199;
+            --accent: #ffbf00;
+            --bg-light: #f0f4f8;
+            --text-dark: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(rgb(26, 97, 153) 33.33%, rgb(233, 231, 247) 33.33%);
+            margin: 0;
+            padding: 20px;
+            color: var(--text-dark);
+            min-height: 100vh;
+        }
+
+        /* Header Header */
+        header {
+            color: white;
+            text-align: center;
+            margin: 0 0 20px;
+        }
+
+        header img { width: 100px; height: 100px; margin-bottom: 20px; }
+        header h1 { margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 1px; }
+        header p { margin: 8px 0 0; opacity: 0.9; font-size: 14px; }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Pencarian/Filter Sederhana */
+        .search-box {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: rgba(0, 0, 0, 0.15) 0px 10px 25px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        /* Grid Kartu Ujian */
+        .exam-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .exam-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            align-items: center;
+            box-shadow: rgba(0, 0, 0, 0.15) 0px 10px 25px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .exam-info h3 { margin: 0; font-size: 17px; color: var(--primary); }
+        .exam-info p { margin: 5px 0 0; font-size: 13px; color: #666; line-height: 1.4; }
+        
+        .badge-kelas {
+            background: #eef6ff;
+            color: var(--primary);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 8px;
+        }
+
+        /* Empty State */
+        #noExam {
+            text-align: center;
+            padding: 50px 20px;
+            color: #999;
+        }
+
+        /* MODAL TOKEN */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000;
+            visibility: hidden; opacity: 0;
+            transition: 0.3s;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+
+        .modal-box {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 300px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            margin: 20px;
+        }
+
+        .modal-box h2 { font-size: 18px; margin-bottom: 10px; color: var(--primary); }
+        .modal-box p { font-size: 13px; color: #666; margin-bottom: 20px; }
+
+        .token-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 24px;
+            text-align: center;
+            letter-spacing: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            box-sizing: border-box;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .token-input:focus { border-color: var(--accent); outline: none; }
+
+        /* Style Baru untuk Pesan Error Token */
+        .error-message {
+            color: #dc3545;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: none;
+            text-align: center;
+        }
+
+        .btn-confirm {
+            background: var(--success, #28a745);
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-close {
+            margin-top: 15px;
+            color: #999;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="https://blogger.googleusercontent.com/img/a/AVvXsEjo66nQHpyZ0fp3n9YykQufHZ588vRii8FtfWy7y8fO2wmCMaA3FoR6LBEKGO6avnztclQ6zwNBnkYOhiMcMQS0eLJtm_6p5mnp5JywiW-QnphUTcYfP0hFtVPhPqBpyHrZmYO_-_DMQTjTIHxwh4Wgc5S3o3u6Bscssv-GAg72vZqRKn2HJYpBMGAu6LQ=s200" alt="Logo">
+        <h1>Daftar Ujian Aktif</h1>
+        <p>Silakan pilih sesi ujian sesuai jadwal Anda</p>
+    </header>
+
+    <div class="container">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Cari Mata Pelajaran atau Kelas...">
+        </div>
+
+        <div id="examList" class="exam-list">
+            </div>
+
+        <div id="noExam" style="display:none;">
+            <p>📭 Tidak ada ujian yang sedang aktif saat ini.</p>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="tokenModal">
+        <div class="modal-box">
+            <h2>Masukkan Token</h2>
+            <p id="targetExamName">Nama Ujian</p>
+            <input type="text" class="token-input" id="inputToken" maxlength="6" placeholder="******" autocomplete="off">
+            <div id="errorToken" class="error-message"></div>
+            <button class="btn-confirm" id="btnProsesMasuk">Mulai Mengerjakan</button>
+            <button class="btn-close" id="btnBatalToken">Kembali</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+    const examListContainer = document.getElementById('examList');
+    const noExamState = document.getElementById('noExam');
+    const searchInput = document.getElementById('searchInput');
+    const tokenModal = document.getElementById('tokenModal');
+    const targetExamNameText = document.getElementById('targetExamName');
+    const inputToken = document.getElementById('inputToken');
+    const errorToken = document.getElementById('errorToken');
+    
+    // =================================================================
+    // KONFIGURASI FIREBASE (Menyambungkan Lobi Siswa ke Internet)
+    // =================================================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyArpngNXmHc_H7_G69iAvpMb0UWLjrr4tw",
+      authDomain: "ujicoba-ujian.firebaseapp.com",
+      databaseURL: "https://ujicoba-ujian-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "ujicoba-ujian",
+      storageBucket: "ujicoba-ujian.appspot.com",
+      messagingSenderId: "712473385614",
+      appId: "1:712473385614:web:0664a125020a28db03c7df",
+      measurementId: "G-T0P00YWQMY"
+    };
+
+    // Jalankan Inisialisasi Koneksi Firebase
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    const database = firebase.database();
+
+    // Kontainer lokal di browser siswa (menggantikan localStorage lama)
+    let databaseUjian = [];
+    let ujianTerpilih = null;
+
+    // REAL-TIME LISTENER: Otomatis mendeteksi sakelar ujian dari Halaman Guru
+    database.ref('db_ujian_sman4').on('value', (snapshot) => {
+        const dataDariInternet = snapshot.val();
+        if (dataDariInternet) {
+            // Konversi objek database internet ke bentuk Array agar cocok dengan logika kode Bapak
+            databaseUjian = Array.isArray(dataDariInternet) ? dataDariInternet : Object.values(dataDariInternet);
+        } else {
+            databaseUjian = [];
+        }
+        
+        console.log("🔄 Data Lobi Siswa berhasil diperbarui dari Firebase!");
+        
+        // Panggil fungsi render bawaan Bapak agar kartu ujian langsung muncul/berubah otomatis
+        renderUjian(); 
+    });
+
+    // =================================================================
+    // FUNGSI RENDER BAWAAN (Tetap dipertahankan dengan sedikit penyesuaian pengetikan filter)
+    // =================================================================
+    function renderUjian(filter = "") {
+        examListContainer.innerHTML = "";
+        
+        // Mengambil ujian yang statusAktif-nya true (atau string "ON" jika disetel dari cloud)
+        let ujianAktif = databaseUjian.filter(u => u.statusAktif === true || u.status === "ON");
+
+        if (filter) {
+            ujianAktif = ujianAktif.filter(u => 
+                u.mataPelajaran.toLowerCase().includes(filter.toLowerCase()) || 
+                u.kelasUjian.toLowerCase().includes(filter.toLowerCase())
+            );
+        }
+
+        if (ujianAktif.length === 0) {
+            noExamState.style.display = "block";
+            return;
+        }
+
+        noExamState.style.display = "none";
+        ujianAktif.forEach(ujian => {
+            const card = document.createElement('div');
+            card.className = 'exam-card';
+            
+            // Format Tampilan Tanggal Indonesia Sederhana
+            const formatTgl = ujian.tanggalUjian.split('-').reverse().join('/');
+            
+            card.innerHTML = `
+                <div class="exam-info">
+                    <h3>${ujian.namaUjian}</h3>
+                    <p><strong>Mata Pelajaran:</strong> ${ujian.mataPelajaran}</p>
+                    <p><small style="color:#666; font-style:italic;">Guru: ${ujian.guruPengampu || '-'}</small></p>
+                    <p>📅 ${formatTgl} | ⏰ ${ujian.jamUjian} s.d ${ujian.jamSelesaiUjian || '-'}</p>
+                    <div class="badge-kelas">Kelas: ${ujian.kelasUjian}</div>
+                </div>
+            `;
+            card.onclick = () => bukaModalToken(ujian);
+            examListContainer.appendChild(card);
+        });
+    }
+    function bukaModalToken(ujian) {
+        ujianTerpilih = ujian;
+        targetExamNameText.innerText = `${ujian.namaUjian} - ${ujian.mataPelajaran}`;
+        inputToken.value = "";
+        errorToken.style.display = "none"; // Sembunyikan error saat ganti atau buka sesi baru
+        errorToken.innerText = "";
+        tokenModal.classList.add('active');
+        setTimeout(() => inputToken.focus(), 300);
+    }
+
+    document.getElementById('btnBatalToken').onclick = () => {
+        tokenModal.classList.remove('active');
+        ujianTerpilih = null;
+    };
+
+    // Bersihkan pesan error secara otomatis saat siswa mulai mengetik ulang tokennya
+    inputToken.addEventListener('input', function() {
+        errorToken.style.display = "none";
+        errorToken.innerText = "";
+    });
+
+    // 2. EKSEKUSI VERIFIKASI TOKEN INTEGRASI WAKTU (ANTI-GAGAL LOKAL & GITHUB PAGES)
+    document.getElementById('btnProsesMasuk').onclick = function(e) {
+        e.preventDefault();
+
+        const tokenInputSiswa = inputToken.value.toUpperCase().trim();
+        
+        // --- RUMUS SINKRONISASI WAKTU OTOMATIS (SAMA DENGAN HALAMAN E) ---
+        const DURASI_LIMA_MENIT = 5 * 60;
+        const detikUnixSekarang = Math.floor(Date.now() / 1000);
+        const sisaDetikBlokBerjalan = detikUnixSekarang % DURASI_LIMA_MENIT;
+        const awalBlokLimaMenit = detikUnixSekarang - sisaDetikBlokBerjalan;
+
+        function hitungTokenLokal(seedWaktu) {
+            const alfabetKandidat = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+            let nilaiSaran = seedWaktu;
+            let hasilToken = "";
+            for (let i = 0; i < 6; i++) {
+                nilaiSaran = (nilaiSaran * 9301 + 49297) % 233280;
+                const indeksKarakter = Math.floor((nilaiSaran / 233280) * alfabetKandidat.length);
+                hasilToken += alfabetKandidat.charAt(indeksKarakter);
+            }
+            return hasilToken;
+        }
+
+        const tokenSahSaatIni = hitungTokenLokal(awalBlokLimaMenit);
+        // -----------------------------------------------------------------
+
+        // Jalankan Verifikasi Pencocokan
+        if (tokenInputSiswa === tokenSahSaatIni) {
+            const timestamp = Math.floor(Date.now() / 1000);
+            
+            // GUNAKAN URL ABSOLUT MUTLAK (Pasti Tepat Sasaran di GitHub Pages)
+            const urlUjianUtama = "https://ehariansah.github.io/ujicoba/run/"; // JANGAN LUPA GANTI
+            
+            // Lempar pengguna ke Halaman B menggunakan .replace() secara langsung tanpa pop-up alert
+            window.location.replace(urlUjianUtama + "?url=" + encodeURIComponent(ujianTerpilih.tautanSoal) + "&auth=" + timestamp);
+        } else {
+            // Jika token salah, tampilkan pesan di bawah input tanpa pop-up alert
+            errorToken.innerText = "Token tidak valid!";
+            errorToken.style.display = "block";
+            inputToken.value = "";
+            inputToken.focus();
+        }
+    };
+
+    // Fitur Pencarian Sederhana
+    searchInput.oninput = (e) => renderUjian(e.target.value);
+
+    // Inisialisasi Jalankan Fungsi
+    renderUjian();
+});
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+</body>
+</html>
