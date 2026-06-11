@@ -168,7 +168,7 @@
                 🔋 --%
             </div>
             <div id="statJam" style="font-variant-numeric: tabular-nums;">
-                00:00:00
+                00:00
             </div>
             <div id="statJaringan" style="align-items: center; color: #2de25d; display: flex; gap: 5px;">
                 📶 ONLINE
@@ -466,8 +466,8 @@
             if (!elemenJam) return;
             setInterval(function() {
                 const sekarang = new Date();
-                elemenJam.innerText = jamPad(sekarang.getHours()) + ":" + jamPad(sekarang.getMinutes()) + ":" + jamPad(sekarang.getSeconds());
-            }, 1000);
+                elemenJam.innerText = jamPad(sekarang.getHours()) + ":" + jamPad(sekarang.getMinutes());
+            }, 10000);
         }
 
         function aktifkanPantauanBaterai() {
