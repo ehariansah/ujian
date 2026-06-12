@@ -147,7 +147,7 @@
                 SMAN 4 BARRU • SISTEM INTEGRASI DIGITAL
             </p>
             
-            <div style="color: #333333; font-size: 14px; line-height: 1.6; margin-bottom: 25px; max-height: 240px; overflow-y: auto; padding-right: 5px; text-align: left;">
+            <div style="color: #333333; font-size: 14px; line-height: 1.6; margin-bottom: 25px; text-align: left;">
                 <ol style="margin-left: 0px; padding-left: 20px; text-align: left;">
                     <li style="margin-bottom: 8px;">Selama sesi ujian berlangsung, <strong>DILARANG:</strong> Keluar dari aplikasi, keluar dari mode full screen, menekan tombol navigasi (recent / home / back), menarik turun bilah notifikasi, membagi layar (split screen), membuka tab baru, mengaktifkan floating apps, dan mematikan layar.</li>
                     <li style="margin-bottom: 8px;">Setiap bentuk interupsi atau hilangnya fokus layar akan dicatat oleh sistem sebagai <strong>PELANGGARAN</strong>.</li>
@@ -161,7 +161,7 @@
         </div>
     </div>
 
-    <div id="layarB_Ujian" style="background: rgb(17, 17, 17); box-sizing: border-box; display: none; height: 100vh; left: 0px; overflow: hidden; position: fixed; top: 0px; width: 100vw; z-index: 99998;">
+    <div id="layar_Ujian" style="background: rgb(17, 17, 17); box-sizing: border-box; display: none; height: 100vh; left: 0px; overflow: hidden; position: fixed; top: 0px; width: 100vw; z-index: 99998;">
         
         <div id="customStatusBar" style="align-items: center; background-color: #333333; border-bottom: 2px solid rgb(51, 51, 51); box-sizing: border-box; color: white; display: flex; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 14px; font-weight: bold; height: 35px; left: 0px; letter-spacing: 0.5px; padding: 0px 15px; position: fixed; top: 0px; width: 100%; z-index: 999999;">
             <div id="statBaterai" style="align-items: center; display: flex; gap: 5px; flex: 1; justify-content: flex-start;">
@@ -277,7 +277,7 @@
 
                 setTimeout(function() {
                     document.getElementById('gerbangTatib').style.display = 'none';
-                    document.getElementById('layarB_Ujian').style.display = 'block';
+                    document.getElementById('layar_Ujian').style.display = 'block';
                     
                     if (targetUrl) {
                         targetUrl = decodeURIComponent(targetUrl);
