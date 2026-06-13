@@ -186,7 +186,7 @@
             </div>
             
             <div id="statJaringan" style="align-items: center; color: #2de25d; display: flex; gap: 5px; flex: 1; justify-content: flex-end;">
-                📶 ONLINE
+                📶 ON
             </div>
         </div>
 
@@ -511,11 +511,11 @@
             const elemenJaringan = document.getElementById('statJaringan');
             if (!elemenJaringan) return;
             window.addEventListener('online', function() {
-                elemenJaringan.innerText = "📶 ONLINE";
+                elemenJaringan.innerText = "📶 ON";
                 elemenJaringan.style.color = "#2de25d";
             });
             window.addEventListener('offline', function() {
-                elemenJaringan.innerText = "⚠️ OFFLINE";
+                elemenJaringan.innerText = "⚠️ OFF";
                 elemenJaringan.style.color = "#ff4d4d";
             });
         }
