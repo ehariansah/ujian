@@ -493,7 +493,7 @@
                 navigator.getBattery().then(function(battery) {
                     function perbaruiAngkaBaterai() {
                         let level = Math.round(battery.level * 100);
-                        let ikonBaterai = (level <= 15) ? "🪫 " : "\uD83D\uDD0B ";
+                        let ikonBaterai = (level <= 15) ? "🪫 " : "🔋 ";
                         
                         elemenBaterai.innerText = ikonBaterai + level + "%";
                         elemenBaterai.style.color = (level <= 15) ? "#ff4d4d" : "#ffffff";
@@ -503,7 +503,7 @@
                     battery.addEventListener('levelchange', perbaruiAngkaBaterai);
                 });
             } else {
-                elemenBaterai.innerText = "\uD83D\uDD0B AKTIF";
+                elemenBaterai.innerText = "🔋 AKTIF";
             }
         }
 
@@ -515,7 +515,7 @@
                 elemenJaringan.style.color = "#2de25d";
             });
             window.addEventListener('offline', function() {
-                elemenJaringan.innerText = "\u26A0\uFE0F OFFLINE";
+                elemenJaringan.innerText = "⚠️ OFFLINE";
                 elemenJaringan.style.color = "#ff4d4d";
             });
         }
