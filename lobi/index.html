@@ -122,7 +122,6 @@
         }
 
         .modal-box h2 { font-size: 18px; margin: 0 0 10px; color: var(--primary); }
-        .modal-box p { font-size: 13px; color: #666; margin-bottom: 20px; }
 
         .token-input {
             width: 100%;
@@ -197,7 +196,6 @@
     <div class="modal-overlay" id="tokenModal">
         <div class="modal-box">
             <h2>Masukkan Token</h2>
-            <p id="targetExamName">Nama Ujian</p>
             <input type="text" class="token-input" id="inputToken" maxlength="6" placeholder="******" autocomplete="off">
             <div id="errorToken" class="error-message"></div>
             <button class="btn-confirm" id="btnProsesMasuk">Kirim</button>
@@ -299,7 +297,6 @@
     }
     function bukaModalToken(ujian) {
         ujianTerpilih = ujian;
-        targetExamNameText.innerText = `${ujian.namaUjian} - ${ujian.mataPelajaran}`;
         inputToken.value = "";
         errorToken.style.display = "none"; // Sembunyikan error saat ganti atau buka sesi baru
         errorToken.innerText = "";
