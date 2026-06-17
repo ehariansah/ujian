@@ -435,7 +435,6 @@
             const modalMessage = document.getElementById('modalMessage');
 
             function bukaModalKustom(tipe) {
-                // PERBAIKAN WINDOWS: Kunci status konfirmasi di paling atas agar radar interval langsung libur
                 dalamKonfirmasi = true; 
                 aksiTerpilih = tipe;
                 if (tipe === "refresh") {
@@ -447,11 +446,6 @@
                 }
                 modal.style.visibility = "visible";
                 modal.style.opacity = "1";
-
-                // PERBAIKAN WINDOWS: Paksa lepas fokus tombol fisik agar activeElement Windows kembali netral
-                if (document.activeElement) {
-                    document.activeElement.blur();
-                }
             }
 
             function tutupModalKustom() {
@@ -523,6 +517,6 @@
                 elemenJaringan.style.color = "#ff4d4d";
             });
         }
-</script>
+    </script>
 </body>
 </html>
