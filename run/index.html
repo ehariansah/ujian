@@ -435,8 +435,10 @@
             const modalMessage = document.getElementById('modalMessage');
 
             function bukaModalKustom(tipe) {
+                // JALUR AMAN: Langsung matikan radar di milidetik pertama tombol diklik
                 dalamKonfirmasi = true; 
                 aksiTerpilih = tipe;
+
                 if (tipe === "refresh") {
                     modalTitle.innerText = "Muat Ulang Halaman?";
                     modalMessage.innerText = "Apakah Anda yakin ingin memuat ulang halaman? Jawaban Anda mungkin tidak dipulihkan.";
@@ -444,8 +446,14 @@
                     modalTitle.innerText = "Keluar Sesi Ujian?";
                     modalMessage.innerText = "Apakah Anda yakin ingin keluar dari sesi ujian ini dan kembali ke halaman beranda?";
                 }
+
                 modal.style.visibility = "visible";
                 modal.style.opacity = "1";
+
+                // Lepas fokus dari tombol fisik agar Windows/Laptop tidak salah mendeteksi elemen aktif
+                if (document.activeElement) {
+                    document.activeElement.blur();
+                }
             }
 
             function tutupModalKustom() {
@@ -493,9 +501,12 @@
                 navigator.getBattery().then(function(battery) {
                     function perbaruiAngkaBaterai() {
                         let level = Math.round(battery.level * 100);
-                        let ikonBaterai = (level <= 15) ? "🪫 " : "🔋 ";
+                        let karakterEmotikon = (level <= 15) ? "🪫" : "🔋";
                         
-                        elemenBaterai.innerText = ikonBaterai + level + "%";
+                        // Memutar emotikon teks asli sebesar 90 derajat agar tidur/berbaring
+                        let ikonBateraiTidur = `<span style="display: inline-block; transform: rotate(90deg); margin-right: 8px; vertical-align: middle;">${karakterEmotikon}</span>`;
+                        
+                        elemenBaterai.innerHTML = ikonBateraiTidur + level + "%";
                         elemenBaterai.style.color = (level <= 15) ? "#ff4d4d" : "#ffffff";
                     }
                     
@@ -517,6 +528,6 @@
                 elemenJaringan.style.color = "#ff4d4d";
             });
         }
-    </script>
+</script>
 </body>
 </html>
