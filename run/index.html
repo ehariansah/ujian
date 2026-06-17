@@ -435,10 +435,9 @@
             const modalMessage = document.getElementById('modalMessage');
 
             function bukaModalKustom(tipe) {
-                // JALUR AMAN: Langsung matikan radar di milidetik pertama tombol diklik
+                // PERBAIKAN WINDOWS: Kunci status konfirmasi di paling atas agar radar interval langsung libur
                 dalamKonfirmasi = true; 
                 aksiTerpilih = tipe;
-
                 if (tipe === "refresh") {
                     modalTitle.innerText = "Muat Ulang Halaman?";
                     modalMessage.innerText = "Apakah Anda yakin ingin memuat ulang halaman? Jawaban Anda mungkin tidak dipulihkan.";
@@ -446,11 +445,10 @@
                     modalTitle.innerText = "Keluar Sesi Ujian?";
                     modalMessage.innerText = "Apakah Anda yakin ingin keluar dari sesi ujian ini dan kembali ke halaman beranda?";
                 }
-
                 modal.style.visibility = "visible";
                 modal.style.opacity = "1";
 
-                // Lepas fokus dari tombol fisik agar Windows/Laptop tidak salah mendeteksi elemen aktif
+                // PERBAIKAN WINDOWS: Paksa lepas fokus tombol fisik agar activeElement Windows kembali netral
                 if (document.activeElement) {
                     document.activeElement.blur();
                 }
@@ -501,12 +499,9 @@
                 navigator.getBattery().then(function(battery) {
                     function perbaruiAngkaBaterai() {
                         let level = Math.round(battery.level * 100);
-                        let karakterEmotikon = (level <= 15) ? "🪫" : "🔋";
+                        let ikonBaterai = (level <= 15) ? "🪫 " : "🔋 ";
                         
-                        // Memutar emotikon teks asli sebesar 90 derajat agar tidur/berbaring
-                        let ikonBateraiTidur = `<span style="display: inline-block; transform: rotate(270deg); vertical-align: middle;">${karakterEmotikon}</span>`;
-                        
-                        elemenBaterai.innerHTML = ikonBateraiTidur + level + "%";
+                        elemenBaterai.innerText = ikonBaterai + level + "%";
                         elemenBaterai.style.color = (level <= 15) ? "#ff4d4d" : "#ffffff";
                     }
                     
