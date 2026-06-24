@@ -252,13 +252,48 @@
     });
 
     // =================================================================
-    // FUNGSI RENDER BAWAAN (Tetap dipertahankan dengan sedikit penyesuaian pengetikan filter)
+    // FUNGSI RENDER DENGAN LOGIKA VALIDASI GANDA (BYPASS WAKTU)
     // =================================================================
     function renderUjian(filter = "") {
         examListContainer.innerHTML = "";
         
-        // Mengambil ujian yang statusAktif-nya true (atau string "ON" jika disetel dari cloud)
-        let ujianAktif = databaseUjian.filter(u => u.statusAktif === true || u.status === "ON");
+        // Dapatkan waktu saat ini dari gawai siswa
+        const sekarang = new Date();
+        const tahun = sekarang.getFullYear();
+        const bulan = String(sekarang.getMonth() + 1).padStart(2, '0');
+        const tgl = String(sekarang.getDate()).padStart(2, '0');
+        const tglSekarangFormat = `${tahun}-${bulan}-${tgl}`; // format YYYY-MM-DD
+        
+        const jam = String(sekarang.getHours()).padStart(2, '0');
+        const menit = String(sekarang.getMinutes()).padStart(2, '0');
+        const waktuSekarangFormat = `${jam}:${menit}`; // format HH:MM
+
+        // Lakukan penyaringan data secara pintar (Validasi Ganda)
+        let ujianAktif = databaseUjian.filter(u => {
+            // Cocokkan apakah hari ini adalah tanggal ujiannya
+            const apakahHariIni = (u.tanggalUjian === tglSekarangFormat);
+            // Cek apakah waktu saat ini sudah masuk ke rentang waktu ujian
+            const sudahMulai = (waktuSekarangFormat >= u.jamUjian);
+            const belumSelesai = u.jamSelesaiUjian ? (waktuSekarangFormat <= u.jamSelesaiUjian) : true;
+            const rentangWaktuCocok = (apakahHariIni && sudahMulai && belumSelesai);
+
+            // LOGIKA VALIDASI GANDA:
+            // 1. Jika guru merevisi/memundurkan jadwal, tapi waktu gawai siswa BELUM masuk waktu baru,
+            //    maka WAJIB DIKUNCI (return false) meskipun di Firebase statusnya masih ON.
+            if (apakahHariIni && !sudahMulai) {
+                return false;
+            }
+            
+            // 2. Jika waktu gawai siswa sudah berakhir/lewat jam selesai, WAJIB DIKUNCI.
+            if (apakahHariIni && !belumSelesai) {
+                return false;
+            }
+
+            // 3. Ketentuan lolos tampil: 
+            //    - Dinyalakan secara manual/otomatis oleh Halaman Guru (statusAktif atau status "ON")
+            //    - ATAU otomatis lolos bypass jika rentang waktu saat ini memang sudah cocok (meski Dasbor Guru ditutup)
+            return (u.statusAktif === true || u.status === "ON" || rentangWaktuCocok);
+        });
 
         if (filter) {
             ujianAktif = ujianAktif.filter(u => 
@@ -293,6 +328,7 @@
             examListContainer.appendChild(card);
         });
     }
+
     function bukaModalToken(ujian) {
         ujianTerpilih = ujian;
         inputToken.value = "";
