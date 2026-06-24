@@ -413,14 +413,11 @@ let databaseUjian = [];
 database.ref('db_ujian_sman4').once('value', (snapshot) => {
     const dataDariInternet = snapshot.val();
     if (dataDariInternet) {
-        // Jika data di Firebase berbentuk objek, kita konversi ke Array agar cocok dengan kode lama Bapak
         databaseUjian = Array.isArray(dataDariInternet) ? dataDariInternet : Object.values(dataDariInternet);
     } else {
         databaseUjian = [];
     }
     
-    // PENTING: Jika di Halaman C Bapak ada fungsi untuk menampilkan tabel/list ujian, 
-    // jalankan nama fungsinya di sini agar datanya langsung muncul saat loading pertama.
     if (typeof perbaruiTampilanTabel === "function") {
         perbaruiTampilanTabel(); 
     }
@@ -486,7 +483,6 @@ database.ref('db_ujian_sman4').once('value', (snapshot) => {
                     // JALUR EDIT DATA
                     const indeks = databaseUjian.findIndex(item => item.id === idUjian);
                     if (indeks !== -1) {
-                        // Pertahankan status toggle ON/OFF yang lama saat proses editing
                         dataBaru.id = idUjian;
                         dataBaru.statusAktif = databaseUjian[indeks].statusAktif;
                         databaseUjian[indeks] = dataBaru;
@@ -494,9 +490,12 @@ database.ref('db_ujian_sman4').once('value', (snapshot) => {
                 } else {
                     // JALUR TAMBAH DATA BARU
                     dataBaru.id = "UJIAN_" + Date.now();
-                    dataBaru.statusAktif = false; // Standar awal: MATI (OFF) agar tidak langsung muncul di siswa
+                    dataBaru.statusAktif = false; // Standar awal: MATI (OFF)
                     databaseUjian.push(dataBaru);
                 }
+
+                // Cek instan setelah simpan, jika ternyata jadwalnya pas langsung aktif detik itu juga
+                pemeriksaWaktuOtomatis(); 
 
                 simpanKeStorage();
                 tutupModalInputUjian();
@@ -505,7 +504,6 @@ database.ref('db_ujian_sman4').once('value', (snapshot) => {
 
             // Fungsi Sinkronisasi Data ke Firebase Realtime Database
 function simpanKeStorage() {
-    // Kirim seluruh struktur array databaseUjian ke Firebase
     database.ref('db_ujian_sman4').set(databaseUjian)
     .then(() => {
         console.log("✅ Data ujian berhasil disinkronkan ke Firebase Internet!");
@@ -530,7 +528,6 @@ function simpanKeStorage() {
                 databaseUjian.forEach(function(ujian) {
                     const baris = document.createElement('tr');
 
-                    // Format Tampilan Tanggal Indonesia Sederhana
                     const formatTgl = ujian.tanggalUjian.split('-').reverse().join('/');
 
                     baris.innerHTML = `
@@ -559,7 +556,6 @@ function simpanKeStorage() {
                     tempatDaftarUjian.appendChild(baris);
                 });
 
-                // Gantungkan Event Listener ke Tombol Dinamis setelah digambar
                 kaitkanEventTombolTabel();
             }
 
@@ -575,7 +571,6 @@ function simpanKeStorage() {
                             targetUjian.statusAktif = statusTerpilih;
                             simpanKeStorage();
                             
-                            // Perbarui komponen teks badge di bawah sakelar secara instan
                             const badge = document.getElementById(`badge_${idTarget}`);
                             if (statusTerpilih) {
                                 badge.innerText = "ON";
@@ -608,6 +603,37 @@ function simpanKeStorage() {
                     });
                 });
             }
+
+            // =========================================================================
+            // SOS-SISTEM: SAKELAR ON OTOMATIS BERDASARKAN JADWAL MULAI (UPGRADED)
+            // =========================================================================
+            function pemeriksaWaktuOtomatis() {
+                if (databaseUjian.length === 0) return;
+
+                let adaPerubahan = false;
+                const waktuSekarang = new Date();
+
+                databaseUjian.forEach(ujian => {
+                    // Gabungkan string 'YYYY-MM-DD' dan 'HH:MM' menjadi format objek waktu yang sah
+                    const waktuMulaiUjian = new Date(`${ujian.tanggalUjian}T${ujian.jamUjian}`);
+
+                    // JIKA: Waktu gawai sekarang sudah menyentuh/melewati waktu mulai, DAN status masih OFF (false)
+                    if (waktuSekarang >= waktuMulaiUjian && !ujian.statusAktif) {
+                        ujian.statusAktif = true; // Paksa Ubah Ke ON secara Sistem
+                        adaPerubahan = true;
+                        console.log(`[SOS-System] Sesi ujian "${ujian.namaUjian}" otomatis diaktifkan.`);
+                    }
+                });
+
+                // Jika ada sakelar yang menyala otomatis, perbarui tabel dan kirim ke Firebase
+                if (adaPerubahan) {
+                    simpanKeStorage();
+                    perbaruiTampilanTabel();
+                }
+            }
+
+            // Jalankan detak pemeriksaan berkala setiap 10 detik di background
+            setInterval(pemeriksaWaktuOtomatis, 10000);
         });
     </script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
