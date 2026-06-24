@@ -535,7 +535,7 @@ function simpanKeStorage() {
 
                     baris.innerHTML = `
                         <td><strong>${ujian.namaUjian}</strong></td>
-                        <td>${ujian.mataPelajaran}<br><small style="color:#666; font-style:italic;">Guru: ${ujian.guruPengampu || '-'}</small></td>
+                        <td><strong>${ujian.mataPelajaran}</strong><br><small style="color:#666; font-style:italic;">Guru: ${ujian.guruPengampu || '-'}</small></td>
                         <td><span style="background:#e3f2fd; color:#0d47a1; padding:3px 8px; border-radius:5px; font-weight:bold; font-size:12px;">${ujian.kelasUjian}</span></td>
                         <td>📅 ${formatTgl}<br>⏰ ${ujian.jamUjian} s.d ${ujian.jamSelesaiUjian || '-'}</td>
                         <td style="text-align:center;">
