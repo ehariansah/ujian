@@ -1,1232 +1,616 @@
 <!DOCTYPE html>
-
 <html lang="id">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Panel Guru - Manajemen Ujian SMAN 4 Barru</title>
-
     <link rel="icon" type="image/png" href="../favicon.png">
-
     
-
     <style>
-
         :root {
-
             --primary-color: #1a6199;
-
             --success-color: #28a745;
-
             --danger-color: #dc3545;
-
             --warning-color: #ffbf00;
-
             --dark-color: #2a2a2a;
-
             --light-bg: #f4f6f9;
-
         }
-
-
 
         body {
-
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
             background: linear-gradient(rgb(26, 97, 153) 250px, rgb(233, 231, 247) 250px);
-
             margin: 0;
-
             padding: 20px;
-
             color: #333;
-
             min-height: 100dvh;
-
             box-sizing: border-box;
-
         }
-
-
 
         /* Header Panel */
-
         .header-panel {
-
             color: white;
-
             margin: 0 auto 20px;
-
             text-align: center;
-
         }
-
-
 
         .header-title img {
-
             width: 100px;
-
             height: 100px;
-
-            margin-bottom: 20px; }
-
-
+            margin-bottom: 20px;
+        }
 
         .header-title h1 {
-
             margin: 0 0 10px;
-
             font-size: 20px;
-
         }
-
-
 
         .header-title p {
-
             margin: 0;
-
             font-size: 14px;
-
         }
-
-
 
         /* Container Utama */
-
         .container {
-
             max-width: 1000px;
-
             margin: 0 auto;
-
             box-sizing: border-box;
-
         }
-
-
 
         /* Tombol Utama */
-
         .btn {
-
             padding: 10px 18px;
-
             font-weight: bold;
-
             font-size: 14px;
-
             border: none;
-
             border-radius: 5px;
-
             cursor: pointer;
-
             transition: all 0.2s ease;
-
             display: inline-flex;
-
             align-items: center;
-
             gap: 8px;
-
         }
-
-
 
         .btn-primary { background-color: var(--primary-color); color: white; }
-
         .btn-primary:hover { background-color: #11436b; }
-
         .btn-success { background-color: var(--success-color); color: white; }
-
         .btn-danger { background-color: var(--danger-color); color: white; }
-
         .btn-warning { background-color: var(--warning-color); color: #fff; }
 
-
-
         .btn-tambah-container {
-
             margin-bottom: 20px;
-
             text-align: left;
-
         }
-
-
 
         .btn-besar {
-
             padding: 12px;
-
         }
-
-
 
         /* MODAL FORM (Pop-up) */
-
         .modal-overlay {
-
             position: fixed;
-
             top: 0;
-
             left: 0;
-
             width: 100%;
-
             height: 100%;
-
             background: rgba(0, 0, 0, 0.7);
-
             display: flex;
-
             justify-content: center;
-
             align-items: center;
-
             z-index: 1000;
-
             visibility: hidden;
-
             opacity: 0;
-
             transition: opacity 0.3s ease, visibility 0.3s ease;
-
         }
-
-
 
         .modal-overlay.active {
-
             visibility: visible;
-
             opacity: 1;
-
         }
-
-
 
         .modal-box {
-
             background: white;
-
             padding: 20px;
-
             border-radius: 15px;
-
             width: 90%;
-
             max-width: 550px;
-
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             box-sizing: border-box;
-
             transform: translateY(-20px);
-
             transition: transform 0.3s ease;
-
         }
-
-
 
         .modal-overlay.active .modal-box {
-
             transform: translateY(0);
-
         }
-
-
 
         .modal-box h3 {
-
             margin-top: 0;
-
             color: var(--primary-color);
-
             border-bottom: 2px solid #eee;
-
             padding-bottom: 10px;
-
             margin-bottom: 20px;
-
         }
-
-
 
         /* Form Controls */
-
         .form-group {
-
             margin-bottom: 16px;
-
         }
-
-
 
         .form-group label {
-
             display: block;
-
             font-weight: 600;
-
             font-size: 14px;
-
             margin-bottom: 6px;
-
             color: #444;
-
         }
-
-
 
         .form-group input, .form-group select {
-
             width: 100%;
-
             padding: 10px 12px;
-
             border: 1px solid #ccc;
-
             border-radius: 5px;
-
             font-size: 14px;
-
             box-sizing: border-box;
-
         }
-
-
 
         .form-row {
-
             display: flex;
-
             gap: 10px;
-
         }
-
-
 
         .form-row .form-group {
-
             flex: 1;
-
         }
-
-
 
         .modal-footer {
-
             display: flex;
-
             justify-content: flex-end;
-
             gap: 10px;
-
             margin-top: 25px;
-
             border-top: 1px solid #eee;
-
             padding-top: 15px;
-
         }
-
-
 
         /* KARTU / TABEL DAFTAR UJIAN */
-
         .panel-data {
-
             background: white;
-
             border-radius: 15px;
-
             box-shadow: rgba(0, 0, 0, 0.15) 0px 10px 25px;
-
             padding: 20px;
-
             overflow-x: auto;
-
         }
-
-
 
         table {
-
             width: 100%;
-
             border-collapse: collapse;
-
             text-align: left;
-
             min-width: 800px;
-
         }
-
-
 
         th {
-
             background-color: #f8f9fa;
-
             color: #555;
-
             font-weight: 600;
-
             padding: 14px;
-
             border-bottom: 2px solid #dee2e6;
-
             font-size: 14px;
-
         }
-
-
 
         td {
-
             padding: 14px;
-
             border-bottom: 1px solid #eee;
-
             font-size: 14px;
-
             vertical-align: middle;
-
             line-height: 1.5;
-
         }
-
-
 
         tr:hover { background-color: #fdfdfd; }
 
-
-
         /* SAKELAR ON/OFF (iOS Style Toggle Switch) */
-
         .switch {
-
             position: relative;
-
             display: inline-block;
-
             width: 46px;
-
             height: 24px;
-
         }
-
-
 
         .switch input { 
-
             opacity: 0;
-
             width: 0;
-
             height: 0;
-
         }
-
-
 
         .slider {
-
             position: absolute;
-
             cursor: pointer;
-
             top: 0;
-
             left: 0;
-
             right: 0;
-
             bottom: 0;
-
             background-color: #ccc;
-
             transition: .3s;
-
             border-radius: 24px;
-
         }
-
-
 
         .slider:before {
-
             position: absolute;
-
             content: "";
-
             height: 18px;
-
             width: 18px;
-
             left: 3px;
-
             bottom: 3px;
-
             background-color: white;
-
             transition: .3s;
-
             border-radius: 50%;
-
         }
-
-
 
         input:checked + .slider {
-
             background-color: var(--success-color);
-
         }
-
-
 
         input:checked + .slider:before {
-
             transform: translateX(22px);
-
         }
-
-
 
         /* Badge Status */
-
         .badge {
-
             padding: 4px 8px;
-
             border-radius: 4px;
-
             font-size: 11px;
-
             font-weight: bold;
-
             text-transform: uppercase;
-
         }
-
         .badge-on { background-color: #d4edda; color: #155724; }
-
         .badge-off { background-color: #e2e3e5; color: #383d41; }
 
-
-
         .aksi-buttons {
-
             display: flex;
-
             gap: 5px;
-
         }
-
-
 
         .aksi-buttons .btn {
-
             padding: 6px 12px;
-
             font-size: 12px;
-
         }
-
-
 
         #emptyState {
-
             text-align: center;
-
             padding: 40px 20px;
-
             color: #888;
-
             font-style: italic;
-
         }
-
     </style>
-
 </head>
-
 <body>
 
-
-
     <div class="header-panel">
-
         <div class="header-title">
-
             <img src="https://blogger.googleusercontent.com/img/a/AVvXsEjo66nQHpyZ0fp3n9YykQufHZ588vRii8FtfWy7y8fO2wmCMaA3FoR6LBEKGO6avnztclQ6zwNBnkYOhiMcMQS0eLJtm_6p5mnp5JywiW-QnphUTcYfP0hFtVPhPqBpyHrZmYO_-_DMQTjTIHxwh4Wgc5S3o3u6Bscssv-GAg72vZqRKn2HJYpBMGAu6LQ=s200" alt="Logo">
-
             <h1>PANEL GURU</h1>
-
             <p>SMAN 4 Barru • Manajemen Distribusi Soal Ujian</p>
-
         </div>
-
     </div>
-
-
 
     <div class="container">
-
-        
-
         <div class="panel-data">
-
             <div class="btn-action btn-tambah-container">
-
-            <button class="btn btn-success btn-besar" id="btnBukaForm">+ Tambah Ujian Baru</button>
-
-        </div>
-
+                <button class="btn btn-success btn-besar" id="btnBukaForm">+ Tambah Ujian Baru</button>
+            </div>
             <table>
-
                 <thead>
-
                     <tr>
-
                         <th style="width: 20%;">Nama Ujian</th>
-
                         <th style="width: 25%;">Mata Pelajaran / Pengampu</th>
-
                         <th style="width: 10%;">Kelas</th>
-
                         <th style="width: 20%;">Waktu Pelaksanaan</th>
-
                         <th style="width: 10%; text-align: center;">Status</th>
-
                         <th style="width: 15%; text-align: center;">Tindakan</th>
-
                     </tr>
-
                 </thead>
-
                 <tbody id="tempatDaftarUjian">
-
-                    </tbody>
-
+                </tbody>
             </table>
-
             <div id="emptyState">Belum ada daftar ujian. Silakan klik tombol "+ Tambah Ujian Baru" di atas.</div>
-
         </div>
-
     </div>
-
-
 
     <div class="modal-overlay" id="modalFormUjian">
-
         <div class="modal-box">
-
             <h3 id="modalTitleForm">Form Tambah Sesi Ujian</h3>
-
             <form id="formUjian">
-
                 <input type="hidden" id="ujianId">
 
-
-
                 <div class="form-group">
-
                     <label for="namaUjian">Nama Ujian</label>
-
                     <input type="text" id="namaUjian" placeholder="Contoh: Sumatif Akhir Semester (SAS)" required>
-
                 </div>
 
-
-
                 <div class="form-group">
-
                     <label for="mataPelajaran">Mata Pelajaran</label>
-
                     <input type="text" id="mataPelajaran" placeholder="Contoh: Sejarah / Geografi" required>
-
                 </div>
 
-
-
                 <div class="form-group">
-
                     <label for="guruPengampu">Guru Pengampu / Penanggung Jawab</label>
-
                     <input type="text" id="guruPengampu" placeholder="Contoh: Umar Bakri, S.Pd." required>
-
                 </div>
-
-
 
                 <div class="form-group">
-
                     <label for="kelasUjian">Kelas Target</label>
-
                     <input type="text" id="kelasUjian" placeholder="Contoh: X / XI / XII" required>
-
                 </div>
-
-
 
                 <div class="form-row">
-
                     <div class="form-group">
-
                         <label for="tanggalUjian">Tanggal</label>
-
                         <input type="date" id="tanggalUjian" required>
-
                     </div>
-
                     <div class="form-group">
-
                         <label for="jamUjian">Jam Mulai</label>
-
                         <input type="time" id="jamUjian" required>
-
                     </div>
-
                     <div class="form-group">
-
                         <label for="jamSelesaiUjian">Jam Berakhir</label>
-
                         <input type="time" id="jamSelesaiUjian" required>
-
                     </div>
-
                 </div>
-
-
 
                 <div class="form-group">
-
                     <label for="tautanSoal">Tautan Soal (Google Form / Quizizz / dll)</label>
-
                     <input type="url" id="tautanSoal" placeholder="https://docs.google.com/forms/d/..." required>
-
                 </div>
-
-
 
                 <div class="modal-footer">
-
                     <button type="button" class="btn btn-danger" id="btnBatalForm">Batal</button>
-
                     <button type="submit" class="btn btn-primary" id="btnSimpanUjian">Simpan Sesi</button>
-
                 </div>
-
             </form>
-
         </div>
-
     </div>
 
-
-
     <script>
-
         document.addEventListener("DOMContentLoaded", function() {
-
             // Pengait Elemen HTML
-
             const modal = document.getElementById('modalFormUjian');
-
             const btnBukaForm = document.getElementById('btnBukaForm');
-
             const btnBatalForm = document.getElementById('btnBatalForm');
-
             const formUjian = document.getElementById('formUjian');
-
             const tempatDaftarUjian = document.getElementById('tempatDaftarUjian');
-
             const emptyState = document.getElementById('emptyState');
-
             const modalTitleForm = document.getElementById('modalTitleForm');
 
-
-
             // Variabel Form Input
-
             const ujianIdInput = document.getElementById('ujianId');
-
             const namaUjianInput = document.getElementById('namaUjian');
-
             const mataPelajaranInput = document.getElementById('mataPelajaran');
-
             const guruPengampuInput = document.getElementById('guruPengampu');
-
             const kelasUjianInput = document.getElementById('kelasUjian');
-
             const tanggalUjianInput = document.getElementById('tanggalUjian');
-
             const jamUjianInput = document.getElementById('jamUjian');
-
             const jamSelesaiUjianInput = document.getElementById('jamSelesaiUjian');
-
             const tautanSoalInput = document.getElementById('tautanSoal');
 
-
-
             // Konfigurasi Firebase dari Akun Pak Erik semalam
+            const firebaseConfig = {
+                apiKey: "AIzaSyArpngNXmHc_H7_G69iAvpMb0UWLjrr4tw",
+                authDomain: "ujicoba-ujian.firebaseapp.com",
+                databaseURL: "https://ujicoba-ujian-default-rtdb.asia-southeast1.firebasedatabase.app",
+                projectId: "ujicoba-ujian",
+                storageBucket: "ujicoba-ujian.appspot.com",
+                messagingSenderId: "712473385614",
+                appId: "1:712473385614:web:0664a125020a28db03c7df",
+                measurementId: "G-T0P00YWQMY"
+            };
 
-const firebaseConfig = {
+            // Jalankan Inisialisasi Koneksi Firebase
+            firebase.initializeApp(firebaseConfig);
+            const database = firebase.database();
 
-  apiKey: "AIzaSyArpngNXmHc_H7_G69iAvpMb0UWLjrr4tw",
+            // Kontainer Array lokal untuk kebutuhan tampilan interface di halaman guru
+            let databaseUjian = [];
 
-  authDomain: "ujicoba-ujian.firebaseapp.com",
-
-  databaseURL: "https://ujicoba-ujian-default-rtdb.asia-southeast1.firebasedatabase.app",
-
-  projectId: "ujicoba-ujian",
-
-  storageBucket: "ujicoba-ujian.appspot.com",
-
-  messagingSenderId: "712473385614",
-
-  appId: "1:712473385614:web:0664a125020a28db03c7df",
-
-  measurementId: "G-T0P00YWQMY"
-
-};
-
-
-
-// Jalankan Inisialisasi Koneksi Firebase
-
-firebase.initializeApp(firebaseConfig);
-
-const database = firebase.database();
-
-
-
-// Kontainer Array lokal untuk kebutuhan tampilan interface di halaman guru
-
-let databaseUjian = [];
-
-
-
-// AMBIL DATA AWAL DARI FIREBASE (Agar saat halaman di-refresh, daftar ujian lama tidak hilang)
-
-database.ref('db_ujian_sman4').once('value', (snapshot) => {
-
-    const dataDariInternet = snapshot.val();
-
-    if (dataDariInternet) {
-
-        // Jika data di Firebase berbentuk objek, kita konversi ke Array agar cocok dengan kode lama Bapak
-
-        databaseUjian = Array.isArray(dataDariInternet) ? dataDariInternet : Object.values(dataDariInternet);
-
-    } else {
-
-        databaseUjian = [];
-
-    }
-
-    
-
-    // PENTING: Jika di Halaman C Bapak ada fungsi untuk menampilkan tabel/list ujian, 
-
-    // jalankan nama fungsinya di sini agar datanya langsung muncul saat loading pertama.
-
-    if (typeof perbaruiTampilanTabel === "function") {
-
-        perbaruiTampilanTabel(); 
-
-    }
-
-});
-
-
-
-            // Render awal saat halaman dibuka
-
-            perbaruiTampilanTabel();
-
-
-
-            // Kontrol Manajemen Modal Pop-up
-
-            btnBukaForm.addEventListener('click', function() {
-
-                bukaModalInputUjian("tambah");
-
+            // AMBIL DATA AWAL DARI FIREBASE (Agar saat halaman di-refresh, daftar ujian lama tidak hilang)
+            database.ref('db_ujian_sman4').once('value', (snapshot) => {
+                const dataDariInternet = snapshot.val();
+                if (dataDariInternet) {
+                    // Jika data di Firebase berbentuk objek, kita konversi ke Array agar cocok dengan kode lama Bapak
+                    databaseUjian = Array.isArray(dataDariInternet) ? dataDariInternet : Object.values(dataDariInternet);
+                } else {
+                    databaseUjian = [];
+                }
+                
+                // PENTING: Jika di Halaman C Bapak ada fungsi untuk menampilkan tabel/list ujian, 
+                // jalankan nama fungsinya di sini agar datanya langsung muncul saat loading pertama.
+                if (typeof perbaruiTampilanTabel === "function") {
+                    perbaruiTampilanTabel(); 
+                }
             });
 
+            // Render awal saat halaman dibuka
+            perbaruiTampilanTabel();
 
+            // Kontrol Manajemen Modal Pop-up
+            btnBukaForm.addEventListener('click', function() {
+                bukaModalInputUjian("tambah");
+            });
 
             btnBatalForm.addEventListener('click', tutupModalInputUjian);
 
-
-
             function bukaModalInputUjian(mode, id = null) {
-
                 formUjian.reset();
-
                 ujianIdInput.value = "";
-
                 guruPengampuInput.value = "";
-
                 jamSelesaiUjianInput.value = "";
-
                 
-
                 if (mode === "tambah") {
-
                     modalTitleForm.innerText = "Form Tambah Sesi Ujian Baru";
-
                 } else if (mode === "edit") {
-
                     modalTitleForm.innerText = "Edit Sesi Ujian";
-
                     const dataEdit = databaseUjian.find(item => item.id === id);
-
                     if (dataEdit) {
-
                         ujianIdInput.value = dataEdit.id;
-
                         namaUjianInput.value = dataEdit.namaUjian;
-
                         mataPelajaranInput.value = dataEdit.mataPelajaran;
-
                         guruPengampuInput.value = dataEdit.guruPengampu || "";
-
                         kelasUjianInput.value = dataEdit.kelasUjian;
-
                         tanggalUjianInput.value = dataEdit.tanggalUjian;
-
                         jamUjianInput.value = dataEdit.jamUjian;
-
                         jamSelesaiUjianInput.value = dataEdit.jamSelesaiUjian || "";
-
                         tautanSoalInput.value = dataEdit.tautanSoal;
-
                     }
-
                 }
-
                 modal.classList.add('active');
-
             }
-
-
 
             function tutupModalInputUjian() {
-
                 modal.classList.remove('active');
-
             }
-
-
 
             // Operasi Eksekusi SIMPAN data (Tambah & Edit)
-
             formUjian.addEventListener('submit', function(e) {
-
                 e.preventDefault();
 
-
-
                 const idUjian = ujianIdInput.value;
-
                 const dataBaru = {
-
                     namaUjian: namaUjianInput.value.trim(),
-
                     mataPelajaran: mataPelajaranInput.value.trim(),
-
                     guruPengampu: guruPengampuInput.value.trim(),
-
                     kelasUjian: kelasUjianInput.value.trim(),
-
                     tanggalUjian: tanggalUjianInput.value,
-
                     jamUjian: jamUjianInput.value,
-
                     jamSelesaiUjian: jamSelesaiUjianInput.value,
-
                     tautanSoal: tautanSoalInput.value.trim()
-
                 };
 
-
-
                 if (idUjian) {
-
                     // JALUR EDIT DATA
-
                     const indeks = databaseUjian.findIndex(item => item.id === idUjian);
-
                     if (indeks !== -1) {
-
                         // Pertahankan status toggle ON/OFF yang lama saat proses editing
-
                         dataBaru.id = idUjian;
-
                         dataBaru.statusAktif = databaseUjian[indeks].statusAktif;
-
                         databaseUjian[indeks] = dataBaru;
-
                     }
-
                 } else {
-
                     // JALUR TAMBAH DATA BARU
-
                     dataBaru.id = "UJIAN_" + Date.now();
-
                     dataBaru.statusAktif = false; // Standar awal: MATI (OFF) agar tidak langsung muncul di siswa
-
                     databaseUjian.push(dataBaru);
-
                 }
-
-
 
                 simpanKeStorage();
-
                 tutupModalInputUjian();
-
                 perbaruiTampilanTabel();
-
             });
 
-
-
             // Fungsi Sinkronisasi Data ke Firebase Realtime Database
-
-function simpanKeStorage() {
-
-    // Kirim seluruh struktur array databaseUjian ke Firebase
-
-    database.ref('db_ujian_sman4').set(databaseUjian)
-
-    .then(() => {
-
-        console.log("✅ Data ujian berhasil disinkronkan ke Firebase Internet!");
-
-    })
-
-    .catch((error) => {
-
-        console.error("❌ Gagal sinkronisasi ke Firebase: ", error);
-
-        alert("Gagal menyimpan ke cloud: " + error.message);
-
-    });
-
-}
-
-
+            function simpanKeStorage() {
+                // Kirim seluruh struktur array databaseUjian ke Firebase
+                database.ref('db_ujian_sman4').set(databaseUjian)
+                .then(() => {
+                    console.log("✅ Data ujian berhasil disinkronkan ke Firebase Internet!");
+                })
+                .catch((error) => {
+                    console.error("❌ Gagal sinkronisasi ke Firebase: ", error);
+                    alert("Gagal menyimpan ke cloud: " + error.message);
+                });
+            }
 
             // Fungsi Loop Render Menggambar Baris Tabel Berdasarkan Array
-
             function perbaruiTampilanTabel() {
-
                 tempatDaftarUjian.innerHTML = "";
 
-
-
                 if (databaseUjian.length === 0) {
-
                     emptyState.style.display = "block";
-
                     return;
-
                 } else {
-
                     emptyState.style.display = "none";
-
                 }
 
-
-
                 databaseUjian.forEach(function(ujian) {
-
                     const baris = document.createElement('tr');
 
-
-
                     // Format Tampilan Tanggal Indonesia Sederhana
-
                     const formatTgl = ujian.tanggalUjian.split('-').reverse().join('/');
 
-
-
                     baris.innerHTML = `
-
                         <td><strong>${ujian.namaUjian}</strong></td>
-
                         <td><strong>${ujian.mataPelajaran}</strong><br><small style="color:#666; font-style:italic;">Guru: ${ujian.guruPengampu || '-'}</small></td>
-
                         <td><span style="background:#e3f2fd; color:#0d47a1; padding:3px 8px; border-radius:5px; font-weight:bold; font-size:12px;">${ujian.kelasUjian}</span></td>
-
                         <td>📅 ${formatTgl}<br>⏰ ${ujian.jamUjian} s.d ${ujian.jamSelesaiUjian || '-'}</td>
-
                         <td style="text-align:center;">
-
                             <label class="switch">
-
                                 <input type="checkbox" class="toggle-status" data-id="${ujian.id}" ${ujian.statusAktif ? 'checked' : ''}>
-
                                 <span class="slider"></span>
-
                             </label>
-
                             <br>
-
                             <span id="badge_${ujian.id}" class="badge ${ujian.statusAktif ? 'badge-on' : 'badge-off'}" style="margin-top:5px; display:inline-block;">
-
                                 ${ujian.statusAktif ? 'ON' : 'OFF'}
-
                             </span>
-
                         </td>
-
                         <td style="text-align:center;">
-
                             <div class="aksi-buttons">
-
                                 <button class="btn btn-warning btn-edit" data-id="${ujian.id}">Edit</button>
-
                                 <button class="btn btn-danger btn-hapus" data-id="${ujian.id}">Hapus</button>
-
                             </div>
-
                         </td>
-
                     `;
 
-
-
                     tempatDaftarUjian.appendChild(baris);
-
                 });
-
-
 
                 // Gantungkan Event Listener ke Tombol Dinamis setelah digambar
-
                 kaitkanEventTombolTabel();
-
             }
-
-
 
             function kaitkanEventTombolTabel() {
-
                 // 1. Event Handler Sakelar ON/OFF
-
                 document.querySelectorAll('.toggle-status').forEach(checkbox => {
-
                     checkbox.addEventListener('change', function() {
-
                         const idTarget = this.getAttribute('data-id');
-
                         const statusTerpilih = this.checked;
-
                         
-
                         const targetUjian = databaseUjian.find(item => item.id === idTarget);
-
                         if (targetUjian) {
-
                             targetUjian.statusAktif = statusTerpilih;
-
                             simpanKeStorage();
-
                             
-
                             // Perbarui komponen teks badge di bawah sakelar secara instan
-
                             const badge = document.getElementById(`badge_${idTarget}`);
-
                             if (statusTerpilih) {
-
                                 badge.innerText = "ON";
-
                                 badge.className = "badge badge-on";
-
                             } else {
-
                                 badge.innerText = "OFF";
-
                                 badge.className = "badge badge-off";
-
                             }
-
                         }
-
                     });
-
                 });
-
-
 
                 // 2. Event Handler Tombol Edit
-
                 document.querySelectorAll('.btn-edit').forEach(tombol => {
-
                     tombol.addEventListener('click', function() {
-
                         const idTarget = this.getAttribute('data-id');
-
                         bukaModalInputUjian("edit", idTarget);
-
                     });
-
                 });
-
-
 
                 // 3. Event Handler Tombol Hapus
-
                 document.querySelectorAll('.btn-hapus').forEach(tombol => {
-
                     tombol.addEventListener('click', function() {
-
                         const idTarget = this.getAttribute('data-id');
-
                         if (confirm("Apakah Anda yakin ingin menghapus jadwal ujian ini? Data yang dihapus tidak bisa dikembalikan.")) {
-
                             databaseUjian = databaseUjian.filter(item => item.id !== idTarget);
-
                             simpanKeStorage();
-
                             perbaruiTampilanTabel();
-
                         }
-
                     });
-
                 });
-
             }
-
         });
-
     </script>
-
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 </body>
-
-</html> 
-
+</html>
