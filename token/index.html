@@ -64,7 +64,7 @@
         /* Tampilan Utama Blok Token */
         .token-display-box {
             background: #f1f3f5;
-            padding: 25px 10px;
+            padding: 25px 10px 15px 10px; /* Disesuaikan agar pas dengan tombol */
             border-radius: 10px;
             margin-bottom: 20px;
             border: 1px solid #ced4da;
@@ -86,8 +86,33 @@
             font-weight: 900;
             letter-spacing: 6px;
             color: #0b3c66;
-            margin: 0;
-            user-select: all;
+            margin: 0 0 15px 0;
+            /* PERBAIKAN: Diubah ke text agar bisa diseleksi manual tanpa konflik browser */
+            user-select: text; 
+            -webkit-user-select: text;
+        }
+
+        /* Tombol Salin Instan */
+        .btn-salin {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s, transform 0.1s;
+            width: 80%;
+            justify-content: center;
+            margin: 0 auto;
+        }
+
+        .btn-salin:active {
+            transform: scale(0.98);
         }
 
         /* Komponen Hitung Mundur & Progress Bar */
@@ -144,6 +169,9 @@
         <div class="token-display-box">
             <div class="token-label">Token Berlaku Saat Ini</div>
             <div class="token-code" id="kodeTokenTampil">------</div>
+            <button class="btn-salin" id="btnSalin">
+                <span>📋 Salin Token</span>
+            </button>
         </div>
 
         <div class="timer-container">
@@ -166,15 +194,13 @@
             const tokenTampil = document.getElementById('kodeTokenTampil');
             const menitDetikTampil = document.getElementById('menitDetik');
             const barProgress = document.getElementById('barProgress');
+            const btnSalin = document.getElementById('btnSalin');
 
             const DURASI_LIMA_MENIT = 5 * 60; // 300 Detik
 
             // Algoritma Generator String Token Acak 6 Digit Khas Aplikasi Ujian
             function produksiTokenAcak(stempelWaktuBlok) {
-                // Karakter yang mudah dibaca (menghilangkan 'I', 'O', '0', '1' agar siswa tidak salah ketik)
                 const alfabetKandidat = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-                
-                // Menggunakan stempel waktu blok sebagai seed pseudo-random sederhana
                 let nilaiSaran = stempelWaktuBlok;
                 let hasilToken = "";
                 
@@ -189,34 +215,44 @@
             function siklusPenjagaToken() {
                 const detikUnixSekarang = Math.floor(Date.now() / 1000);
                 
-                // Cari awal mula blok 5 menit berjalan saat ini
                 const sisaDetikBlokBerjalan = detikUnixSekarang % DURASI_LIMA_MENIT;
                 const awalBlokLimaMenit = detikUnixSekarang - sisaDetikBlokBerjalan;
                 
-                // Generate token berdasarkan waktu blok saat ini
                 const tokenAktif = produksiTokenAcak(awalBlokLimaMenit);
                 tokenTampil.innerText = tokenAktif;
 
-                // Hitung sisa waktu mundur untuk blok ini
                 const sisaWaktuMundur = DURASI_LIMA_MENIT - sisaDetikBlokBerjalan;
                 
-                // Format menit dan detik teks
                 const menit = Math.floor(sisaWaktuMundur / 60);
                 const detik = sisaWaktuMundur % 60;
                 menitDetikTampil.innerText = `${menit.toString().padStart(2, '0')}:${detik.toString().padStart(2, '0')}`;
 
-                // Atur penyusutan Bar Progress secara visual (0% sampai 100%)
                 const persentaseSisa = (sisaWaktuMundur / DURASI_LIMA_MENIT) * 100;
                 barProgress.style.width = persentaseSisa + "%";
 
-                // Simpan token aktif saat ini ke LocalStorage agar Halaman D bisa membaca token yang sama
                 localStorage.setItem('token_ujian_aktif_sman4', tokenAktif);
             }
 
-            // Jalankan detak pertama kali halaman dibuka
-            siklusPenjagaToken();
+            // TAMBAHAN: Logika Salin Token Menggunakan Clipboard API
+            btnSalin.addEventListener('click', function() {
+                const teksToken = tokenTampil.innerText;
+                
+                if (teksToken && teksToken !== "------") {
+                    navigator.clipboard.writeText(teksToken).then(function() {
+                        btnSalin.style.backgroundColor = "#28a745";
+                        btnSalin.innerHTML = "<span>✅ Berhasil Disalin!</span>";
+                        
+                        setTimeout(function() {
+                            btnSalin.style.backgroundColor = "var(--primary-color)";
+                            btnSalin.innerHTML = "<span>📋 Salin Token</span>";
+                        }, 2000);
+                    }).catch(function(err) {
+                        alert("Gagal menyalin otomatis. Silakan salin manual.");
+                    });
+                }
+            });
 
-            // Lakukan pembaruan rutin setiap 1 detik
+            siklusPenjagaToken();
             setInterval(siklusPenjagaToken, 1000);
         });
     </script>
