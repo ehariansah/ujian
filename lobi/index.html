@@ -252,40 +252,13 @@
     });
 
     // =================================================================
-    // FUNGSI RENDER DENGAN LOGIKA VALIDASI GANDA (MANUAL TETAP MENANG)
+    // FUNGSI RENDER BAWAAN (Tetap dipertahankan dengan sedikit penyesuaian pengetikan filter)
     // =================================================================
     function renderUjian(filter = "") {
         examListContainer.innerHTML = "";
         
-        // Dapatkan waktu saat ini dari gawai siswa
-        const sekarang = new Date();
-        const tahun = sekarang.getFullYear();
-        const bulan = String(sekarang.getMonth() + 1).padStart(2, '0');
-        const tgl = String(sekarang.getDate()).padStart(2, '0');
-        const tglSekarangFormat = `${tahun}-${bulan}-${tgl}`; // format YYYY-MM-DD
-        
-        const jam = String(sekarang.getHours()).padStart(2, '0');
-        const menit = String(sekarang.getMinutes()).padStart(2, '0');
-        const waktuSekarangFormat = `${jam}:${menit}`; // format HH:MM
-
-        // Lakukan penyaringan data secara pintar
-        let ujianAktif = databaseUjian.filter(u => {
-            // Cek status manual dari Firebase terlebih dahulu
-            const isManualOn = (u.statusAktif === true || u.status === "ON");
-
-            // JIKA GURU SUDAH NYALAKAN MANUAL, langsung loloskan (tampilkan)!
-            if (isManualOn) {
-                return true;
-            }
-
-            // --- JIKA STATUS MASIH OFF, BARU CEK OTOMATISASI WAKTU DI BAWAH INI ---
-            const apakahHariIni = (u.tanggalUjian === tglSekarangFormat);
-            const sudahMulai = (waktuSekarangFormat >= u.jamUjian);
-            const belumSelesai = u.jamSelesaiUjian ? (waktuSekarangFormat <= u.jamSelesaiUjian) : true;
-
-            // Otomatis muncul jika memang sudah masuk rentang waktunya (Fitur Cadangan)
-            return (apakahHariIni && sudahMulai && belumSelesai);
-        });
+        // Mengambil ujian yang statusAktif-nya true (atau string "ON" jika disetel dari cloud)
+        let ujianAktif = databaseUjian.filter(u => u.statusAktif === true || u.status === "ON");
 
         if (filter) {
             ujianAktif = ujianAktif.filter(u => 
@@ -320,7 +293,6 @@
             examListContainer.appendChild(card);
         });
     }
-
     function bukaModalToken(ujian) {
         ujianTerpilih = ujian;
         inputToken.value = "";
