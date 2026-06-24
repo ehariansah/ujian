@@ -252,7 +252,7 @@
     });
 
     // =================================================================
-    // FUNGSI RENDER DENGAN LOGIKA VALIDASI GANDA (BYPASS WAKTU)
+    // FUNGSI RENDER DENGAN LOGIKA VALIDASI GANDA (MANUAL TETAP MENANG)
     // =================================================================
     function renderUjian(filter = "") {
         examListContainer.innerHTML = "";
@@ -268,31 +268,23 @@
         const menit = String(sekarang.getMinutes()).padStart(2, '0');
         const waktuSekarangFormat = `${jam}:${menit}`; // format HH:MM
 
-        // Lakukan penyaringan data secara pintar (Validasi Ganda)
+        // Lakukan penyaringan data secara pintar
         let ujianAktif = databaseUjian.filter(u => {
-            // Cocokkan apakah hari ini adalah tanggal ujiannya
+            // Cek status manual dari Firebase terlebih dahulu
+            const isManualOn = (u.statusAktif === true || u.status === "ON");
+
+            // JIKA GURU SUDAH NYALAKAN MANUAL, langsung loloskan (tampilkan)!
+            if (isManualOn) {
+                return true;
+            }
+
+            // --- JIKA STATUS MASIH OFF, BARU CEK OTOMATISASI WAKTU DI BAWAH INI ---
             const apakahHariIni = (u.tanggalUjian === tglSekarangFormat);
-            // Cek apakah waktu saat ini sudah masuk ke rentang waktu ujian
             const sudahMulai = (waktuSekarangFormat >= u.jamUjian);
             const belumSelesai = u.jamSelesaiUjian ? (waktuSekarangFormat <= u.jamSelesaiUjian) : true;
-            const rentangWaktuCocok = (apakahHariIni && sudahMulai && belumSelesai);
 
-            // LOGIKA VALIDASI GANDA:
-            // 1. Jika guru merevisi/memundurkan jadwal, tapi waktu gawai siswa BELUM masuk waktu baru,
-            //    maka WAJIB DIKUNCI (return false) meskipun di Firebase statusnya masih ON.
-            if (apakahHariIni && !sudahMulai) {
-                return false;
-            }
-            
-            // 2. Jika waktu gawai siswa sudah berakhir/lewat jam selesai, WAJIB DIKUNCI.
-            if (apakahHariIni && !belumSelesai) {
-                return false;
-            }
-
-            // 3. Ketentuan lolos tampil: 
-            //    - Dinyalakan secara manual/otomatis oleh Halaman Guru (statusAktif atau status "ON")
-            //    - ATAU otomatis lolos bypass jika rentang waktu saat ini memang sudah cocok (meski Dasbor Guru ditutup)
-            return (u.statusAktif === true || u.status === "ON" || rentangWaktuCocok);
+            // Otomatis muncul jika memang sudah masuk rentang waktunya (Fitur Cadangan)
+            return (apakahHariIni && sudahMulai && belumSelesai);
         });
 
         if (filter) {
