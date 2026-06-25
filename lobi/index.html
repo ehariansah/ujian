@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pilih Sesi Ujian - SMAN 4 Barru</title>
     <link rel="icon" type="image/png" href="../favicon.png">
-    
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     
@@ -186,7 +185,8 @@
             <input type="text" id="searchInput" placeholder="Cari Mata Pelajaran atau Kelas...">
         </div>
 
-        <div id="examList" class="exam-list"></div>
+        <div id="examList" class="exam-list">
+            </div>
 
         <div id="noExam" style="display:none;">
             <p>📭 Tidak ada ujian yang sedang aktif saat ini.</p>
@@ -205,162 +205,167 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const examListContainer = document.getElementById('examList');
-            const noExamState = document.getElementById('noExam');
-            const searchInput = document.getElementById('searchInput');
-            const tokenModal = document.getElementById('tokenModal');
-            const inputToken = document.getElementById('inputToken');
-            const errorToken = document.getElementById('errorToken');
+    const examListContainer = document.getElementById('examList');
+    const noExamState = document.getElementById('noExam');
+    const searchInput = document.getElementById('searchInput');
+    const tokenModal = document.getElementById('tokenModal');
+    const targetExamNameText = document.getElementById('targetExamName');
+    const inputToken = document.getElementById('inputToken');
+    const errorToken = document.getElementById('errorToken');
+    
+    // =================================================================
+    // KONFIGURASI FIREBASE (Menyambungkan Lobi Siswa ke Internet)
+    // =================================================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyArpngNXmHc_H7_G69iAvpMb0UWLjrr4tw",
+      authDomain: "ujicoba-ujian.firebaseapp.com",
+      databaseURL: "https://ujicoba-ujian-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "ujicoba-ujian",
+      storageBucket: "ujicoba-ujian.appspot.com",
+      messagingSenderId: "712473385614",
+      appId: "1:712473385614:web:0664a125020a28db03c7df",
+      measurementId: "G-T0P00YWQMY"
+    };
+
+    // Jalankan Inisialisasi Koneksi Firebase
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    const database = firebase.database();
+
+    // Kontainer lokal di browser siswa (menggantikan localStorage lama)
+    let databaseUjian = [];
+    let ujianTerpilih = null;
+
+    // REAL-TIME LISTENER: Otomatis mendeteksi sakelar ujian dari Halaman Guru
+    database.ref('db_ujian_sman4').on('value', (snapshot) => {
+        const dataDariInternet = snapshot.val();
+        if (dataDariInternet) {
+            // Konversi objek database internet ke bentuk Array agar cocok dengan logika kode Bapak
+            databaseUjian = Array.isArray(dataDariInternet) ? dataDariInternet : Object.values(dataDariInternet);
+        } else {
+            databaseUjian = [];
+        }
+        
+        console.log("🔄 Data Lobi Siswa berhasil diperbarui dari Firebase!");
+        
+        // Panggil fungsi render bawaan Bapak agar kartu ujian langsung muncul/berubah otomatis
+        renderUjian(); 
+    });
+
+    // =================================================================
+    // FUNGSI RENDER BAWAAN (Tetap dipertahankan dengan sedikit penyesuaian pengetikan filter)
+    // =================================================================
+    function renderUjian(filter = "") {
+        examListContainer.innerHTML = "";
+        
+        // Mengambil ujian yang statusAktif-nya true (atau string "ON" jika disetel dari cloud)
+        let ujianAktif = databaseUjian.filter(u => u.statusAktif === true || u.status === "ON");
+
+        if (filter) {
+            ujianAktif = ujianAktif.filter(u => 
+                u.mataPelajaran.toLowerCase().includes(filter.toLowerCase()) || 
+                u.kelasUjian.toLowerCase().includes(filter.toLowerCase())
+            );
+        }
+
+        if (ujianAktif.length === 0) {
+            noExamState.style.display = "block";
+            return;
+        }
+
+        noExamState.style.display = "none";
+        ujianAktif.forEach(ujian => {
+            const card = document.createElement('div');
+            card.className = 'exam-card';
             
-            // =================================================================
-            // KONFIGURASI FIREBASE (Menyambungkan Lobi Siswa ke Internet)
-            // =================================================================
-            const firebaseConfig = {
-              apiKey: "AIzaSyArpngNXmHc_H7_G69iAvpMb0UWLjrr4tw",
-              authDomain: "ujicoba-ujian.firebaseapp.com",
-              databaseURL: "https://ujicoba-ujian-default-rtdb.asia-southeast1.firebasedatabase.app",
-              projectId: "ujicoba-ujian",
-              storageBucket: "ujicoba-ujian.appspot.com",
-              messagingSenderId: "712473385614",
-              appId: "1:712473385614:web:0664a125020a28db03c7df",
-              measurementId: "G-T0P00YWQMY"
-            };
-
-            // Jalankan Inisialisasi Koneksi Firebase
-            if (!firebase.apps.length) {
-                firebase.initializeApp(firebaseConfig);
-            }
-            const database = firebase.database();
-
-            // Kontainer lokal di browser siswa
-            let databaseUjian = [];
-            let ujianTerpilih = null;
-
-            // REAL-TIME LISTENER: Otomatis mendeteksi sakelar ujian dari Halaman Guru
-            database.ref('db_ujian_sman4').on('value', (snapshot) => {
-                const dataDariInternet = snapshot.val();
-                if (dataDariInternet) {
-                    databaseUjian = Array.isArray(dataDariInternet) ? dataDariInternet : Object.values(dataDariInternet);
-                } else {
-                    databaseUjian = [];
-                }
-                
-                console.log("🔄 Data Lobi Siswa berhasil diperbarui dari Firebase!");
-                
-                // Panggil fungsi render bawaan agar kartu ujian langsung muncul/berubah otomatis
-                renderUjian(searchInput.value); 
-            });
-
-            // =================================================================
-            // FUNGSI RENDER BAWAAN
-            // =================================================================
-            function renderUjian(filter = "") {
-                examListContainer.innerHTML = "";
-                
-                // Mengambil ujian yang statusAktif-nya true (atau string "ON" jika disetel dari cloud)
-                let ujianAktif = databaseUjian.filter(u => u && (u.statusAktif === true || u.status === "ON"));
-
-                if (filter) {
-                    ujianAktif = ujianAktif.filter(u => 
-                        (u.mataPelajaran && u.mataPelajaran.toLowerCase().includes(filter.toLowerCase())) || 
-                        (u.kelasUjian && u.kelasUjian.toLowerCase().includes(filter.toLowerCase()))
-                    );
-                }
-
-                if (ujianAktif.length === 0) {
-                    noExamState.style.display = "block";
-                    return;
-                }
-
-                noExamState.style.display = "none";
-                ujianAktif.forEach(ujian => {
-                    const card = document.createElement('div');
-                    card.className = 'exam-card';
-                    
-                    // Format Tampilan Tanggal Indonesia Sederhana
-                    const formatTgl = ujian.tanggalUjian ? ujian.tanggalUjian.split('-').reverse().join('/') : '-';
-                    
-                    card.innerHTML = `
-                        <div class="exam-info">
-                            <h3>${ujian.namaUjian || '-'}</h3>
-                            <p>Mata Pelajaran: <strong>${ujian.mataPelajaran || '-'}</strong></p>
-                            <p><small style="color:#666; font-style:italic;">Guru: ${ujian.guruPengampu || '-'}</small></p>
-                            <p>📅 ${formatTgl} | ⏰ ${ujian.jamUjian || '-'} s.d ${ujian.jamSelesaiUjian || '-'}</p>
-                            <div class="badge-kelas">Kelas: ${ujian.kelasUjian || '-'}</div>
-                        </div>
-                    `;
-                    card.onclick = () => bukaModalToken(ujian);
-                    examListContainer.appendChild(card);
-                });
-            }
-
-            function bukaModalToken(ujian) {
-                ujianTerpilih = ujian;
-                inputToken.value = "";
-                errorToken.style.display = "none"; 
-                errorToken.innerText = "";
-                tokenModal.classList.add('active');
-                setTimeout(() => inputToken.focus(), 300);
-            }
-
-            document.getElementById('btnBatalToken').onclick = () => {
-                tokenModal.classList.remove('active');
-                ujianTerpilih = null;
-            };
-
-            // Bersihkan pesan error secara otomatis saat siswa mulai mengetik ulang tokennya
-            inputToken.addEventListener('input', function() {
-                errorToken.style.display = "none";
-                errorToken.innerText = "";
-            });
-
-            // EKSEKUSI VERIFIKASI TOKEN INTEGRASI WAKTU
-            document.getElementById('btnProsesMasuk').onclick = function(e) {
-                e.preventDefault();
-
-                const tokenInputSiswa = inputToken.value.toUpperCase().trim();
-                
-                // --- RUMUS SINKRONISASI WAKTU OTOMATIS ---
-                const DURASI_LIMA_MENIT = 5 * 60;
-                const detikUnixSekarang = Math.floor(Date.now() / 1000);
-                const sisaDetikBlokBerjalan = detikUnixSekarang % DURASI_LIMA_MENIT;
-                const awalBlokLimaMenit = detikUnixSekarang - sisaDetikBlokBerjalan;
-
-                function hitungTokenLokal(seedWaktu) {
-                    const alfabetKandidat = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-                    let nilaiSaran = seedWaktu;
-                    let hasilToken = "";
-                    for (let i = 0; i < 6; i++) {
-                        nilaiSaran = (nilaiSaran * 9301 + 49297) % 233280;
-                        const indeksKarakter = Math.floor((nilaiSaran / 233280) * alfabetKandidat.length);
-                        hasilToken += alfabetKandidat.charAt(indeksKarakter);
-                    }
-                    return hasilToken;
-                }
-
-                const tokenSahSaatIni = hitungTokenLokal(awalBlokLimaMenit);
-                // -----------------------------------------------------------------
-
-                // Jalankan Verifikasi Pencocokan
-                if (tokenInputSiswa === tokenSahSaatIni) {
-                    const timestamp = Math.floor(Date.now() / 1000);
-                    const urlUjianUtama = "http://ujian.sman4barru.sch.id/run/";
-                    
-                    window.location.replace(urlUjianUtama + "?url=" + encodeURIComponent(ujianTerpilih.tautanSoal) + "&auth=" + timestamp);
-                } else {
-                    errorToken.innerText = "Token tidak valid!";
-                    errorToken.style.display = "block";
-                    inputToken.value = "";
-                    inputToken.focus();
-                }
-            };
-
-            // Fitur Pencarian Sederhana
-            searchInput.oninput = (e) => renderUjian(e.target.value);
-
-            // Inisialisasi Jalankan Fungsi Pertama Kali
-            renderUjian();
+            // Format Tampilan Tanggal Indonesia Sederhana
+            const formatTgl = ujian.tanggalUjian.split('-').reverse().join('/');
+            
+            card.innerHTML = `
+                <div class="exam-info">
+                    <h3>${ujian.namaUjian}</h3>
+                    <p>Mata Pelajaran: <strong>${ujian.mataPelajaran}</strong></p>
+                    <p><small style="color:#666; font-style:italic;">Guru: ${ujian.guruPengampu || '-'}</small></p>
+                    <p>📅 ${formatTgl} | ⏰ ${ujian.jamUjian} s.d ${ujian.jamSelesaiUjian || '-'}</p>
+                    <div class="badge-kelas">Kelas: ${ujian.kelasUjian}</div>
+                </div>
+            `;
+            card.onclick = () => bukaModalToken(ujian);
+            examListContainer.appendChild(card);
         });
+    }
+    function bukaModalToken(ujian) {
+        ujianTerpilih = ujian;
+        inputToken.value = "";
+        errorToken.style.display = "none"; // Sembunyikan error saat ganti atau buka sesi baru
+        errorToken.innerText = "";
+        tokenModal.classList.add('active');
+        setTimeout(() => inputToken.focus(), 300);
+    }
+
+    document.getElementById('btnBatalToken').onclick = () => {
+        tokenModal.classList.remove('active');
+        ujianTerpilih = null;
+    };
+
+    // Bersihkan pesan error secara otomatis saat siswa mulai mengetik ulang tokennya
+    inputToken.addEventListener('input', function() {
+        errorToken.style.display = "none";
+        errorToken.innerText = "";
+    });
+
+    // 2. EKSEKUSI VERIFIKASI TOKEN INTEGRASI WAKTU (ANTI-GAGAL LOKAL & GITHUB PAGES)
+    document.getElementById('btnProsesMasuk').onclick = function(e) {
+        e.preventDefault();
+
+        const tokenInputSiswa = inputToken.value.toUpperCase().trim();
+        
+        // --- RUMUS SINKRONISASI WAKTU OTOMATIS (SAMA DENGAN HALAMAN E) ---
+        const DURASI_LIMA_MENIT = 5 * 60;
+        const detikUnixSekarang = Math.floor(Date.now() / 1000);
+        const sisaDetikBlokBerjalan = detikUnixSekarang % DURASI_LIMA_MENIT;
+        const awalBlokLimaMenit = detikUnixSekarang - sisaDetikBlokBerjalan;
+
+        function hitungTokenLokal(seedWaktu) {
+            const alfabetKandidat = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+            let nilaiSaran = seedWaktu;
+            let hasilToken = "";
+            for (let i = 0; i < 6; i++) {
+                nilaiSaran = (nilaiSaran * 9301 + 49297) % 233280;
+                const indeksKarakter = Math.floor((nilaiSaran / 233280) * alfabetKandidat.length);
+                hasilToken += alfabetKandidat.charAt(indeksKarakter);
+            }
+            return hasilToken;
+        }
+
+        const tokenSahSaatIni = hitungTokenLokal(awalBlokLimaMenit);
+        // -----------------------------------------------------------------
+
+        // Jalankan Verifikasi Pencocokan
+        if (tokenInputSiswa === tokenSahSaatIni) {
+            const timestamp = Math.floor(Date.now() / 1000);
+            
+            // GUNAKAN URL ABSOLUT MUTLAK (Pasti Tepat Sasaran di GitHub Pages)
+            const urlUjianUtama = "http://ujian.sman4barru.sch.id/run/"; // JANGAN LUPA GANTI
+            
+            // Lempar pengguna ke Halaman B menggunakan .replace() secara langsung tanpa pop-up alert
+            window.location.replace(urlUjianUtama + "?url=" + encodeURIComponent(ujianTerpilih.tautanSoal) + "&auth=" + timestamp);
+        } else {
+            // Jika token salah, tampilkan pesan di bawah input tanpa pop-up alert
+            errorToken.innerText = "Token tidak valid!";
+            errorToken.style.display = "block";
+            inputToken.value = "";
+            inputToken.focus();
+        }
+    };
+
+    // Fitur Pencarian Sederhana
+    searchInput.oninput = (e) => renderUjian(e.target.value);
+
+    // Inisialisasi Jalankan Fungsi
+    renderUjian();
+});
     </script>
 </body>
 </html>
