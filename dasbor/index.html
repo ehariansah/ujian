@@ -486,15 +486,17 @@
                     // JALUR EDIT DATA
                     const indeks = databaseUjian.findIndex(item => item.id === idUjian);
                     if (indeks !== -1) {
-                        // Pertahankan status toggle ON/OFF yang lama saat proses editing
+                        // Pertahankan status toggle ON/OFF dan waktuAktif lama saat proses editing biasa
                         dataBaru.id = idUjian;
                         dataBaru.statusAktif = databaseUjian[indeks].statusAktif;
+                        dataBaru.waktuAktif = databaseUjian[indeks].waktuAktif || Date.now();
                         databaseUjian[indeks] = dataBaru;
                     }
                 } else {
                     // JALUR TAMBAH DATA BARU
                     dataBaru.id = "UJIAN_" + Date.now();
                     dataBaru.statusAktif = false; // Standar awal: MATI (OFF) agar tidak langsung muncul di siswa
+                    dataBaru.waktuAktif = Date.now(); // Inisialisasi awal waktu pembuatan
                     databaseUjian.push(dataBaru);
                 }
 
@@ -573,6 +575,12 @@
                         const targetUjian = databaseUjian.find(item => item.id === idTarget);
                         if (targetUjian) {
                             targetUjian.statusAktif = statusTerpilih;
+                            
+                            // JIKA SAKELAR DIUBAH KE "ON", Perbarui waktuAktif ke detik ini juga!
+                            if (statusTerpilih) {
+                                targetUjian.waktuAktif = Date.now();
+                            }
+                            
                             simpanKeStorage();
                             
                             // Perbarui komponen teks badge di bawah sakelar secara instan
