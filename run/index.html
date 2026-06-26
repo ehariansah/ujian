@@ -9,17 +9,19 @@
     <link rel="apple-touch-icon" href="../favicon.png">
 
     <style>
+        *, ::before, ::after {
+            box-sizing: border-box;
+        }
+        
         body {
             margin: 0;
             padding: 20px;
             background: linear-gradient(to bottom, #1a6199 250px, #e9e7f7 250px);
-            box-sizing: border-box;
             min-height: 100dvh;
         }
         
         #gerbangTatib {
             align-items: center;
-            box-sizing: border-box;
             font-family: sans-serif;
         }
         
@@ -45,7 +47,6 @@
             background: #fff;
             color: #fff;
             display: flex;
-            box-sizing: border-box;
       	    box-shadow: rgba(0, 0, 0, 0.5) 0px 4px 12px;
             z-index: 9999; /* Z-index tinggi agar berada di atas elemen blog apapun */
         }
@@ -109,7 +110,6 @@
             max-width: 350px;
             text-align: center;
             box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-            box-sizing: border-box;
             font-family: sans-serif;
         }
 
