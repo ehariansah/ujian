@@ -16,6 +16,10 @@
             --light-bg: #f4f6f9;
         }
 
+        *, ::before, ::after {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(rgb(26, 97, 153) 250px, rgb(233, 231, 247) 250px);
@@ -23,7 +27,6 @@
             padding: 20px;
             color: #333;
             min-height: 100dvh;
-            box-sizing: border-box;
         }
 
         /* Header Panel */
@@ -53,7 +56,6 @@
         .container {
             max-width: 1000px;
             margin: 0 auto;
-            box-sizing: border-box;
         }
 
         /* Tombol Utama */
@@ -114,7 +116,6 @@
             width: 90%;
             max-width: 550px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            box-sizing: border-box;
             transform: translateY(-20px);
             transition: transform 0.3s ease;
         }
@@ -150,7 +151,6 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 14px;
-            box-sizing: border-box;
         }
 
         .form-row {
