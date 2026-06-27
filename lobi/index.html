@@ -366,7 +366,7 @@
             const timestamp = Math.floor(Date.now() / 1000);
             
             // GUNAKAN URL ABSOLUT MUTLAK (Pasti Tepat Sasaran di GitHub Pages)
-            const urlUjianUtama = "http://ujian.sman4barru.sch.id/run/"; // JANGAN LUPA GANTI
+            const urlUjianUtama = "https://ujian.sman4barru.sch.id/run/"; // JANGAN LUPA GANTI
             
             // Lempar pengguna ke Halaman B menggunakan .replace() secara langsung tanpa pop-up alert
             window.location.replace(urlUjianUtama + "?url=" + encodeURIComponent(ujianTerpilih.tautanSoal) + "&auth=" + timestamp);
