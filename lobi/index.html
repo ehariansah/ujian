@@ -116,44 +116,50 @@
 
         .modal-box {
             background: white;
-            padding: 20px;
+            padding: 15px 15px 20px;
             border-radius: 15px;
             width: 85%;
             max-width: 350px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
         }
 
-        .modal-box h2 { font-size: 18px; margin: 0 0 18px; color: #222; }
+        .close-group {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .modal-box h2 { font-weight: unset; font-size: 18px; margin: 0; color: #222; }
+
+        .btn-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0;
+            color: #222;
+        }
 
         .input-group {
             display: flex;
             flex-wrap: unset;
             gap: 10px;
-            margin-bottom: 15px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
         }
 
         .token-input {
             width: 75%;
             padding: 5px;
-            font-size: 20px;
+            font-size: 18px;
             text-align: center;
-            letter-spacing: 8px;
+            letter-spacing: 6px;
             border: 1px solid #ccc;
             border-radius: 5px;
             text-transform: uppercase;
             font-weight: bold;
             color: var(--primary);
-        }
-
-        /* Style Baru untuk Pesan Error Token */
-        .error-message {
-            color: #dc3545;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            display: none;
-            text-align: center;
         }
 
         .btn-confirm {
@@ -168,13 +174,15 @@
             font-size: 14px;
         }
 
-        .btn-close {
-            color: #999;
-            background: none;
-            border: none;
-            cursor: pointer;
+        .error-message {
+            color: #dc3545;
             font-size: 13px;
+            font-weight: 600;
+            margin-top: 15px;
+            display: none;
+            text-align: center;
         }
+
     </style>
 </head>
 <body>
@@ -200,13 +208,15 @@
 
     <div class="modal-overlay" id="tokenModal">
         <div class="modal-box">
-            <h2>Masukkan Token</h2>
+            <div class="close-group">
+                <h2>Masukkan Token</h2>
+                <button class="btn-close" id="btnBatalToken">✕</button>
+            </div>
             <div class="input-group">
                 <input type="text" class="token-input" id="inputToken" maxlength="6" placeholder="******" autocomplete="off">
                 <button class="btn-confirm" id="btnProsesMasuk">Kirim</button>
             </div>
             <div id="errorToken" class="error-message"></div>
-            <button class="btn-close" id="btnBatalToken">Kembali</button>
         </div>
     </div>
 
