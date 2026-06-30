@@ -177,35 +177,41 @@
             }
 
             function toggleScanner() {
-                const readerDiv = document.getElementById('reader');
+    const readerDiv = document.getElementById('reader');
 
-                if (!html5QrcodeScanner) {
-                    readerDiv.style.display = 'block';
-                    btnToggleScan.innerText = "Matikan Kamera QR";
-                    btnToggleScan.style.backgroundColor = "#dc3545";
+    if (!html5QrcodeScanner) {
+        readerDiv.style.display = 'block';
+        btnToggleScan.innerText = "Matikan Kamera QR";
+        btnToggleScan.style.backgroundColor = "#dc3545";
 
-                    html5QrcodeScanner = new Html5QrcodeScanner(
-                        "reader", 
-                        { 
-                            fps: 10, 
-                            qrbox: { width: 250, height: 250 },
-                            i18n: {
-                                "search-button": "Cari Kamera",
-                                "request-permission-button": "Izinkan Kamera",
-                                "scan-type-title": "Pilih Jenis Scan",
-                                "select-camera-label": "Pilih Kamera",
-                                "text-if-camera-empty": "Kamera tidak ditemukan",
-                                "text-if-file-empty": "File kosong",
-                                "scan-an-image-file-string": "Pindai dari File Gambar"
-                            }
-                        }, 
-                        true
-                    );
-                    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-                } else {
-                    stopScanner();
-                }
+        // Konfigurasi digabung dalam satu objek yang benar
+        const config = {
+            fps: 10,
+            qrbox: { width: 250, height: 250 },
+            // Memaksa kamera belakang menjadi prioritas utama
+            rememberLastUsedCamera: true,
+            supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
+            // Pengaturan bahasa resmi html5-qrcode
+            i18n: {
+                "search-button": "Cari Kamera",
+                "request-permission-button": "Izinkan Kamera",
+                "scan-type-title": "Pilih Jenis Scan",
+                "select-camera-label": "Pilih Kamera",
+                "text-if-camera-empty": "Kamera tidak ditemukan",
+                "text-if-file-empty": "File kosong",
+                "scan-an-image-file-string": "Pindai dari File Gambar"
             }
+        };
+
+        // Buat objek scanner dengan melemparkan objek config di atas
+        html5QrcodeScanner = new Html5QrcodeScanner("reader", config, /* verbose= */ false);
+        
+        // Mulai jalankan kamera
+        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+    } else {
+        stopScanner();
+    }
+}
 
             function onScanSuccess(decodedText, decodedResult) {
                 stopScanner();
