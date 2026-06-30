@@ -33,10 +33,9 @@
         .gambar-kepala img {
             width: 100px;
             height: 100px;
-            margin: 0 !important;
+            margin: 0;
         }
 
-        /* Memaksa Navigasi Bar mengunci di posisi paling bawah layar */
         .bottom-navbar {
             position: fixed;
             bottom: 0;
@@ -48,6 +47,7 @@
             display: flex;
             box-shadow: rgba(0, 0, 0, 0.5) 0px 4px 12px;
             z-index: 9999;
+            padding: 10px 20px;
             gap: 10px;
             justify-content: center;
         }
@@ -65,10 +65,8 @@
             align-items: center;
             justify-content: center;
             width: 30%;
-            margin: 10px 0;
         }
 
-        /* Gaya Khusus untuk Tombol Zoom Baru */
         .btn-zoom {
             background: #28a745;
             width: 10%;
@@ -90,7 +88,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 999999; /* Sangat tinggi agar mengunci seluruh layar */
+            z-index: 999999;
             visibility: hidden;
             opacity: 0;
             transition: opacity 0.2s ease, visibility 0.2s ease;
