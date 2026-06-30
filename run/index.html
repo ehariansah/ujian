@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Halaman E-Ujian</title>
     <link rel="icon" type="image/png" href="../favicon.png">
-
     <link rel="apple-touch-icon" href="../favicon.png">
 
     <style>
@@ -47,14 +46,14 @@
             background: #fff;
             color: #fff;
             display: flex;
-      	    box-shadow: rgba(0, 0, 0, 0.5) 0px 4px 12px;
+            box-shadow: rgba(0, 0, 0, 0.5) 0px 4px 12px;
             z-index: 9999; /* Z-index tinggi agar berada di atas elemen blog apapun */
         }
 
         .nav-btn {
             background: #ffbf00;
             color: #fff;
-          	border: none;
+            border: none;
             border-radius: 5px;
             font-size: 14px;
             font-weight: bold;
@@ -63,14 +62,13 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: background 0.2s, color 0.2s;
-          	width: 30%;
-          	margin: 10px auto;
+            width: 22%; /* Diubah dari 30% menjadi 22% agar muat 4 tombol secara seimbang */
+            margin: 10px auto;
         }
 
-        .nav-btn:hover {
-            background: #2a2a2a;
-            color: #fff;
+        /* Gaya Khusus untuk Tombol Zoom Baru */
+        .btn-zoom {
+            background: #28a745;
         }
 
         .btn-exit {
@@ -83,9 +81,6 @@
             color: #fff;
         }
 
-        /* =========================================================================
-           STYLE MODAL POPUP KUSTOM (PENGGANTI CONFIRM BROWSER AGAR ANTI-SALAH DETEKSI)
-           ========================================================================= */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -191,17 +186,25 @@
             </div>
         </div>
 
-        <div class="app-container" style="height: calc(100vh - 35px); margin-top: 35px; position: relative; width: 100%;">
-            <iframe allowfullscreen="" id="contentFrame" onload="resetFokusIframe()" sandbox="allow-scripts allow-forms allow-same-origin" src="" style="background: #fff; border: none; display: block; height: calc(100vh - 35px - 60px) !important; left: 0; position: absolute; top: 0; width: 100%; z-index: 999;"></iframe>
+        <div class="app-container" style="height: calc(100vh - 35px - 60px); margin-top: 35px; position: relative; width: 100%; overflow: hidden;">
+            
+            <iframe allowfullscreen="" id="contentFrame" onload="resetFokusIframe()" sandbox="allow-scripts allow-forms allow-same-origin" src="" style="background: #fff; border: none; display: block; height: 100% !important; left: 0; position: absolute; top: 0; width: 100%; z-index: 999; transform-origin: center top; transition: transform 0.3s ease-out, width 0.3s ease-out, height 0.3s ease-out, left 0.3s ease-out; will-change: transform;"></iframe>
 
-            <div class="bottom-navbar">
-                <button class="nav-btn" id="btnRefresh">
-                    <span>Muat Ulang</span>
-                </button>
-                <button class="nav-btn btn-exit" id="btnExit">
-                    <span>Keluar Sesi</span>
-                </button>
-            </div>
+        </div>
+
+        <div class="bottom-navbar">
+            <button class="nav-btn" id="btnRefresh">
+                <span>Muat Ulang</span>
+            </button>
+            <button class="nav-btn btn-zoom" id="btnZoomOut">
+                <span>A-</span>
+            </button>
+            <button class="nav-btn btn-zoom" id="btnZoomIn">
+                <span>A+</span>
+            </button>
+            <button class="nav-btn btn-exit" id="btnExit">
+                <span>Keluar Sesi</span>
+            </button>
         </div>
 
         <div style="background: rgb(34, 34, 34); border-radius: 5px; border: 2px solid rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.5) 0px 4px 12px; height: 120px; overflow: hidden; position: fixed; right: 3%; top: 45px; width: 100px; z-index: 99999;">
@@ -258,6 +261,7 @@
             let sudahKeluar = false;
             let aksiTerpilih = ""; 
             let dalamKonfirmasi = false; 
+            let sedangZoom = false; // Variabel baru: pelindung durasi transisi skala zoom
             let radarUjianAktif = false;
 
             // Inisialisasi status bar realtime
@@ -305,9 +309,53 @@
                 }, 300);
             });
 
+            // =========================================================================
+            // FUNGSI AKTIFASI SKALA ZOOM (INTEGRASI FITUR TIMEOUT DAN TRANSISI HALUS)
+            // =========================================================================
+            let currentScale = 1.0;
+            const scaleStep = 0.08;       
+            const maxScale = 1.4;         
+            const minScale = 0.9;         
+
+            function jalankanZoomIframe(arah) {
+                // Matikan sementara sistem pelaporan kecurangan
+                sedangZoom = true; 
+                
+                if (arah === 'in' && currentScale < maxScale) {
+                    currentScale += scaleStep;
+                } else if (arah === 'out' && currentScale > minScale) {
+                    currentScale -= scaleStep;
+                }
+                
+                currentScale = Math.round(currentScale * 100) / 100;
+                
+                if (iframe) {
+                    iframe.style.transform = `scale(${currentScale})`;
+                    iframe.style.width = (100 / currentScale) + "%";
+                    iframe.style.height = (100 / currentScale) + "%";
+                    
+                    let sisaPersen = (100 - (100 / currentScale)) / 2;
+                    iframe.style.left = sisaPersen + "%";
+                }
+
+                // Amankan fokus: paksa layar kembali mengunci ke dalam lembar soal
+                setTimeout(function() {
+                    if (iframe) iframe.focus();
+                }, 50);
+
+                // Aktifkan kembali radar pengawas setelah animasi 0.3s CSS selesai sempurna
+                setTimeout(function() {
+                    sedangZoom = false;
+                }, 350);
+            }
+
+            document.getElementById('btnZoomIn').addEventListener('click', function() { jalankanZoomIframe('in'); });
+            document.getElementById('btnZoomOut').addEventListener('click', function() { jalankanZoomIframe('out'); });
+            // =========================================================================
+
             // Sistem Eksekusi Keluar Paksa
             function eksekusiKeluarPaksa() {
-                if (!radarUjianAktif || sudahKeluar) return; 
+                if (!radarUjianAktif || sedangZoom || dalamKonfirmasi || sudahKeluar) return; 
                 
                 sudahKeluar = true;
                 alert("KECURANGAN DIDETEKSI: Anda terdeteksi meninggalkan halaman ujian! Sesi Anda dibatalkan secara otomatis.");
@@ -316,7 +364,7 @@
 
             // Deteksi pembatalan manual Mode Fullscreen
             function cekPerubahanFullscreen() {
-                if (!radarUjianAktif || sudahKeluar) return;
+                if (!radarUjianAktif || sedangZoom || sudahKeluar) return;
                 if (!document.fullscreenElement && !document.webkitFullscreenElement) {
                     eksekusiKeluarPaksa();
                 }
@@ -334,7 +382,7 @@
 
             // Patroli Fokus Halaman & Proteksi Pindah Tab (Interval 800ms)
             function patroliFokusBerkala() {
-                if (!radarUjianAktif || dalamKonfirmasi || sudahKeluar) return;
+                if (!radarUjianAktif || dalamKonfirmasi || sedangZoom || sudahKeluar) return;
 
                 if (!document.hasFocus()) {
                     eksekusiKeluarPaksa();
@@ -350,7 +398,7 @@
 
             // Deteksi Blur Layar Utama
             window.addEventListener('blur', function() {
-                if (!radarUjianAktif || dalamKonfirmasi || sudahKeluar) return;
+                if (!radarUjianAktif || dalamKonfirmasi || sedangZoom || sudahKeluar) return;
                 setTimeout(function() {
                     const elemenAktif = document.activeElement;
                     if (elemenAktif && (elemenAktif.tagName === "IFRAME" || elemenAktif.id === "contentFrame")) {
@@ -363,7 +411,7 @@
             // Deteksi Anti Split-Screen (Resize Layout Vertikal Android)
             const tinggiFisikLayarHP = window.screen.height;
             function cekKecuranganLayar() {
-                if (!radarUjianAktif || sudahKeluar) return;
+                if (!radarUjianAktif || sedangZoom || sudahKeluar) return;
                 const batasToleransiSplit = tinggiFisikLayarHP * 0.60; 
 
                 if (window.innerHeight < batasToleransiSplit) {
@@ -379,7 +427,7 @@
 
             // Deteksi Visibility Change (Tombol Home / Recent Apps Smartphone)
             document.addEventListener("visibilitychange", function() {
-                if (document.hidden && radarUjianAktif) {
+                if (document.hidden && radarUjianAktif && !sedangZoom) {
                     setTimeout(function() {
                         if (document.hidden && !sudahKeluar) {
                             sudahKeluar = true;
@@ -406,7 +454,7 @@
                 }, { passive: true });
                 
                 window.addEventListener('touchmove', function(e) {
-                    if (!radarUjianAktif || sudahKeluar) return;
+                    if (!radarUjianAktif || sudahKeluar || sedangZoom) return;
                     
                     let koordinatY_Sekarang = e.touches[0].clientY;
                     if (koordinatY_Awal <= AMBANG_BATAS_Y) {
@@ -423,6 +471,7 @@
                 }, { passive: true });
                 
                 function tendangSiswaKarenaTiraiNotifikasi() {
+                    if (sedangZoom || dalamKonfirmasi) return;
                     sudahKeluar = true;
                     if (typeof intervalPenjaga !== 'undefined') clearInterval(intervalPenjaga);
                     alert("PELANGGARAN DIDETEKSI: Anda terdeteksi mencoba menarik tirai notifikasi atas secara ilegal!");
