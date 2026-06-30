@@ -185,7 +185,21 @@
                     btnToggleScan.style.backgroundColor = "#dc3545";
 
                     html5QrcodeScanner = new Html5QrcodeScanner(
-                        "reader", { fps: 10, qrbox: { width: 250, height: 250 } }, false
+                        "reader", 
+                        { 
+                            fps: 10, 
+                            qrbox: { width: 250, height: 250 },
+                            i18n: {
+                                "search-button": "Cari Kamera",
+                                "request-permission-button": "Izinkan Kamera",
+                                "scan-type-title": "Pilih Jenis Scan",
+                                "select-camera-label": "Pilih Kamera",
+                                "text-if-camera-empty": "Kamera tidak ditemukan",
+                                "text-if-file-empty": "File kosong",
+                                "scan-an-image-file-string": "Pindai dari File Gambar"
+                            }
+                        }, 
+                        false
                     );
                     html5QrcodeScanner.render(onScanSuccess, onScanFailure);
                 } else {
