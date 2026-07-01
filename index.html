@@ -232,5 +232,83 @@
             });
         })();
     </script>
+	
+	<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const kamusKata = {
+            "Request Camera Permission": "Izinkan Kamera Ujian",
+            "Select Camera": "Pilih Kamera",
+            "Start Scanning": "Mulai Memindai",
+            "Stop Scanning": "Matikan Kamera",
+            "Scan an Image File": "Pindai dari File Gambar",
+            "or select an image file": "atau pilih file gambar",
+            "No camera found": "Kamera tidak ditemukan",
+            "camera 0, facing back": "Kamera Belakang Utama",
+            "camera 1, facing front": "Kamera Depan",
+            "facing back": "Kamera Belakang",
+            "facing front": "Kamera Depan"
+        };
+
+        function paksaKameraBelakang() {
+            const selectKamera = document.querySelector("#reader select");
+            
+            if (selectKamera && !selectKamera.dataset.autoSelected) {
+                let opsiKetemu = false;
+
+                for (let i = 0; i < selectKamera.options.length; i++) {
+                    const teksOpsi = selectKamera.options[i].text.toLowerCase();
+                    if (teksOpsi.includes("back") || teksOpsi.includes("belakang")) {
+                        selectKamera.selectedIndex = i;
+                        opsiKetemu = true;
+                        break;
+                    }
+                }
+
+                if (opsiKetemu) {
+                    selectKamera.dataset.autoSelected = "true";
+                    selectKamera.dispatchEvent(new Event('change'));
+                }
+            }
+        }
+
+        function eksekusiTerjemahOtomatis() {
+            paksaKameraBelakang();
+
+            const elemenTarget = document.querySelectorAll("#reader, #reader *");
+            
+            elemenTarget.forEach(elemen => {
+                if (elemen.childNodes.length > 0) {
+                    elemen.childNodes.forEach(node => {
+                        if (node.nodeType === Node.TEXT_NODE) {
+                            const teksAsli = node.nodeValue.trim();
+                            for (let [kataInggris, kataIndonesia] of Object.entries(kamusKata)) {
+                                if (teksAsli.toLowerCase().includes(kataInggris.toLowerCase())) {
+                                    node.nodeValue = node.nodeValue.replace(new RegExp(kataInggris, "gi"), kataIndonesia);
+                                }
+                            }
+                        }
+                    });
+                }
+                
+                if (elemen.value) {
+                    for (let [kataInggris, kataIndonesia] of Object.entries(kamusKata)) {
+                        if (elemen.value.toLowerCase().includes(kataInggris.toLowerCase())) {
+                            elemen.value = elemen.value.replace(new RegExp(kataInggris, "gi"), kataIndonesia);
+                        }
+                    }
+                }
+            });
+        }
+
+        const targetKotakScanner = document.getElementById('reader');
+        if (targetKotakScanner) {
+            const pengamat = new MutationObserver(function() {
+                eksekusiTerjemahOtomatis();
+            });
+            
+            pengamat.observe(targetKotakScanner, { childList: true, subtree: true });
+        }
+    });
+</script>
 </body>
 </html>
