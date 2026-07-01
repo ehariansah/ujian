@@ -36,6 +36,114 @@
             margin: 0;
         }
 
+        .area-tatib {
+            background: rgb(255, 255, 255);
+            border-radius: 15px;
+            box-shadow: rgba(0, 0, 0, 0.15) 0px 10px 25px;
+            max-width: 500px;
+            padding: 25px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .area-tulisan {
+            color: #333333;
+            font-size: 14px;
+            line-height: 1.5;
+            max-height: 250px;
+            margin-bottom: 25px;
+            overflow-y: auto;
+            text-align: left;
+        }
+
+        #btnMulaiUjian {
+            background-color: #28a745;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 14px;
+            width: 100%;
+        }
+
+        #layar_Ujian {
+            background: rgb(17, 17, 17);
+            display: none;
+            height: 100dvh;
+            left: 0px;
+            overflow: hidden;
+            position: fixed;
+            top: 0px;
+            width: 100%;
+            z-index: 99998;
+        }
+
+        #customStatusBar {
+            align-items: center;
+            background-color: #1a6199;
+            color: white;
+            display: flex;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+            height: 35px;
+            left: 0px;
+            letter-spacing: 0.5px;
+            padding: 0px 20px;
+            position: fixed;
+            top: 0px;
+            width: 100%;
+            z-index: 999999;
+        }
+
+        #statBaterai {
+            align-items: center;
+            display: flex;
+            gap: 5px;
+            flex: 1;
+            justify-content: flex-start;
+        }
+
+        #statJam {
+            font-variant-numeric: tabular-nums;
+            flex: 1;
+            text-align: center;
+        }
+
+        #statJaringan {
+            align-items: center;
+            color: #2de25d;
+            display: flex;
+            gap: 5px;
+            flex: 1;
+            justify-content: flex-end;
+        }
+
+        .app-container {
+            height: calc(100vh - 35px - 60px);
+            margin-top: 35px;
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        #contentFrame {
+            background: #fff;
+            border: none;
+            display: block;
+            height: 100% !important;
+            left: 0;
+            position: absolute;
+            top: 0;
+            width: 100%;
+            z-index: 999;
+            transform-origin: center top;
+            transition: transform 0.3s ease-out, width 0.3s ease-out, height 0.3s ease-out, left 0.3s ease-out;
+            will-change: transform;
+        }
+
         .bottom-navbar {
             position: fixed;
             bottom: 0;
@@ -76,6 +184,20 @@
         .btn-exit {
             color: #fff;
             background: #dc3545;
+        }
+
+        .kamera-pengawas {
+            background: rgb(34, 34, 34);
+            border-radius: 5px;
+            border: 2px solid rgb(255, 255, 255);
+            box-shadow: rgba(0, 0, 0, 0.5) 0px 4px 12px;
+            height: 120px;
+            overflow: hidden;
+            position: fixed;
+            right: 3%;
+            top: 45px;
+            width: 100px;
+            z-index: 99999;
         }
 
         .modal-overlay {
@@ -145,15 +267,11 @@
             <img src="https://blogger.googleusercontent.com/img/a/AVvXsEjo66nQHpyZ0fp3n9YykQufHZ588vRii8FtfWy7y8fO2wmCMaA3FoR6LBEKGO6avnztclQ6zwNBnkYOhiMcMQS0eLJtm_6p5mnp5JywiW-QnphUTcYfP0hFtVPhPqBpyHrZmYO_-_DMQTjTIHxwh4Wgc5S3o3u6Bscssv-GAg72vZqRKn2HJYpBMGAu6LQ=s200" alt="Logo Sekolah">
         </div>
         
-        <div style="background: rgb(255, 255, 255); border-radius: 15px; box-shadow: rgba(0, 0, 0, 0.15) 0px 10px 25px; box-sizing: border-box; max-width: 500px; padding: 25px; width: 100%; margin: 0 auto;">
-            <h1 style="color: #dc3545; font-size: 20px; margin: 0 0 10px; text-align: center;">
-                TATA TERTIB E-UJIAN
-            </h1>
-            <p style="color: #6c757d; font-size: 14px; margin: 0 0 20px; text-align: center;">
-                Baca terlebih dahulu sebelum melanjutkan
-            </p>
+        <div class="area-tatib">
+            <h1 style="color: #dc3545; font-size: 20px; margin: 0 0 10px; text-align: center;">TATA TERTIB E-UJIAN</h1>
+            <p style="color: #6c757d; font-size: 14px; margin: 0 0 20px; text-align: center;">Baca terlebih dahulu sebelum melanjutkan</p>
             
-            <div style="color: #333333; font-size: 14px; line-height: 1.6; max-height: 250px; margin-bottom: 25px; overflow-y: auto; padding-right: 5px; text-align: left;">
+            <div class="area-tulisan">
                 <ol style="margin-left: 0px; padding-left: 20px; text-align: left;">
                     <li style="margin-bottom: 8px;">Selama sesi ujian berlangsung, <b>DILARANG:</b> Keluar dari aplikasi, keluar dari mode <i>full screen</i>, menekan tombol navigasi (<i>recent/home/back</i>), menarik turun bilah notifikasi, membagi layar (<i>split screen</i>), mengaktifkan <i>floating apps</i>, memutar/rotasi layar, atau mematikan layar.</li>
                     <li style="margin-bottom: 8px;">Setiap tindakan di atas akan dicatat secara otomatis oleh sistem sebagai <b>PELANGGARAN</b>.</li>
@@ -161,50 +279,30 @@
                 </ol>
             </div>
             
-            <button id="btnMulaiUjian" style="background-color: #28a745; border: none; border-radius: 5px; color: white; cursor: pointer; font-size: 16px; font-weight: bold; padding: 14px; width: 100%;">
-                Saya Mengerti &amp; Mulai Ujian
-            </button>
+            <button id="btnMulaiUjian">Saya Mengerti & Mulai Ujian</button>
         </div>
     </div>
 
-    <div id="layar_Ujian" style="background: rgb(17, 17, 17); box-sizing: border-box; display: none; height: 100dvh; left: 0px; overflow: hidden; position: fixed; top: 0px; width: 100%; z-index: 99998;">
+    <div id="layar_Ujian">
         
-        <div id="customStatusBar" style="align-items: center; background-color: #1a6199; box-sizing: border-box; color: white; display: flex; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 14px; font-weight: bold; height: 35px; left: 0px; letter-spacing: 0.5px; padding: 0px 20px; position: fixed; top: 0px; width: 100%; z-index: 999999;">
-            <div id="statBaterai" style="align-items: center; display: flex; gap: 5px; flex: 1; justify-content: flex-start;">
-                🔋 --%
-            </div>
-            
-            <div id="statJam" style="font-variant-numeric: tabular-nums; flex: 1; text-align: center;">
-                00:00
-            </div>
-            
-            <div id="statJaringan" style="align-items: center; color: #2de25d; display: flex; gap: 5px; flex: 1; justify-content: flex-end;">
-                📶 ONLINE
-            </div>
+        <div id="customStatusBar">
+            <div id="statBaterai">🔋 --%</div>
+            <div id="statJam">00:00</div>
+            <div id="statJaringan">📶 ONLINE</div>
         </div>
 
-        <div class="app-container" style="height: calc(100vh - 35px - 60px); margin-top: 35px; position: relative; width: 100%; overflow: hidden;">
-            
-            <iframe allowfullscreen="" id="contentFrame" onload="resetFokusIframe()" sandbox="allow-scripts allow-forms allow-same-origin" src="" style="background: #fff; border: none; display: block; height: 100% !important; left: 0; position: absolute; top: 0; width: 100%; z-index: 999; transform-origin: center top; transition: transform 0.3s ease-out, width 0.3s ease-out, height 0.3s ease-out, left 0.3s ease-out; will-change: transform;"></iframe>
-
+        <div class="app-container">
+            <iframe allowfullscreen="" id="contentFrame" onload="resetFokusIframe()" sandbox="allow-scripts allow-forms allow-same-origin" src=""></iframe>
         </div>
 
         <div class="bottom-navbar">
-            <button class="nav-btn" id="btnRefresh">
-                <span>Muat Ulang</span>
-            </button>
-            <button class="nav-btn btn-zoom" id="btnZoomOut">
-                <span>A-</span>
-            </button>
-            <button class="nav-btn btn-zoom" id="btnZoomIn">
-                <span>A+</span>
-            </button>
-            <button class="nav-btn btn-exit" id="btnExit">
-                <span>Keluar Sesi</span>
-            </button>
+            <button class="nav-btn" id="btnRefresh"><span>Muat Ulang</span></button>
+            <button class="nav-btn btn-zoom" id="btnZoomOut"><span>A-</span></button>
+            <button class="nav-btn btn-zoom" id="btnZoomIn"><span>A+</span></button>
+            <button class="nav-btn btn-exit" id="btnExit"><span>Keluar Sesi</span></button>
         </div>
 
-        <div style="background: rgb(34, 34, 34); border-radius: 5px; border: 2px solid rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.5) 0px 4px 12px; height: 120px; overflow: hidden; position: fixed; right: 3%; top: 45px; width: 100px; z-index: 99999;">
+        <div class="kamera-pengawas">
             <video autoplay id="webcamPreview" muted playsinline style="height: 100%; object-fit: cover; transform: scaleX(-1); width: 100%;"></video>
         </div>
 
