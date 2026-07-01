@@ -235,6 +235,7 @@
 	
 	<script>
     document.addEventListener("DOMContentLoaded", function() {
+        // Kamus terjemahan instan
         const kamusKata = {
             "Request Camera Permission": "Izinkan Kamera",
             "Select Camera": "Pilih Kamera",
@@ -247,19 +248,17 @@
             "camera 1, facing front": "Kamera Depan",
             "facing back": "Kamera Belakang",
             "facing front": "Kamera Depan"
-			"Choose Image - No image choosen": "Pilih Gambar - Belum ada berkas",
-            "Choose Image": "Pilih Gambar",
-            "No image choosen": "Belum ada berkas terpilih",
-            "Or drop an image to scan": "Atau seret gambar ke sini untuk memindai",
-            "Scan using camera directly": "Pindai menggunakan kamera secara langsung"
         };
 
+        // Fungsi tambahan untuk mengunci kamera belakang secara otomatis
         function paksaKameraBelakang() {
             const selectKamera = document.querySelector("#reader select");
             
+            // Cek apakah dropdown pilih kamera sudah muncul dan belum pernah kita utak-atik
             if (selectKamera && !selectKamera.dataset.autoSelected) {
                 let opsiKetemu = false;
 
+                // Cari opsi yang merupakan kamera belakang
                 for (let i = 0; i < selectKamera.options.length; i++) {
                     const teksOpsi = selectKamera.options[i].text.toLowerCase();
                     if (teksOpsi.includes("back") || teksOpsi.includes("belakang")) {
@@ -269,14 +268,17 @@
                     }
                 }
 
+                // Jika ketemu, tandai dan picu efek perubahan sistem agar kamera belakang langsung menyala
                 if (opsiKetemu) {
-                    selectKamera.dataset.autoSelected = "true";
+                    selectKamera.dataset.autoSelected = "true"; // Agar tidak terjadi perulangan tanpa henti
                     selectKamera.dispatchEvent(new Event('change'));
                 }
             }
         }
 
+        // Fungsi utama untuk menyisir dan mengganti teks Inggris di layar
         function eksekusiTerjemahOtomatis() {
+            // Jalankan fungsi pemilih kamera belakang otomatis terlebih dahulu
             paksaKameraBelakang();
 
             const elemenTarget = document.querySelectorAll("#reader, #reader *");
@@ -305,6 +307,7 @@
             });
         }
 
+        // Jalankan pengamat otomatis (MutationObserver)
         const targetKotakScanner = document.getElementById('reader');
         if (targetKotakScanner) {
             const pengamat = new MutationObserver(function() {
