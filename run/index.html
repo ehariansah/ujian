@@ -453,7 +453,7 @@
                 if (!radarUjianAktif || sedangZoom || dalamKonfirmasi || sudahKeluar) return; 
                 
                 sudahKeluar = true;
-                alert("KECURANGAN DIDETEKSI: Anda terdeteksi meninggalkan halaman ujian! Sesi Anda dibatalkan secara otomatis.");
+                alert("KECURANGAN DIDETEKSI: Anda meninggalkan halaman ujian/membuka aplikasi lain! Sesi Anda dibatalkan.");
                 window.top.location.replace(halamanUtamaUrl);
             }
 
@@ -527,7 +527,7 @@
                         if (document.hidden && !sudahKeluar) {
                             sudahKeluar = true;
                             clearInterval(intervalPenjaga);
-                            alert("KECURANGAN DIDETEKSI: Anda terdeteksi meninggalkan halaman ujian! Sesi Anda dibatalkan secara otomatis.");
+                            alert("KECURANGAN DIDETEKSI: Anda meninggalkan halaman ujian/membuka aplikasi lain! Sesi Anda dibatalkan.");
                             setTimeout(function() {
                                 window.top.location.replace(halamanUtamaUrl);
                             }, 1500);
@@ -569,7 +569,7 @@
                     if (sedangZoom || dalamKonfirmasi) return;
                     sudahKeluar = true;
                     if (typeof intervalPenjaga !== 'undefined') clearInterval(intervalPenjaga);
-                    alert("PELANGGARAN DIDETEKSI: Anda terdeteksi mencoba menarik tirai notifikasi atas secara ilegal!");
+                    alert("KECURANGAN DIDETEKSI: Menarik tirai notifikasi atas dilarang saat ujian! Sesi Anda dibatalkan.");
                     window.top.location.replace(halamanUtamaUrl);
                 }
             })();
@@ -662,12 +662,6 @@
                 elemenJaringan.style.color = "#ff4d4d";
             });
         }
-
-        // KOMFIRMASI KELAR DENGAN TOMBOL BACK
-        window.addEventListener('beforeunload', function (e) {
-            e.preventDefault();
-            e.returnValue = ''; 
-        });
     </script>
 </body>
 </html>
