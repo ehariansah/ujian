@@ -662,6 +662,12 @@
                 elemenJaringan.style.color = "#ff4d4d";
             });
         }
+
+        // KOMFIRMASI KELAR DENGAN TOMBOL BACK
+        window.addEventListener('beforeunload', function (e) {
+            e.preventDefault();
+            e.returnValue = ''; 
+        });
     </script>
 </body>
 </html>
