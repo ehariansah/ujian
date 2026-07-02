@@ -42,7 +42,7 @@
         .gambar-kepala img {
             width: 100px;
             height: 100px;
-            margin: 0 !important;
+            margin: 0;
         }
 
         .scanner-container {
@@ -59,6 +59,12 @@
 	    	font-size: 20px;
 	    	margin: 0 0 10px;
     	}
+
+		.scanner-container p {
+			color: #666666;
+			font-size: 14px;
+			margin-bottom: 20px;
+		}
 
         .box-input {
             padding: 15px;
@@ -95,13 +101,9 @@
 			width: 25%;
         }
 
-        #btnList {
-            margin-bottom: 15px;
-        }
+        #btnList {margin-bottom: 15px; }
 
-        #btnList, #btnToggleScan {
-            width: 100%;
-        }
+        #btnList, #btnToggleScan {width: 100%; }
 
         #reader {
             width: 100%;
@@ -120,33 +122,29 @@
     
     <div class="gambar-kepala">
         <img src="https://blogger.googleusercontent.com/img/a/AVvXsEjo66nQHpyZ0fp3n9YykQufHZ588vRii8FtfWy7y8fO2wmCMaA3FoR6LBEKGO6avnztclQ6zwNBnkYOhiMcMQS0eLJtm_6p5mnp5JywiW-QnphUTcYfP0hFtVPhPqBpyHrZmYO_-_DMQTjTIHxwh4Wgc5S3o3u6Bscssv-GAg72vZqRKn2HJYpBMGAu6LQ=s200" alt="Logo Sekolah" />
-      </div>
+    </div>
 
-      <div class="scanner-container">
+    <div class="scanner-container">
         <h1>E-UJIAN SMAN 4 BARRU</h1>
-        <p style="color: #666666; font-size: 14px; margin-bottom: 20px;">
-               Masukkan tautan, pilih ujian aktif, atau scan QR Code untuk membuka halaman ujian.
-          </p>
+        <p>Masukkan tautan, pilih ujian aktif, atau scan QR Code untuk membuka halaman ujian.</p>
             
-          <div class="box-input">
+        <div class="box-input">
             <div class="input-group">
                 <input id="urlInput" placeholder="Masukkan tautan ujian..." type="url" />
                 <button class="btn-action" id="btnLoadManual">Buka</button>
-              </div>
-              <button class="btn-action" id="btnList" onclick="window.location.href='https://ujian.sman4barru.sch.id/lobi/';">Pilih Ujian Aktif</button>
+            </div>
+            <button class="btn-action" id="btnList" onclick="window.location.href='https://ujian.sman4barru.sch.id/lobi/';">Pilih Ujian Aktif</button>
             <button class="btn-action" id="btnToggleScan">Scan QR Code</button>
         </div>
 
-         <div id="reader"></div>
+        <div id="reader"></div>
     </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             let html5QrcodeScanner = null;
 
-            // ==========================================
-            // SEBELUM DI-SAVE, GANTI DI BAWAH INI DENGAN URL HALAMAN B ANDA:
-            const halamanViewerUrl = "https://ujian.sman4barru.sch.id/run/";
+            const halamanViewerUrl = "https://ujian.sman4barru.sch.id/run/"; // JANGAN LUPA GANTI
 
             const btnLoadManual = document.getElementById('btnLoadManual');
             const btnToggleScan = document.getElementById('btnToggleScan');
