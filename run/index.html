@@ -356,7 +356,7 @@
             let sudahKeluar = false;
             let aksiTerpilih = ""; 
             let dalamKonfirmasi = false; 
-            let sedangZoom = false; // Variabel baru: pelindung durasi transisi skala zoom
+            let sedangZoom = false; 
             let radarUjianAktif = false;
 
             // Inisialisasi status bar realtime
@@ -405,7 +405,7 @@
             });
 
             // =========================================================================
-            // FUNGSI AKTIFASI SKALA ZOOM (INTEGRASI FITUR TIMEOUT DAN TRANSISI HALUS)
+            // FITUR RESMI: MANAJEMEN SKALA ZOOM (INSTAN TANPA TIMEOUT TUMPANG TINDIH)
             // =========================================================================
             let currentScale = 1.0;
             const scaleStep = 0.08;       
@@ -413,7 +413,6 @@
             const minScale = 0.8;         
 
             function jalankanZoomIframe(arah) {
-                // Matikan sementara sistem pelaporan kecurangan
                 sedangZoom = true; 
                 
                 if (arah === 'in' && currentScale < maxScale) {
@@ -433,22 +432,21 @@
                     iframe.style.left = sisaPersen + "%";
                 }
 
-                // Amankan fokus: paksa layar kembali mengunci ke dalam lembar soal
-                setTimeout(function() {
-                    if (iframe) iframe.focus();
-                }, 50);
-
-                // Aktifkan kembali radar pengawas setelah animasi 0.3s CSS selesai sempurna
-                setTimeout(function() {
-                    sedangZoom = false;
-                }, 350);
+                if (iframe) iframe.focus();
+                sedangZoom = false; 
             }
 
             document.getElementById('btnZoomIn').addEventListener('click', function() { jalankanZoomIframe('in'); });
             document.getElementById('btnZoomOut').addEventListener('click', function() { jalankanZoomIframe('out'); });
-            // =========================================================================
 
-            // Sistem Eksekusi Keluar Paksa
+            // PROTEKSI UTAMA LAPTOP: Paksa fokus tetap di iframe saat mengklik navbar bawah
+            document.querySelector('.bottom-navbar').addEventListener('mousedown', function(e) {
+                e.preventDefault(); 
+            });
+
+            // =========================================================================
+            // RADAR DETEKSI KECURANGAN
+            // =========================================================================
             function eksekusiKeluarPaksa() {
                 if (!radarUjianAktif || sedangZoom || dalamKonfirmasi || sudahKeluar) return; 
                 
@@ -475,7 +473,7 @@
                 }, 300);
             };
 
-            // Patroli Fokus Halaman & Proteksi Pindah Tab (Interval 800ms)
+            // Patroli Fokus Halaman (Interval 800ms) - Loloskan Iframe dan Navbar Bawah
             function patroliFokusBerkala() {
                 if (!radarUjianAktif || dalamKonfirmasi || sedangZoom || sudahKeluar) return;
 
@@ -485,20 +483,37 @@
                 }
 
                 const elemenAktif = document.activeElement;
-                if (elemenAktif && elemenAktif.tagName !== "IFRAME" && elemenAktif.id !== "contentFrame" && elemenAktif !== document.body && elemenAktif !== document.documentElement) {
+                
+                // Zona Dilindungi 1: Fokus berada di dalam lembar soal (Iframe)
+                if (elemenAktif && (elemenAktif.tagName === "IFRAME" || elemenAktif.id === "contentFrame")) {
+                    return;
+                }
+
+                // Zona Dilindungi 2: Fokus menyentuh tombol di dalam navbar bawah resmi
+                if (elemenAktif && (elemenAktif.classList.contains('nav-btn') || elemenAktif.closest('.bottom-navbar'))) {
+                    return; 
+                }
+
+                // Jika terlempar ke luar daerah resmi (Membuka aplikasi desktop/inspeksi elemen)
+                if (elemenAktif !== document.body && elemenAktif !== document.documentElement) {
                     eksekusiKeluarPaksa();
                 }
             }
             const intervalPenjaga = setInterval(patroliFokusBerkala, 800);
 
-            // Deteksi Blur Layar Utama
+            // Deteksi Blur Jendela Browser Utama
             window.addEventListener('blur', function() {
                 if (!radarUjianAktif || dalamKonfirmasi || sedangZoom || sudahKeluar) return;
                 setTimeout(function() {
                     const elemenAktif = document.activeElement;
+                    
                     if (elemenAktif && (elemenAktif.tagName === "IFRAME" || elemenAktif.id === "contentFrame")) {
                         return; 
                     }
+                    if (elemenAktif && (elemenAktif.classList.contains('nav-btn') || elemenAktif.closest('.bottom-navbar'))) {
+                        return; 
+                    }
+                    
                     eksekusiKeluarPaksa();
                 }, 150);
             });
@@ -536,9 +551,7 @@
                 }
             });
 
-            // =========================================================================
-            // JEBAKAN MUTLAK: SEKALI USAP ATAS LANGSUNG TENDANG (EDISI ANTI-PONI KAMERA)
-            // =========================================================================
+            // Deteksi Usapan Tirai Notifikasi Atas (Mobile Anti-Poni)
             (function() {
                 let koordinatY_Awal = 0;
                 const AMBANG_BATAS_Y = 35;
@@ -574,7 +587,9 @@
                 }
             })();
 
-            // Manajemen Kontrol Modal Kustom Bar Bawah
+            // =========================================================================
+            // MANAJEMEN KONTROL MODAL KUSTOM BAR BAWAH (INSTAN DAN SINKRON)
+            // =========================================================================
             const modal = document.getElementById('customModal');
             const modalTitle = document.getElementById('modalTitle');
             const modalMessage = document.getElementById('modalMessage');
@@ -597,7 +612,8 @@
                 modal.style.visibility = "hidden";
                 modal.style.opacity = "0";
                 aksiTerpilih = "";
-                setTimeout(function() { dalamKonfirmasi = false; }, 300);
+                dalamKonfirmasi = false; 
+                if (iframe) iframe.focus();
             }
 
             document.getElementById('btnRefresh').addEventListener('click', function() { bukaModalKustom("refresh"); });
