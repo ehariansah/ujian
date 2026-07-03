@@ -292,7 +292,7 @@
         </div>
 
         <div class="app-container">
-            <iframe allowfullscreen="" id="contentFrame" onload="resetFokusIframe()" sandbox="allow-scripts allow-forms allow-same-origin" src=""></iframe>
+            <iframe allowfullscreen="" id="contentFrame" sandbox="allow-scripts allow-forms allow-same-origin" src=""></iframe>
         </div>
 
         <div class="bottom-navbar">
@@ -464,14 +464,6 @@
             }
             document.addEventListener('fullscreenchange', cekPerubahanFullscreen);
             document.addEventListener('webkitfullscreenchange', cekPerubahanFullscreen);
-
-            // Re-binding Fokus Iframe Utama
-            window.resetFokusIframe = function() {
-                if (sudahKeluar) return;
-                setTimeout(function() {
-                    if (iframe) iframe.focus();
-                }, 300);
-            };
 
             // Patroli Fokus Halaman (Interval 800ms) - Loloskan Iframe dan Navbar Bawah
             function patroliFokusBerkala() {
