@@ -8,6 +8,9 @@
     <link rel="apple-touch-icon" href="../favicon.png">
 
     <style>
+        /* =========================================================================
+           1. RESET & LAYOUT DASAR
+           ========================================================================= */
         *, ::before, ::after {
             box-sizing: border-box;
         }
@@ -18,7 +21,10 @@
             background: linear-gradient(to bottom, #1a6199 300px, #e9e7f7 300px);
             min-height: 100dvh;
         }
-        
+
+        /* =========================================================================
+           2. GERBANG TATA TERTIB
+           ========================================================================= */
         #gerbangTatib {
             align-items: center;
             font-family: sans-serif;
@@ -46,6 +52,20 @@
             margin: 0 auto;
         }
 
+        .judul-tatib {
+            color: #dc3545; 
+            font-size: 20px; 
+            margin: 0 0 10px; 
+            text-align: center;
+        }
+
+        .sub-tatib {
+            color: #6c757d; 
+            font-size: 14px; 
+            margin: 0 0 20px; 
+            text-align: center;
+        }
+
         .area-tulisan {
             color: #333333;
             font-size: 14px;
@@ -54,6 +74,16 @@
             margin-bottom: 25px;
             overflow-y: auto;
             text-align: left;
+        }
+
+        .list-tatib {
+            margin-left: 0px; 
+            padding-left: 20px; 
+            text-align: left;
+        }
+
+        .item-tatib {
+            margin-bottom: 8px;
         }
 
         #btnMulaiUjian {
@@ -68,6 +98,9 @@
             width: 100%;
         }
 
+        /* =========================================================================
+           3. AREA LAYAR UJIAN & STATUS BAR
+           ========================================================================= */
         #layar_Ujian {
             background: rgb(17, 17, 17);
             display: none;
@@ -121,6 +154,9 @@
             justify-content: flex-end;
         }
 
+        /* =========================================================================
+           4. CONTAINER IFRAME & LOADER NEW ELEMENT
+           ========================================================================= */
         .app-container {
             height: calc(100vh - 35px - 60px);
             margin-top: 35px;
@@ -129,19 +165,18 @@
             overflow: hidden;
         }
 
-        /* Container Utama Loader */
         .iframe-loader {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #ffffff; /* Latar belakang putih bersih */
+            background-color: #ffffff;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 1000; /* Berada tepat di atas iframe sebelum dimuat */
+            z-index: 1000;
             font-family: sans-serif;
             color: #555555;
             font-size: 14px;
@@ -149,12 +184,11 @@
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
 
-        /* Animasi Spinner Putar Ringan (Murni CSS) */
         .spinner {
             width: 40px;
             height: 40px;
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #1a6199; /* Warna biru serasi dengan tema status bar */
+            border-top: 4px solid #1a6199;
             border-radius: 50%;
             animation: putarSpinner 0.8s linear infinite;
             margin-bottom: 12px;
@@ -180,6 +214,9 @@
             will-change: transform;
         }
 
+        /* =========================================================================
+           5. NAVIGASI BAWAH & PANEL KAMERA
+           ========================================================================= */
         .bottom-navbar {
             position: fixed;
             bottom: 0;
@@ -236,6 +273,16 @@
             z-index: 99999;
         }
 
+        .video-render {
+            height: 100%; 
+            object-fit: cover; 
+            transform: scaleX(-1); 
+            width: 100%;
+        }
+
+        /* =========================================================================
+           6. KUSTOM MODAL DIALOG
+           ========================================================================= */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -304,14 +351,14 @@
         </div>
         
         <div class="area-tatib">
-            <h1 style="color: #dc3545; font-size: 20px; margin: 0 0 10px; text-align: center;">TATA TERTIB E-UJIAN</h1>
-            <p style="color: #6c757d; font-size: 14px; margin: 0 0 20px; text-align: center;">Baca terlebih dahulu sebelum melanjutkan</p>
+            <h1 class="judul-tatib">TATA TERTIB E-UJIAN</h1>
+            <p class="sub-tatib">Baca terlebih dahulu sebelum melanjutkan</p>
             
             <div class="area-tulisan">
-                <ol style="margin-left: 0px; padding-left: 20px; text-align: left;">
-                    <li style="margin-bottom: 8px;">Selama sesi ujian berlangsung, <b>DILARANG:</b> Keluar dari aplikasi, keluar dari mode <i>full screen</i>, menekan tombol navigasi (<i>recent/home/back</i>), menarik turun bilah notifikasi, mengaktifkan <i>floating apps</i>, membagi layar (<i>split screen</i>), merotasi layar, atau mematikan layar.</li>
-                    <li style="margin-bottom: 8px;">Setiap tindakan di atas akan dicatat oleh sistem sebagai <b>PELANGGARAN</b>.</li>
-                    <li style="margin-bottom: 8px;"><b>SANKSI:</b> Sistem akan membatalkan sesi ujian secara otomatis dan mengembalikan Anda ke halaman utama.</li>
+                <ol class="list-tatib">
+                    <li class="item-tatib">Selama sesi ujian berlangsung, <b>DILARANG:</b> Keluar dari aplikasi, keluar dari mode <i>full screen</i>, menekan tombol navigasi (<i>recent/home/back</i>), menarik turun bilah notifikasi, mengaktifkan <i>floating apps</i>, membagi layar (<i>split screen</i>), merotasi layar, atau mematikan layar.</li>
+                    <li class="item-tatib">Setiap tindakan di atas akan dicatat oleh sistem sebagai <b>PELANGGARAN</b>.</li>
+                    <li class="item-tatib"><b>SANKSI:</b> Sistem akan membatalkan sesi ujian secara otomatis dan mengembalikan Anda ke halaman utama.</li>
                 </ol>
             </div>
             
@@ -343,7 +390,7 @@
         </div>
 
         <div class="kamera-pengawas">
-            <video autoplay id="webcamPreview" muted playsinline style="height: 100%; object-fit: cover; transform: scaleX(-1); width: 100%;"></video>
+            <video autoplay id="webcamPreview" muted playsinline class="video-render"></video>
         </div>
 
     </div>
@@ -361,7 +408,7 @@
 
     <script>
         // =========================================================================
-        // VALIDASI TOKEN GERBANG UTAMA (IIFE)
+        // 1. VALIDASI TOKEN GERBANG UTAMA (IIFE - PRIORITAS TINGGI)
         // =========================================================================
         (function() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -374,9 +421,7 @@
                     <div style="font-family: sans-serif; text-align: center; margin-top: 100px; padding: 20px;">
                         <h1 style="color: #ff4d4d; font-size: 50px; margin-bottom: 10px;">404</h1>
                         <h2 style="color: #333; margin-bottom: 20px;">Halaman Tidak Ditemukan</h2>
-                        <p style="color: #666; max-width: 400px; margin: 0 auto 30px auto; line-height: 1.6;">
-                            Tautan ini tidak valid, sudah kedaluwarsa, atau diakses secara ilegal di luar aplikasi ujian resmi SMAN 4 Barru.
-                        </p>
+                        <p style="color: #666; max-width: 400px; margin: 0 auto 30px auto; line-height: 1.6;">Tautan ini tidak valid, sudah kedaluwarsa, atau diakses secara ilegal di luar aplikasi ujian resmi SMAN 4 Barru.</p>
                         <span style="font-size: 12px; color: #999;">Kode Keamanan: ERR_TOKEN_EXPIRED</span>
                     </div>
                 `;
@@ -385,7 +430,7 @@
         })();
           
         // =========================================================================
-        // LOGIKA CORE DAN PATROLI KEAMANAN RADAR
+        // 2. LOGIKA UTAMA & AKTIVASI ENGINE RADAR
         // =========================================================================
         document.addEventListener("DOMContentLoaded", function() {
             const halamanUtamaUrl = "https://ujian.sman4barru.sch.id/";
@@ -399,12 +444,12 @@
             let sedangZoom = false; 
             let radarUjianAktif = false;
 
-            // Inisialisasi status bar realtime
+            // Inisialisasi Fitur Status Bar Realtime
             aktifkanJamMati();
             aktifkanPantauanBaterai();
             aktifkanPantauanKoneksi();
           
-            // Pemicu Kamera Depan Pengawas
+            // Pemicu Kamera Depan Pengawas (Webcam Tracker)
             if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
                 .then(function(stream) {
@@ -416,7 +461,7 @@
                 });
             }
 
-            // Aksi Klik Tombol Mulai (Masuk Fullscreen)
+            // Trigger Aksi Mulai Ujian (Masuk Fullscreen & Ambil Target)
             document.getElementById('btnMulaiUjian').addEventListener('click', function() {
                 const elemenDokumen = document.documentElement;
                 
@@ -445,7 +490,7 @@
             });
 
             // =========================================================================
-            // FITUR RESMI: MANAJEMEN SKALA ZOOM (INSTAN TANPA TIMEOUT TUMPANG TINDIH)
+            // 3. FITUR KONTROL UKURAN SKALA ZOOM IFRAME
             // =========================================================================
             let currentScale = 1.0;
             const scaleStep = 0.08;       
@@ -485,7 +530,7 @@
             });
 
             // =========================================================================
-            // RADAR DETEKSI KECURANGAN
+            // 4. SISTEM PATROLI DAN KRETERIA PENINDAKAN RADAR KECURANGAN
             // =========================================================================
             function eksekusiKeluarPaksa() {
                 if (!radarUjianAktif || sedangZoom || dalamKonfirmasi || sudahKeluar) return; 
@@ -505,7 +550,7 @@
             document.addEventListener('fullscreenchange', cekPerubahanFullscreen);
             document.addEventListener('webkitfullscreenchange', cekPerubahanFullscreen);
 
-            // Patroli Fokus Halaman (Interval 800ms) - Loloskan Iframe dan Navbar Bawah
+            // Patroli Fokus Halaman Berkala (Interval 800ms)
             function patroliFokusBerkala() {
                 if (!radarUjianAktif || dalamKonfirmasi || sedangZoom || sudahKeluar) return;
 
@@ -583,7 +628,7 @@
                 }
             });
 
-            // Deteksi Usapan Tirai Notifikasi Atas (Mobile Anti-Poni)
+            // Deteksi Usapan Tirai Notifikasi Atas (Mobile Anti-Poni via Touch Interceptor)
             (function() {
                 let koordinatY_Awal = 0;
                 const AMBANG_BATAS_Y = 35;
@@ -620,7 +665,7 @@
             })();
 
             // =========================================================================
-            // MANAJEMEN KONTROL MODAL KUSTOM BAR BAWAH (INSTAN DAN SINKRON)
+            // 5. MANAJEMEN KONTROL KUSTOM MODAL DIALOG BAR BAWAH
             // =========================================================================
             const modal = document.getElementById('customModal');
             const modalTitle = document.getElementById('modalTitle');
@@ -665,7 +710,7 @@
         });
 
         // =========================================================================
-        // DATA REALTIME PADA STATUS BAR ATAS
+        // 6. UTILITY ENGINE: DATA REALTIME PADA STATUS BAR ATAS
         // =========================================================================
         function jamPad(n) { return n.toString().padStart(2, '0'); }
 
@@ -711,7 +756,7 @@
             });
         }
 
-        // Fungsi mematikan animasi loading setelah iframe selesai dimuat
+        // Fungsi Penutup Animasi Loading Iframe (Dipicu Saat Iframe Onload)
         window.matikanLoaderIframe = function() {
             const loader = document.getElementById('loaderIframe');
             if (loader) {
