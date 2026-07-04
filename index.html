@@ -5,34 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-Ujian SMAN 4 Barru</title>
     <link rel="icon" type="image/png" href="./favicon.png">
-
     <link rel="apple-touch-icon" href="./favicon.png">
+    <link rel="manifest" href="./manifest.json">
 
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-    <link rel="manifest" href="./manifest.json">
 
     <script>
         if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./service-worker.js')
-                .then((reg) => console.log('Service Worker terdaftar!', reg))
-                .catch((err) => console.log('Gagal mendaftarkan Service Worker', err));
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then((reg) => console.log('Service Worker terdaftar!', reg))
+                    .catch((err) => console.log('Gagal mendaftarkan Service Worker', err));
             });
         }
     </script>
 
     <style>
-		*, ::before, ::after {
+        /* =========================================================================
+           1. RESET & LAYOUT DASAR
+           ========================================================================= */
+        *, ::before, ::after {
             box-sizing: border-box;
         }
-		
+        
         body {
             padding: 70px 20px;
             background: linear-gradient(rgb(26, 97, 153) 300px, rgb(233, 231, 247) 300px);
             min-height: 100dvh;
             margin: 0;
         }
-        
+
+        /* =========================================================================
+           2. ELEMEN BRANDING (LOGO)
+           ========================================================================= */
         .gambar-kepala {
             width: 100px;
             height: 100px;
@@ -45,6 +50,9 @@
             margin: 0;
         }
 
+        /* =========================================================================
+           3. CONTAINER UTAMA & FORM INPUT
+           ========================================================================= */
         .scanner-container {
             font-family: 'Segoe UI', Arial, sans-serif;
             max-width: 500px;
@@ -56,15 +64,17 @@
         }
 
         .scanner-container h1 {
-	    	font-size: 20px;
-	    	margin: 0 0 10px;
-    	}
+            font-size: 20px;
+            margin: 0 0 10px;
+            text-align: center;
+        }
 
-		.scanner-container p {
-			color: #666666;
-			font-size: 14px;
-			margin-bottom: 20px;
-		}
+        .scanner-container p {
+            color: #666666;
+            font-size: 14px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
 
         .box-input {
             padding: 15px;
@@ -75,7 +85,6 @@
 
         .input-group {
             display: flex;
-            flex-wrap: unset;
             gap: 10px;
             margin-bottom: 15px;
         }
@@ -83,13 +92,19 @@
         .input-group input {
             flex: 1;
             padding: 10px;
-            border: 1px solid #666;
+            border: 1px solid #666666;
             border-radius: 5px;
             font-size: 14px;
             width: 75%;
         }
 
+        /* =========================================================================
+           4. TOMBOL AKSI & PANEL SCANNER
+           ========================================================================= */
         .btn-action {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 12px 0;
             background: #28a745;
             color: white;
@@ -98,12 +113,18 @@
             cursor: pointer;
             font-weight: bold;
             font-size: 14px;
-			width: 25%;
+            width: 25%;
+            text-decoration: none;
         }
 
-        #btnList {margin-bottom: 15px; }
+        #btnList {
+            margin-bottom: 15px;
+            width: 100%;
+        }
 
-        #btnList, #btnToggleScan {width: 100%; }
+        #btnToggleScan {
+            width: 100%;
+        }
 
         #reader {
             width: 100%;
@@ -111,9 +132,9 @@
             border-radius: 10px;
             overflow: hidden;
             display: none;
-            background: #000;
-            color: #fff;
-			margin-top: 15px;
+            background: #000000;
+            color: #ffffff;
+            margin-top: 15px;
         }
     </style>
 </head>
@@ -132,7 +153,7 @@
                 <input id="urlInput" placeholder="Masukkan tautan ujian..." type="url" />
                 <button class="btn-action" id="btnLoadManual">Buka</button>
             </div>
-            <button class="btn-action" id="btnList" onclick="window.location.href='https://ujian.sman4barru.sch.id/lobi/';">Pilih Ujian Aktif</button>
+            <a class="btn-action" id="btnList" href="https://ujian.sman4barru.sch.id/lobi/">Pilih Ujian Aktif</a>
             <button class="btn-action" id="btnToggleScan">Scan QR Code</button>
         </div>
 
@@ -140,10 +161,12 @@
     </div>
 
     <script>
+        // =========================================================================
+        // 1. ENGINE ROUTING, QR SCANNER, DAN PEMBUATAN TOKEN OTENTIKASI
+        // =========================================================================
         document.addEventListener("DOMContentLoaded", function() {
             let html5QrcodeScanner = null;
-
-            const halamanViewerUrl = "https://ujian.sman4barru.sch.id/run/"; // JANGAN LUPA GANTI
+            const halamanViewerUrl = "https://ujian.sman4barru.sch.id/run/"; 
 
             const btnLoadManual = document.getElementById('btnLoadManual');
             const btnToggleScan = document.getElementById('btnToggleScan');
@@ -154,13 +177,12 @@
 
             function kirimKeViewer(url) {
                 let targetUrl = url.trim();
-                // Bersihkan atau encode URL agar aman dilempar via address bar
                 let encodedUrl = encodeURIComponent(targetUrl);
             
-                // Ambil waktu detik saat ini secara real-time saat siswa klik/scan
+                // Generate token waktu detik saat ini secara real-time demi keamanan berlapis
                 const tokenWaktuAktif = Math.floor(Date.now() / 1000);
             
-                // Lempar pengguna ke Halaman B menggunakan .replace() + bawa Token Waktu Berlapis
+                // Lempar pengguna ke Halaman Viewer menggunakan metode proteksi .replace()
                 window.location.replace(halamanViewerUrl + "?url=" + encodedUrl + "&auth=" + tokenWaktuAktif);
             }
 
@@ -196,7 +218,6 @@
             }
 
             function onScanFailure(error) {
-                // Abaikan error real-time scanning
             }
 
             function stopScanner() {
@@ -215,7 +236,7 @@
         });
           
         // =========================================================================
-        // ANTI-BACK TOTAL: PENGUNCI GERBANG UTAMA (HALAMAN A)
+        // 2. SISTEM ANTI-BACK TOTAL (PENGUNCI GERBANG UTAMA)
         // =========================================================================
         (function () {
             function kunciRiwayat() {
