@@ -259,6 +259,7 @@
             background: #dc3545;
         }
 
+        /* Modifikasi Kamera Pengawas: Tambah cursor move & hilangkan 'right' keras agar bisa dimanipulasi JS */
         .kamera-pengawas {
             background: rgb(34, 34, 34);
             border-radius: 5px;
@@ -267,10 +268,13 @@
             height: 120px;
             overflow: hidden;
             position: fixed;
-            right: 3%;
+            left: calc(100% - 100px - 3%); /* Pengganti right: 3% agar posisi awal tetap sama namun fleksibel digeser */
             top: 45px;
             width: 100px;
             z-index: 99999;
+            cursor: move; /* Mengubah kursor menjadi tanda panah geser */
+            user-select: none;
+            touch-action: none; /* Mencegah layar HP ikut tergulung saat kamera digeser */
         }
 
         .video-render {
@@ -278,6 +282,7 @@
             object-fit: cover; 
             transform: scaleX(-1); 
             width: 100%;
+            pointer-events: none; /* Agar video tidak memblokir event drag pada container */
         }
 
         /* =========================================================================
@@ -389,7 +394,7 @@
             <button class="nav-btn btn-exit" id="btnExit"><span>Keluar Sesi</span></button>
         </div>
 
-        <div class="kamera-pengawas">
+        <div class="kamera-pengawas" id="kameraPengawas">
             <video autoplay id="webcamPreview" muted playsinline class="video-render"></video>
         </div>
 
@@ -707,6 +712,85 @@
                     window.top.location.replace(halamanUtamaUrl);
                 }
             });
+
+            // =========================================================================
+            // EXTRA: ENGINE DRAG-TO-MOVE UNTUK KAMERA PENGAWAS
+            // =========================================================================
+            (function() {
+                const elKamera = document.getElementById("kameraPengawas");
+                let isDragging = false;
+                let currentX, currentY, initialX, initialY;
+                let xOffset = 0, yOffset = 0;
+
+                // Event untuk Mouse (PC/Laptop)
+                elKamera.addEventListener("mousedown", dragStart);
+                document.addEventListener("mousemove", drag);
+                document.addEventListener("mouseup", dragEnd);
+
+                // Event untuk Sentuhan Layar (HP/Tablet)
+                elKamera.addEventListener("touchstart", dragStart, { passive: false });
+                document.addEventListener("touchmove", drag, { passive: false });
+                document.addEventListener("touchend", dragEnd);
+
+                function dragStart(e) {
+                    // Mencegah trigger jika dalam konfirmasi modal curang
+                    if (dalamKonfirmasi) return;
+
+                    if (e.type === "touchstart") {
+                        initialX = e.touches[0].clientX - xOffset;
+                        initialY = e.touches[0].clientY - yOffset;
+                    } else {
+                        initialX = e.clientX - xOffset;
+                        initialY = e.clientY - yOffset;
+                    }
+
+                    if (e.target === elKamera || elKamera.contains(e.target)) {
+                        isDragging = true;
+                    }
+                }
+
+                function drag(e) {
+                    if (!isDragging) return;
+                    e.preventDefault(); // Mengunci pergerakan halaman agar tidak scroll otomatis
+
+                    if (e.type === "touchmove") {
+                        currentX = e.touches[0].clientX - initialX;
+                        currentY = e.touches[0].clientY - initialY;
+                    } else {
+                        currentX = e.clientX - initialX;
+                        currentY = e.clientY - initialY;
+                    }
+
+                    xOffset = currentX;
+                    yOffset = currentY;
+
+                    // Batasi pergerakan agar kotak kamera tidak keluar dari area layar
+                    const batasKiri = - (window.innerWidth * 0.97 - 100);
+                    const batasKanan = window.innerWidth * 0.03;
+                    const batasAtas = -5;
+                    const batasBawah = window.innerHeight - 120 - 105; 
+
+                    if (xOffset < batasKiri) xOffset = batasKiri;
+                    if (xOffset > batasKanan) xOffset = batasKanan;
+                    if (yOffset < batasAtas) yOffset = batasAtas;
+                    if (yOffset > batasBawah) yOffset = batasBawah;
+
+                    setTranslate(xOffset, yOffset, elKamera);
+                }
+
+                function setTranslate(xPos, yPos, el) {
+                    el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
+                }
+
+                function dragEnd() {
+                    initialX = currentX;
+                    initialY = currentY;
+                    isDragging = false;
+                    
+                    // Kembalikan fokus ke lembar soal agar pendeteksi radar tidak salah baca
+                    if(iframe) iframe.focus();
+                }
+            })();
         });
 
         // =========================================================================
