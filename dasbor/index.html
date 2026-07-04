@@ -6,12 +6,18 @@
     <title>Panel Guru - Manajemen Ujian SMAN 4 Barru</title>
     <link rel="icon" type="image/png" href="../favicon.png">
     
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    
     <style>
+        /* =========================================================================
+           1. VARIABEL GLOBAL & RESET STYLE
+           ========================================================================= */
         :root {
             --primary-color: #1a6199;
             --success-color: #28a745;
             --danger-color: #dc3545;
-            --warning-color: #F59C11;
+            --warning-color: #f59c11;
             --dark-color: #2a2a2a;
             --light-bg: #f4f6f9;
         }
@@ -25,11 +31,13 @@
             background: linear-gradient(rgb(26, 97, 153) 250px, rgb(233, 231, 247) 250px);
             margin: 0;
             padding: 20px;
-            color: #333;
+            color: #333333;
             min-height: 100dvh;
         }
 
-        /* Header Panel */
+        /* =========================================================================
+           2. HEADER PANEL COMPONENT
+           ========================================================================= */
         .header-panel {
             color: white;
             margin: 0 auto 20px;
@@ -52,13 +60,14 @@
             font-size: 14px;
         }
 
-        /* Container Utama */
+        /* =========================================================================
+           3. STRUKTUR UTAMA & ACTION ELEMENT
+           ========================================================================= */
         .container {
             max-width: 1000px;
             margin: 0 auto;
         }
 
-        /* Tombol Utama */
         .btn {
             padding: 10px 18px;
             font-weight: bold;
@@ -76,7 +85,7 @@
         .btn-primary:hover { background-color: #11436b; }
         .btn-success { background-color: var(--success-color); color: white; }
         .btn-danger { background-color: var(--danger-color); color: white; }
-        .btn-warning { background-color: var(--warning-color); color: #fff; }
+        .btn-warning { background-color: var(--warning-color); color: #ffffff; }
 
         .btn-tambah-container {
             margin-bottom: 20px;
@@ -87,7 +96,9 @@
             padding: 12px;
         }
 
-        /* MODAL FORM (Pop-up) */
+        /* =========================================================================
+           4. MODAL DIALOG POP-UP MANAGEMENT
+           ========================================================================= */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -116,7 +127,8 @@
             width: 90%;
             max-width: 550px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            transition: opacity 0.2s ease, visibility 0.2s ease;
+            transform: translateY(-20px);
+            transition: transform 0.2s ease;
         }
 
         .modal-overlay.active .modal-box {
@@ -126,12 +138,14 @@
         .modal-box h3 {
             margin-top: 0;
             color: var(--primary-color);
-            border-bottom: 2px solid #eee;
+            border-bottom: 2px solid #eeeeee;
             padding-bottom: 10px;
             margin-bottom: 20px;
         }
 
-        /* Form Controls */
+        /* =========================================================================
+           5. FORM CONTROLS & LAYOUTING
+           ========================================================================= */
         .form-group {
             margin-bottom: 16px;
         }
@@ -141,13 +155,13 @@
             font-weight: 600;
             font-size: 14px;
             margin-bottom: 6px;
-            color: #444;
+            color: #444444;
         }
 
         .form-group input, .form-group select {
             width: 100%;
             padding: 10px 12px;
-            border: 1px solid #666;
+            border: 1px solid #666666;
             border-radius: 5px;
             font-size: 14px;
         }
@@ -166,11 +180,13 @@
             justify-content: flex-end;
             gap: 10px;
             margin-top: 25px;
-            border-top: 1px solid #eee;
+            border-top: 1px solid #eeeeee;
             padding-top: 15px;
         }
 
-        /* KARTU / TABEL DAFTAR UJIAN */
+        /* =========================================================================
+           6. DATATABLE COMPONENTS (DAFTAR UJIAN)
+           ========================================================================= */
         .panel-data {
             background: white;
             border-radius: 15px;
@@ -188,7 +204,7 @@
 
         th {
             background-color: #f8f9fa;
-            color: #555;
+            color: #555555;
             font-weight: 600;
             padding: 14px;
             border-bottom: 2px solid #dee2e6;
@@ -197,7 +213,7 @@
 
         td {
             padding: 14px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #eeeeee;
             font-size: 14px;
             vertical-align: middle;
             line-height: 1.5;
@@ -205,7 +221,9 @@
 
         tr:hover { background-color: #fdfdfd; }
 
-        /* SAKELAR ON/OFF (iOS Style Toggle Switch) */
+        /* =========================================================================
+           7. TOGGLE SAKELAR & BADGES STATUS STYLE
+           ========================================================================= */
         .switch {
             position: relative;
             display: inline-block;
@@ -226,7 +244,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: #ccc;
+            background-color: #cccccc;
             transition: .3s;
             border-radius: 24px;
         }
@@ -251,7 +269,6 @@
             transform: translateX(22px);
         }
 
-        /* Badge Status */
         .badge {
             padding: 4px 8px;
             border-radius: 4px;
@@ -275,7 +292,7 @@
         #emptyState {
             text-align: center;
             padding: 40px 20px;
-            color: #888;
+            color: #888888;
             font-style: italic;
         }
     </style>
@@ -292,7 +309,7 @@
 
     <div class="container">
         <div class="panel-data">
-            <div class="btn-action btn-tambah-container">
+            <div class="btn-tambah-container">
                 <button class="btn btn-success btn-besar" id="btnBukaForm">+ Tambah Ujian Baru</button>
             </div>
             <table>
@@ -306,8 +323,7 @@
                         <th style="width: 15%; text-align: center;">Tindakan</th>
                     </tr>
                 </thead>
-                <tbody id="tempatDaftarUjian">
-                </tbody>
+                <tbody id="tempatDaftarUjian"></tbody>
             </table>
             <div id="emptyState">Belum ada daftar ujian. Silakan klik tombol "+ Tambah Ujian Baru" di atas.</div>
         </div>
@@ -389,7 +405,7 @@
             const jamSelesaiUjianInput = document.getElementById('jamSelesaiUjian');
             const tautanSoalInput = document.getElementById('tautanSoal');
 
-            // Konfigurasi Firebase dari Akun Pak Erik semalam
+            // Konfigurasi Cloud Firebase Realtime Database
             const firebaseConfig = {
                 apiKey: "AIzaSyArpngNXmHc_H7_G69iAvpMb0UWLjrr4tw",
                 authDomain: "ujicoba-ujian.firebaseapp.com",
@@ -408,25 +424,18 @@
             // Kontainer Array lokal untuk kebutuhan tampilan interface di halaman guru
             let databaseUjian = [];
 
-            // AMBIL DATA AWAL DARI FIREBASE (Agar saat halaman di-refresh, daftar ujian lama tidak hilang)
+            // AMBIL DATA AWAL DARI FIREBASE Realtime Database
             database.ref('db_ujian_sman4').once('value', (snapshot) => {
                 const dataDariInternet = snapshot.val();
                 if (dataDariInternet) {
-                    // Jika data di Firebase berbentuk objek, kita konversi ke Array agar cocok dengan kode lama Bapak
                     databaseUjian = Array.isArray(dataDariInternet) ? dataDariInternet : Object.values(dataDariInternet);
                 } else {
                     databaseUjian = [];
                 }
                 
-                // PENTING: Jika di Halaman C Bapak ada fungsi untuk menampilkan tabel/list ujian, 
-                // jalankan nama fungsinya di sini agar datanya langsung muncul saat loading pertama.
-                if (typeof perbaruiTampilanTabel === "function") {
-                    perbaruiTampilanTabel(); 
-                }
+                // Render tabel pertama kali setelah sinkronisasi cloud selesai
+                perbaruiTampilanTabel();
             });
-
-            // Render awal saat halaman dibuka
-            perbaruiTampilanTabel();
 
             // Kontrol Manajemen Modal Pop-up
             btnBukaForm.addEventListener('click', function() {
@@ -482,10 +491,9 @@
                 };
 
                 if (idUjian) {
-                    // JALUR EDIT DATA
+                    // JALUR EDIT DATA EXISTING
                     const indeks = databaseUjian.findIndex(item => item.id === idUjian);
                     if (indeks !== -1) {
-                        // Pertahankan status toggle ON/OFF yang lama saat proses editing
                         dataBaru.id = idUjian;
                         dataBaru.statusAktif = databaseUjian[indeks].statusAktif;
                         databaseUjian[indeks] = dataBaru;
@@ -493,7 +501,7 @@
                 } else {
                     // JALUR TAMBAH DATA BARU
                     dataBaru.id = "UJIAN_" + Date.now();
-                    dataBaru.statusAktif = false; // Standar awal: MATI (OFF) agar tidak langsung muncul di siswa
+                    dataBaru.statusAktif = false; // Standar awal: MATI (OFF)
                     databaseUjian.push(dataBaru);
                 }
 
@@ -504,7 +512,6 @@
 
             // Fungsi Sinkronisasi Data ke Firebase Realtime Database
             function simpanKeStorage() {
-                // Kirim seluruh struktur array databaseUjian ke Firebase
                 database.ref('db_ujian_sman4').set(databaseUjian)
                 .then(() => {
                     console.log("✅ Data ujian berhasil disinkronkan ke Firebase Internet!");
@@ -515,7 +522,7 @@
                 });
             }
 
-            // Fungsi Loop Render Menggambar Baris Tabel Berdasarkan Array
+            // Fungsi Loop Render Menggambar Baris Tabel Berdasarkan Array lokal
             function perbaruiTampilanTabel() {
                 tempatDaftarUjian.innerHTML = "";
 
@@ -528,13 +535,11 @@
 
                 databaseUjian.forEach(function(ujian) {
                     const baris = document.createElement('tr');
-
-                    // Format Tampilan Tanggal Indonesia Sederhana
                     const formatTgl = ujian.tanggalUjian.split('-').reverse().join('/');
 
                     baris.innerHTML = `
                         <td><strong>${ujian.namaUjian}</strong></td>
-                        <td><strong>${ujian.mataPelajaran}</strong><br><small style="color:#666; font-style:italic;">Guru: ${ujian.guruPengampu || '-'}</small></td>
+                        <td><strong>${ujian.mataPelajaran}</strong><br><small style="color:#666666; font-style:italic;">Guru: ${ujian.guruPengampu || '-'}</small></td>
                         <td><span style="background:#e3f2fd; color:#0d47a1; padding:3px 8px; border-radius:5px; font-weight:bold; font-size:12px;">${ujian.kelasUjian}</span></td>
                         <td>📅 ${formatTgl}<br>⏰ ${ujian.jamUjian} s.d ${ujian.jamSelesaiUjian || '-'}</td>
                         <td style="text-align:center;">
@@ -554,11 +559,9 @@
                             </div>
                         </td>
                     `;
-
                     tempatDaftarUjian.appendChild(baris);
                 });
 
-                // Gantungkan Event Listener ke Tombol Dinamis setelah digambar
                 kaitkanEventTombolTabel();
             }
 
@@ -574,7 +577,6 @@
                             targetUjian.statusAktif = statusTerpilih;
                             simpanKeStorage();
                             
-                            // Perbarui komponen teks badge di bawah sakelar secara instan
                             const badge = document.getElementById(`badge_${idTarget}`);
                             if (statusTerpilih) {
                                 badge.innerText = "ON";
@@ -609,7 +611,5 @@
             }
         });
     </script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 </body>
 </html>
