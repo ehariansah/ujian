@@ -22,7 +22,10 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(rgb(26, 97, 153) 250px, rgb(233, 231, 247) 250px);
             margin: 0;
-            padding: 20px;
+            padding: 40px 20px; /* Dioptimalkan agar pas di tengah layar */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
             align-items: center;
             min-height: 100dvh;
             color: var(--dark-color);
@@ -30,77 +33,84 @@
 
         .token-card {
             background: white;
-            padding: 20px;
+            padding: 30px 20px;
             border-radius: 15px;
             box-shadow: rgba(0, 0, 0, 0.15) 0px 10px 25px;
             text-align: center;
             width: 100%;
-            max-width: 500px;
+            max-width: 450px;
             margin: 0 auto;
         }
 
         .logo-sekolah {
-            width: 100px;
-            height: 100px;
-            margin: 0 auto 20px;
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 15px;
         }
 
         .logo-sekolah img {
-            width: 100px;
-            height: 100px;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .token-card h1 {
             font-size: 20px;
             margin: 0 0 10px;
             color: var(--primary-color);
+            letter-spacing: 0.5px;
         }
 
         .token-card p.subtitle {
-            font-size: 14px;
+            font-size: 13px;
             color: #6c757d;
-            margin: 0 0 20px;
+            margin: 0 0 25px;
+            line-height: 1.4;
         }
 
         /* Tampilan Utama Blok Token */
         .token-display-box {
             background: #f1f3f5;
-            padding: 25px 10px;
+            padding: 20px 10px;
             border-radius: 10px;
             margin-bottom: 20px;
             border: 1px solid #ced4da;
-            position: relative;
         }
 
         .token-label {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             color: #868e96;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 5px;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
         }
 
         .token-code {
             font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
-            font-size: 54px;
+            font-size: 50px;
             font-weight: 900;
             letter-spacing: 6px;
             color: #0b3c66;
             margin: 0;
             user-select: all;
+            padding-left: 6px; /* Menyeimbangkan posisi teks akibat letter-spacing */
         }
 
         /* Komponen Hitung Mundur & Progress Bar */
         .timer-container {
             margin-top: 20px;
+            background: #fff8e7; /* Memberi highlight lembut pada area timer */
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px dashed #ffeeba;
         }
 
         .timer-text {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             color: #495057;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         #menitDetik {
@@ -117,30 +127,35 @@
         }
 
         .progress-bar-fill {
-            background: #1a6199;
+            background: var(--primary-color);
             height: 100%;
             width: 100%;
             border-radius: 10px;
-            transition: width 1s linear;
+            /* Transisi diubah ke 0.5s agar pergerakan bar tidak 'delay' saat detik berganti */
+            transition: width 0.5s ease-out; 
         }
 
         /* Catatan Kaki */
         .footer-note {
-            margin-top: 20px;
+            margin-top: 25px;
             font-size: 11px;
             color: #adb5bd;
-            line-height: 1.5;
+            line-height: 1.6;
+            text-align: left;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
         }
     </style>
 </head>
 <body>
-    <div class="logo-sekolah">
-        <img src="../logo-200.png" alt="Logo SMAN 4 Barru">
-    </div>
+
     <div class="token-card">
+        <div class="logo-sekolah">
+            <img src="../logo-200.png" alt="Logo SMAN 4 Barru">
+        </div>
         
         <h1>TOKEN MASUK UJIAN</h1>
-        <p class="subtitle">Bagikan token ini kepada peserta untuk masuk sesi ujian.</p>
+        <p class="subtitle">Bagikan token ini kepada peserta untuk masuk ke dalam sesi ujian.</p>
 
         <div class="token-display-box">
             <div class="token-label">Token Berlaku Saat Ini</div>
@@ -157,8 +172,8 @@
         </div>
 
         <div class="footer-note">
-            *Token ini digenerate otomatis secara sinkron setiap 5 menit.<br>
-            Pastikan jam pada gawai pengawas dan siswa sudah diatur otomatis (Internet).
+            * Token ini dibuat otomatis dan sinkron setiap 5 menit dengan gawai siswa.<br>
+            * Pastikan pengaturan jam dan tanggal pada perangkat Anda sudah disetel otomatis menggunakan waktu jaringan (Internet).
         </div>
     </div>
 
@@ -168,14 +183,11 @@
             const menitDetikTampil = document.getElementById('menitDetik');
             const barProgress = document.getElementById('barProgress');
 
-            const DURASI_LIMA_MENIT = 5 * 60; // 300 Detik
+            const DURASI_LIMA_MENIT = 5 * 60; 
 
             // Algoritma Generator String Token Acak 6 Digit Khas Aplikasi Ujian
             function produksiTokenAcak(stempelWaktuBlok) {
-                // Karakter yang mudah dibaca (menghilangkan 'I', 'O', '0', '1' agar siswa tidak salah ketik)
                 const alfabetKandidat = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-                
-                // Menggunakan stempel waktu blok sebagai seed pseudo-random sederhana
                 let nilaiSaran = stempelWaktuBlok;
                 let hasilToken = "";
                 
@@ -210,7 +222,7 @@
                 const persentaseSisa = (sisaWaktuMundur / DURASI_LIMA_MENIT) * 100;
                 barProgress.style.width = persentaseSisa + "%";
 
-                // Simpan token aktif saat ini ke LocalStorage agar Halaman D bisa membaca token yang sama
+                // Simpan token aktif saat ini ke LocalStorage
                 localStorage.setItem('token_ujian_aktif_sman4', tokenAktif);
             }
 
