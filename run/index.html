@@ -92,9 +92,9 @@
             border-radius: 5px;
             color: white;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
-            padding: 14px;
+            padding: 12px;
             width: 100%;
         }
 
@@ -132,13 +132,9 @@
             gap: 10px;
         }
 
-        #statBaterai {
-            align-items: center;
-        }
+        #statBaterai { align-items: center; }
 
-        #statJam {
-            font-variant-numeric: tabular-nums;
-        }
+        #statJam { font-variant-numeric: tabular-nums; }
 
         #statJaringan {
             align-items: center;
@@ -149,7 +145,7 @@
         }
 
         /* =========================================================================
-           4. CONTAINER IFRAME & LOADER NEW ELEMENT
+           4. CONTAINER IFRAME
            ========================================================================= */
         .app-container {
             height: calc(100vh - 35px - 60px);
@@ -252,7 +248,6 @@
             background: #dc3545;
         }
 
-        /* Modifikasi Kamera Pengawas: Tambah cursor move & hilangkan 'right' keras agar bisa dimanipulasi JS */
         .kamera-pengawas {
             background: rgb(34, 34, 34);
             border-radius: 5px;
@@ -261,13 +256,13 @@
             height: 120px;
             overflow: hidden;
             position: fixed;
-            left: calc(100% - 100px - 3%); /* Pengganti right: 3% agar posisi awal tetap sama namun fleksibel digeser */
+            left: calc(100% - 100px - 3%);
             top: 45px;
             width: 100px;
             z-index: 99999;
-            cursor: move; /* Mengubah kursor menjadi tanda panah geser */
+            cursor: move;
             user-select: none;
-            touch-action: none; /* Mencegah layar HP ikut tergulung saat kamera digeser */
+            touch-action: none;
         }
 
         .video-render {
@@ -275,7 +270,7 @@
             object-fit: cover; 
             transform: scaleX(-1); 
             width: 100%;
-            pointer-events: none; /* Agar video tidak memblokir event drag pada container */
+            pointer-events: none;
         }
 
         /* =========================================================================
@@ -493,7 +488,7 @@
             let currentScale = 1.0;
             const scaleStep = 0.08;       
             const maxScale = 1.5;         
-            const minScale = 0.7;         
+            const minScale = 0.5;         
 
             function jalankanZoomIframe(arah) {
                 sedangZoom = true; 
