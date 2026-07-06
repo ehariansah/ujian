@@ -132,9 +132,19 @@
             gap: 10px;
         }
 
-        #statBaterai { align-items: center; }
+        #statBaterai {
+            align-items: center;
+            justify-content: flex-start;
+            display: flex;
+            flex: 1;
+        }
 
-        #statJam { font-variant-numeric: tabular-nums; }
+        #statJam {
+            font-variant-numeric: tabular-nums;
+            display: flex;
+            flex: 1;
+            align-items: center;
+        }
 
         #statJaringan {
             align-items: center;
@@ -142,6 +152,11 @@
             display: flex;
             flex: 1;
             justify-content: flex-end;
+        }
+
+        @media only screen and (max-width: 480px) {
+            #statBaterai { align-items: center; }
+            #statJam { font-variant-numeric: tabular-nums; }
         }
 
         /* =========================================================================
