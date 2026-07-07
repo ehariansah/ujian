@@ -6,7 +6,7 @@
     <title>E-Ujian SMAN 4 Barru</title>
     <link rel="icon" type="image/png" href="./favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="apple-touch-icon" href="./favicon.png">
+    <link class="apple-touch-icon" href="./favicon.png">
     <link rel="manifest" href="./manifest.json">
 
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
@@ -86,7 +86,6 @@
         .input-group {
             display: flex;
             gap: 10px;
-            margin-bottom: 15px;
         }
 
         .input-group input {
@@ -99,7 +98,7 @@
         }
 
         /* =========================================================================
-           4. TOMBOL AKSI & PANEL SCANNER
+           4. TOMBOL AKSI & PANEL SCANNER FULLSCREEN
            ========================================================================= */
         .btn-action {
             display: flex;
@@ -117,19 +116,37 @@
             text-decoration: none;
         }
 
-        #btnToggleScan {
-            width: 100%;
-        }
-
+        /* Diubah Menjadi Fullscreen Overlay */
         #reader {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 470px;
-            border-radius: 10px;
-            overflow: hidden;
-            display: none;
+            height: 100%;
             background: #000000;
             color: #ffffff;
-            margin-top: 15px;
+            z-index: 10000; /* Harus di atas navigasi bawah */
+            display: none;
+        }
+
+        /* Tombol Tutup Scanner Melayang */
+        .btn-close-scanner {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            background-color: rgba(220, 53, 69, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 10001;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         
         /* Container Utama Navigasi */
@@ -167,7 +184,7 @@
 
         .nav-item i {
             font-size: 20px;
-            margin-bottom: 6px; /* Sedikit disesuaikan agar proporsional */
+            margin-bottom: 6px;
         }
 
         /* Efek Aktif / Hover */
@@ -178,13 +195,14 @@
         /* Tombol Tengah (Scan QR) yang Menonjol */
         .nav-item-center {
             position: relative;
-            top: -27px; /* Membuat tombol naik ke atas */
+            top: -27px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-decoration: none;
             flex: 1;
+            cursor: pointer;
         }
 
         .qr-button {
@@ -205,7 +223,7 @@
         .qr-label {
             font-size: 12px;
             color: #757575;
-            margin-top: 10px; /* Menyesuaikan jarak teks karena tombolnya naik */
+            margin-top: 10px;
             font-weight: 500;
         }
     </style>
@@ -225,40 +243,35 @@
                 <input id="urlInput" placeholder="Masukkan tautan ujian..." type="url" />
                 <button class="btn-action" id="btnLoadManual">Buka</button>
             </div>
-            <button class="btn-action" id="btnToggleScan">Scan QR Code</button>
-        </div>
+            </div>
 
         <div id="reader"></div>
+        <button class="btn-close-scanner" id="btnCloseScanner"><i class="fa-solid fa-xmark"></i></button>
     </div>
     
     <nav class="bottom-nav">
-        <!-- 1. Beranda -->
         <a href="#" class="nav-item active">
             <i class="fa-solid fa-house"></i>
             <span>Beranda</span>
         </a>
 
-        <!-- 2. Pilih Ujian -->
         <a href="https://ujian.sman4barru.sch.id/lobi/" class="nav-item">
             <i class="fa-solid fa-file-signature"></i>
             <span>Pilih Ujian</span>
         </a>
 
-        <!-- 3. Scan QR (Tetap di Tengah) -->
-        <a href="#" class="nav-item-center">
+        <a id="btnToggleScan" class="nav-item-center">
             <div class="qr-button">
                 <i class="fa-solid fa-qrcode"></i>
             </div>
             <span class="qr-label">Scan QR</span>
         </a>
 
-        <!-- 4. Buat Ujian -->
         <a href="https://ujian.sman4barru.sch.id/dasbor/" class="nav-item">
             <i class="fa-solid fa-file-circle-plus"></i>
             <span>Buat Ujian</span>
         </a>
 
-        <!-- 5. Token -->
         <a href="https://ujian.sman4barru.sch.id/token/" class="nav-item">
             <i class="fa-solid fa-key"></i>
             <span>Token</span>
@@ -275,10 +288,12 @@
 
             const btnLoadManual = document.getElementById('btnLoadManual');
             const btnToggleScan = document.getElementById('btnToggleScan');
+            const btnCloseScanner = document.getElementById('btnCloseScanner');
             const urlInput = document.getElementById('urlInput');
 
             if (btnLoadManual) btnLoadManual.addEventListener('click', loadIframeFromInput);
             if (btnToggleScan) btnToggleScan.addEventListener('click', toggleScanner);
+            if (btnCloseScanner) btnCloseScanner.addEventListener('click', stopScanner);
 
             function kirimKeViewer(url) {
                 let targetUrl = url.trim();
@@ -302,11 +317,11 @@
 
             function toggleScanner() {
                 const readerDiv = document.getElementById('reader');
+                const closeBtn = document.getElementById('btnCloseScanner');
 
                 if (!html5QrcodeScanner) {
                     readerDiv.style.display = 'block';
-                    btnToggleScan.innerText = "Matikan Kamera QR";
-                    btnToggleScan.style.backgroundColor = "#dc3545";
+                    closeBtn.style.display = 'flex'; // Tampilkan tombol tutup melayang
 
                     html5QrcodeScanner = new Html5QrcodeScanner(
                         "reader", { fps: 10, qrbox: { width: 250, height: 250 } }, false
@@ -327,12 +342,12 @@
 
             function stopScanner() {
                 const readerDiv = document.getElementById('reader');
+                const closeBtn = document.getElementById('btnCloseScanner');
                 if (html5QrcodeScanner) {
                     html5QrcodeScanner.clear().then(() => {
                         html5QrcodeScanner = null;
                         readerDiv.style.display = 'none';
-                        btnToggleScan.innerText = "Scan QR Code";
-                        btnToggleScan.style.backgroundColor = "#28a745";
+                        closeBtn.style.display = 'none'; // Sembunyikan tombol tutup kembali
                     }).catch(err => {
                         console.error(err);
                     });
