@@ -6,7 +6,7 @@
     <title>E-Ujian SMAN 4 Barru</title>
     <link rel="icon" type="image/png" href="./favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link class="apple-touch-icon" href="./favicon.png">
+    <link rel="apple-touch-icon" href="./favicon.png">
     <link rel="manifest" href="./manifest.json">
 
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
@@ -86,6 +86,7 @@
         .input-group {
             display: flex;
             gap: 10px;
+            margin-bottom: 15px;
         }
 
         .input-group input {
@@ -98,7 +99,7 @@
         }
 
         /* =========================================================================
-           4. TOMBOL AKSI & PANEL SCANNER FULLSCREEN (SOLUSI FIX)
+           4. TOMBOL AKSI & PANEL SCANNER
            ========================================================================= */
         .btn-action {
             display: flex;
@@ -116,51 +117,19 @@
             text-decoration: none;
         }
 
-        /* Kontainer Utama Kunci Mati Layar Penuh */
-        .qr-overlay-container {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            background: #000000 !important;
-            z-index: 999999 !important; /* Memaksa berada di atas segalanya */
-            display: none;
+        #btnToggleScan {
+            width: 100%;
         }
 
-        /* Elemen tempat video render */
         #reader {
-            width: 100% !important;
-            height: 100% !important;
-            background: #000000 !important;
-            border: none !important;
-        }
-
-        /* Memaksa elemen video internal html5-qrcode agar pas di layar */
-        #reader video {
-            object-fit: cover !important;
-            width: 100% !important;
-            height: 100% !important;
-        }
-
-        /* Tombol Tutup Scanner Melayang */
-        .btn-close-scanner {
-            position: fixed !important;
-            top: 25px !important;
-            right: 25px !important;
-            width: 50px;
-            height: 50px;
-            background-color: rgba(220, 53, 69, 0.95) !important;
-            color: white !important;
-            border: none !important;
-            border-radius: 50% !important;
-            font-size: 22px !important;
-            cursor: pointer !important;
-            z-index: 1000000 !important; /* Harus di atas kontainer overlay */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 470px;
+            border-radius: 10px;
+            overflow: hidden;
+            display: none;
+            background: #000000;
+            color: #ffffff;
+            margin-top: 15px;
         }
         
         /* Container Utama Navigasi */
@@ -198,7 +167,7 @@
 
         .nav-item i {
             font-size: 20px;
-            margin-bottom: 6px;
+            margin-bottom: 6px; /* Sedikit disesuaikan agar proporsional */
         }
 
         /* Efek Aktif / Hover */
@@ -209,14 +178,13 @@
         /* Tombol Tengah (Scan QR) yang Menonjol */
         .nav-item-center {
             position: relative;
-            top: -27px;
+            top: -27px; /* Membuat tombol naik ke atas */
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-decoration: none;
             flex: 1;
-            cursor: pointer;
         }
 
         .qr-button {
@@ -237,7 +205,7 @@
         .qr-label {
             font-size: 12px;
             color: #757575;
-            margin-top: 10px;
+            margin-top: 10px; /* Menyesuaikan jarak teks karena tombolnya naik */
             font-weight: 500;
         }
     </style>
@@ -257,37 +225,40 @@
                 <input id="urlInput" placeholder="Masukkan tautan ujian..." type="url" />
                 <button class="btn-action" id="btnLoadManual">Buka</button>
             </div>
+            <button class="btn-action" id="btnToggleScan">Scan QR Code</button>
         </div>
-    </div>
 
-    <div id="qrOverlay" class="qr-overlay-container">
-        <button class="btn-close-scanner" id="btnCloseScanner"><i class="fa-solid fa-xmark"></i></button>
         <div id="reader"></div>
     </div>
     
     <nav class="bottom-nav">
+        <!-- 1. Beranda -->
         <a href="#" class="nav-item active">
             <i class="fa-solid fa-house"></i>
             <span>Beranda</span>
         </a>
 
+        <!-- 2. Pilih Ujian -->
         <a href="https://ujian.sman4barru.sch.id/lobi/" class="nav-item">
             <i class="fa-solid fa-file-signature"></i>
             <span>Pilih Ujian</span>
         </a>
 
-        <a id="btnToggleScan" class="nav-item-center">
+        <!-- 3. Scan QR (Tetap di Tengah) -->
+        <a href="#" class="nav-item-center">
             <div class="qr-button">
                 <i class="fa-solid fa-qrcode"></i>
             </div>
             <span class="qr-label">Scan QR</span>
         </a>
 
+        <!-- 4. Buat Ujian -->
         <a href="https://ujian.sman4barru.sch.id/dasbor/" class="nav-item">
             <i class="fa-solid fa-file-circle-plus"></i>
             <span>Buat Ujian</span>
         </a>
 
+        <!-- 5. Token -->
         <a href="https://ujian.sman4barru.sch.id/token/" class="nav-item">
             <i class="fa-solid fa-key"></i>
             <span>Token</span>
@@ -300,23 +271,23 @@
         // =========================================================================
         document.addEventListener("DOMContentLoaded", function() {
             let html5QrcodeScanner = null;
-            const halamanViewerUrl = "https://ujian.sman4barru.sch.id/run/"; 
+            const halamanViewerUrl = "https://ujian.sman4barru.sch.id/run/"; // JANGAN LUPA GANTI
 
             const btnLoadManual = document.getElementById('btnLoadManual');
             const btnToggleScan = document.getElementById('btnToggleScan');
-            const btnCloseScanner = document.getElementById('btnCloseScanner');
             const urlInput = document.getElementById('urlInput');
 
             if (btnLoadManual) btnLoadManual.addEventListener('click', loadIframeFromInput);
             if (btnToggleScan) btnToggleScan.addEventListener('click', toggleScanner);
-            if (btnCloseScanner) btnCloseScanner.addEventListener('click', stopScanner);
 
             function kirimKeViewer(url) {
                 let targetUrl = url.trim();
                 let encodedUrl = encodeURIComponent(targetUrl);
             
+                // Generate token waktu detik saat ini secara real-time demi keamanan berlapis
                 const tokenWaktuAktif = Math.floor(Date.now() / 1000);
             
+                // Lempar pengguna ke Halaman Viewer menggunakan metode proteksi .replace()
                 window.location.replace(halamanViewerUrl + "?url=" + encodedUrl + "&auth=" + tokenWaktuAktif);
             }
 
@@ -330,10 +301,12 @@
             }
 
             function toggleScanner() {
-                const overlayDiv = document.getElementById('qrOverlay');
+                const readerDiv = document.getElementById('reader');
 
                 if (!html5QrcodeScanner) {
-                    overlayDiv.style.display = 'block'; // Memunculkan kontainer pembungkus penuh
+                    readerDiv.style.display = 'block';
+                    btnToggleScan.innerText = "Matikan Kamera QR";
+                    btnToggleScan.style.backgroundColor = "#dc3545";
 
                     html5QrcodeScanner = new Html5QrcodeScanner(
                         "reader", { fps: 10, qrbox: { width: 250, height: 250 } }, false
@@ -353,11 +326,13 @@
             }
 
             function stopScanner() {
-                const overlayDiv = document.getElementById('qrOverlay');
+                const readerDiv = document.getElementById('reader');
                 if (html5QrcodeScanner) {
                     html5QrcodeScanner.clear().then(() => {
                         html5QrcodeScanner = null;
-                        overlayDiv.style.display = 'none'; // Menyembunyikan seluruh overlay kembali
+                        readerDiv.style.display = 'none';
+                        btnToggleScan.innerText = "Scan QR Code";
+                        btnToggleScan.style.backgroundColor = "#28a745";
                     }).catch(err => {
                         console.error(err);
                     });
