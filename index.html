@@ -98,7 +98,7 @@
         }
 
         /* =========================================================================
-           4. TOMBOL AKSI & PANEL SCANNER FULLSCREEN
+           4. TOMBOL AKSI & PANEL SCANNER FULLSCREEN (SOLUSI FIX)
            ========================================================================= */
         .btn-action {
             display: flex;
@@ -116,37 +116,51 @@
             text-decoration: none;
         }
 
-        /* Diubah Menjadi Fullscreen Overlay */
-        #reader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000000;
-            color: #ffffff;
-            z-index: 10000; /* Harus di atas navigasi bawah */
+        /* Kontainer Utama Kunci Mati Layar Penuh */
+        .qr-overlay-container {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            background: #000000 !important;
+            z-index: 999999 !important; /* Memaksa berada di atas segalanya */
             display: none;
+        }
+
+        /* Elemen tempat video render */
+        #reader {
+            width: 100% !important;
+            height: 100% !important;
+            background: #000000 !important;
+            border: none !important;
+        }
+
+        /* Memaksa elemen video internal html5-qrcode agar pas di layar */
+        #reader video {
+            object-fit: cover !important;
+            width: 100% !important;
+            height: 100% !important;
         }
 
         /* Tombol Tutup Scanner Melayang */
         .btn-close-scanner {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 45px;
-            height: 45px;
-            background-color: rgba(220, 53, 69, 0.9);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            font-size: 20px;
-            cursor: pointer;
-            z-index: 10001;
-            display: none;
+            position: fixed !important;
+            top: 25px !important;
+            right: 25px !important;
+            width: 50px;
+            height: 50px;
+            background-color: rgba(220, 53, 69, 0.95) !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 50% !important;
+            font-size: 22px !important;
+            cursor: pointer !important;
+            z-index: 1000000 !important; /* Harus di atas kontainer overlay */
+            display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
         }
         
         /* Container Utama Navigasi */
@@ -243,11 +257,13 @@
                 <input id="urlInput" placeholder="Masukkan tautan ujian..." type="url" />
                 <button class="btn-action" id="btnLoadManual">Buka</button>
             </div>
-            </div>
+        </div>
     </div>
 
-    <div id="reader"></div>
+    <div id="qrOverlay" class="qr-overlay-container">
         <button class="btn-close-scanner" id="btnCloseScanner"><i class="fa-solid fa-xmark"></i></button>
+        <div id="reader"></div>
+    </div>
     
     <nav class="bottom-nav">
         <a href="#" class="nav-item active">
@@ -284,7 +300,7 @@
         // =========================================================================
         document.addEventListener("DOMContentLoaded", function() {
             let html5QrcodeScanner = null;
-            const halamanViewerUrl = "https://ujian.sman4barru.sch.id/run/"; // JANGAN LUPA GANTI
+            const halamanViewerUrl = "https://ujian.sman4barru.sch.id/run/"; 
 
             const btnLoadManual = document.getElementById('btnLoadManual');
             const btnToggleScan = document.getElementById('btnToggleScan');
@@ -299,10 +315,8 @@
                 let targetUrl = url.trim();
                 let encodedUrl = encodeURIComponent(targetUrl);
             
-                // Generate token waktu detik saat ini secara real-time demi keamanan berlapis
                 const tokenWaktuAktif = Math.floor(Date.now() / 1000);
             
-                // Lempar pengguna ke Halaman Viewer menggunakan metode proteksi .replace()
                 window.location.replace(halamanViewerUrl + "?url=" + encodedUrl + "&auth=" + tokenWaktuAktif);
             }
 
@@ -316,12 +330,10 @@
             }
 
             function toggleScanner() {
-                const readerDiv = document.getElementById('reader');
-                const closeBtn = document.getElementById('btnCloseScanner');
+                const overlayDiv = document.getElementById('qrOverlay');
 
                 if (!html5QrcodeScanner) {
-                    readerDiv.style.display = 'block';
-                    closeBtn.style.display = 'flex'; // Tampilkan tombol tutup melayang
+                    overlayDiv.style.display = 'block'; // Memunculkan kontainer pembungkus penuh
 
                     html5QrcodeScanner = new Html5QrcodeScanner(
                         "reader", { fps: 10, qrbox: { width: 250, height: 250 } }, false
@@ -341,13 +353,11 @@
             }
 
             function stopScanner() {
-                const readerDiv = document.getElementById('reader');
-                const closeBtn = document.getElementById('btnCloseScanner');
+                const overlayDiv = document.getElementById('qrOverlay');
                 if (html5QrcodeScanner) {
                     html5QrcodeScanner.clear().then(() => {
                         html5QrcodeScanner = null;
-                        readerDiv.style.display = 'none';
-                        closeBtn.style.display = 'none'; // Sembunyikan tombol tutup kembali
+                        overlayDiv.style.display = 'none'; // Menyembunyikan seluruh overlay kembali
                     }).catch(err => {
                         console.error(err);
                     });
