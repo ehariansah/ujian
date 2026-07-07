@@ -86,7 +86,6 @@
         .input-group {
             display: flex;
             gap: 10px;
-            margin-bottom: 15px;
         }
 
         .input-group input {
@@ -99,7 +98,7 @@
         }
 
         /* =========================================================================
-           4. TOMBOL AKSI & PANEL SCANNER
+           4. TOMBOL AKSI & JENDELA POPUP (MODAL SCANNER)
            ========================================================================= */
         .btn-action {
             display: flex;
@@ -117,19 +116,60 @@
             text-decoration: none;
         }
 
-        #btnToggleScan {
-            width: 100%;
+        /* Background Hitam Transparan Overly */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000; /* Berada tinggi di atas segalanya */
+            padding: 20px;
         }
 
+        /* Kotak Jendela Popup Tengah */
+        .modal-content {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 450px;
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Tombol Keluar Silang (X) Kanan Atas */
+        .btn-close-modal {
+            position: absolute;
+            top: 12px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #333333;
+            cursor: pointer;
+            line-height: 1;
+            z-index: 10002;
+            transition: color 0.2s ease;
+        }
+
+        .btn-close-modal:hover {
+            color: #dc3545;
+        }
+
+        /* Kontainer Kamera Internal Box */
         #reader {
             width: 100%;
-            max-width: 470px;
             border-radius: 10px;
             overflow: hidden;
-            display: none;
             background: #000000;
             color: #ffffff;
-            margin-top: 15px;
+            margin-top: 25px; /* Memberi ruang agar tidak menumpuk tombol silang */
+            border: none !important;
         }
         
         /* Container Utama Navigasi */
@@ -167,7 +207,7 @@
 
         .nav-item i {
             font-size: 20px;
-            margin-bottom: 6px; /* Sedikit disesuaikan agar proporsional */
+            margin-bottom: 6px;
         }
 
         /* Efek Aktif / Hover */
@@ -178,13 +218,14 @@
         /* Tombol Tengah (Scan QR) yang Menonjol */
         .nav-item-center {
             position: relative;
-            top: -27px; /* Membuat tombol naik ke atas */
+            top: -27px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-decoration: none;
             flex: 1;
+            cursor: pointer;
         }
 
         .qr-button {
@@ -205,7 +246,7 @@
         .qr-label {
             font-size: 12px;
             color: #757575;
-            margin-top: 10px; /* Menyesuaikan jarak teks karena tombolnya naik */
+            margin-top: 10px;
             font-weight: 500;
         }
     </style>
@@ -225,40 +266,39 @@
                 <input id="urlInput" placeholder="Masukkan tautan ujian..." type="url" />
                 <button class="btn-action" id="btnLoadManual">Buka</button>
             </div>
-            <button class="btn-action" id="btnToggleScan">Scan QR Code</button>
         </div>
+    </div>
 
-        <div id="reader"></div>
+    <div id="qrModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="btn-close-modal" id="btnCloseModal"><i class="fa-solid fa-xmark"></i></button>
+            <div id="reader"></div>
+        </div>
     </div>
     
     <nav class="bottom-nav">
-        <!-- 1. Beranda -->
         <a href="#" class="nav-item active">
             <i class="fa-solid fa-house"></i>
             <span>Beranda</span>
         </a>
 
-        <!-- 2. Pilih Ujian -->
         <a href="https://ujian.sman4barru.sch.id/lobi/" class="nav-item">
             <i class="fa-solid fa-file-signature"></i>
             <span>Pilih Ujian</span>
         </a>
 
-        <!-- 3. Scan QR (Tetap di Tengah) -->
-        <a href="#" class="nav-item-center">
+        <a id="btnToggleScan" class="nav-item-center">
             <div class="qr-button">
                 <i class="fa-solid fa-qrcode"></i>
             </div>
             <span class="qr-label">Scan QR</span>
         </a>
 
-        <!-- 4. Buat Ujian -->
         <a href="https://ujian.sman4barru.sch.id/dasbor/" class="nav-item">
             <i class="fa-solid fa-file-circle-plus"></i>
             <span>Buat Ujian</span>
         </a>
 
-        <!-- 5. Token -->
         <a href="https://ujian.sman4barru.sch.id/token/" class="nav-item">
             <i class="fa-solid fa-key"></i>
             <span>Token</span>
@@ -271,14 +311,16 @@
         // =========================================================================
         document.addEventListener("DOMContentLoaded", function() {
             let html5QrcodeScanner = null;
-            const halamanViewerUrl = "https://ujian.sman4barru.sch.id/run/"; // JANGAN LUPA GANTI
+            const halamanViewerUrl = "https://ujian.sman4barru.sch.id/run/";
 
             const btnLoadManual = document.getElementById('btnLoadManual');
             const btnToggleScan = document.getElementById('btnToggleScan');
+            const btnCloseModal = document.getElementById('btnCloseModal');
             const urlInput = document.getElementById('urlInput');
 
             if (btnLoadManual) btnLoadManual.addEventListener('click', loadIframeFromInput);
             if (btnToggleScan) btnToggleScan.addEventListener('click', toggleScanner);
+            if (btnCloseModal) btnCloseModal.addEventListener('click', stopScanner);
 
             function kirimKeViewer(url) {
                 let targetUrl = url.trim();
@@ -301,12 +343,10 @@
             }
 
             function toggleScanner() {
-                const readerDiv = document.getElementById('reader');
+                const modalDiv = document.getElementById('qrModal');
 
                 if (!html5QrcodeScanner) {
-                    readerDiv.style.display = 'block';
-                    btnToggleScan.innerText = "Matikan Kamera QR";
-                    btnToggleScan.style.backgroundColor = "#dc3545";
+                    modalDiv.style.display = 'flex'; // Menampilkan pembungkus popup dengan mode flex center
 
                     html5QrcodeScanner = new Html5QrcodeScanner(
                         "reader", { fps: 10, qrbox: { width: 250, height: 250 } }, false
@@ -326,13 +366,11 @@
             }
 
             function stopScanner() {
-                const readerDiv = document.getElementById('reader');
+                const modalDiv = document.getElementById('qrModal');
                 if (html5QrcodeScanner) {
                     html5QrcodeScanner.clear().then(() => {
                         html5QrcodeScanner = null;
-                        readerDiv.style.display = 'none';
-                        btnToggleScan.innerText = "Scan QR Code";
-                        btnToggleScan.style.backgroundColor = "#28a745";
+                        modalDiv.style.display = 'none'; // Menyembunyikan jendela popup kembali
                     }).catch(err => {
                         console.error(err);
                     });
