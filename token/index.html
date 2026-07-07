@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generator Token Pengawas - SMAN 4 Barru</title>
     <link rel="icon" type="image/png" href="../favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
@@ -131,6 +132,83 @@
             color: #adb5bd;
             line-height: 1.5;
         }
+        
+        /* Container Utama Navigasi */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            z-index: 999;
+            padding: 0 10px;
+        }
+
+        /* Item Menu Biasa */
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #757575;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 500;
+            flex: 1;
+            height: 100%;
+            transition: color 0.2s ease;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 6px; /* Sedikit disesuaikan agar proporsional */
+        }
+
+        /* Efek Aktif / Hover */
+        .nav-item.active, .nav-item:hover {
+            color: #1a6199;
+        }
+
+        /* Tombol Tengah (Scan QR) yang Menonjol */
+        .nav-item-center {
+            position: relative;
+            top: -25px; /* Membuat tombol naik ke atas */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            flex: 1;
+        }
+
+        .qr-button {
+            width: 70px;
+            height: 70px;
+            background-color: #1a6199;
+            border: #ffffff solid 5px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 24px;
+            box-shadow: rgba(0, 0, 0, 0.5) 0px 4px 12px;
+            transition: transform 0.2s ease;
+        }
+
+        .qr-label {
+            font-size: 12px;
+            color: #757575;
+            margin-top: 6px; /* Menyesuaikan jarak teks karena tombolnya naik */
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
@@ -161,6 +239,40 @@
             Pastikan jam pada gawai pengawas dan siswa sudah diatur otomatis (Internet).
         </div>
     </div>
+    
+    <nav class="bottom-nav">
+        <!-- 1. Beranda -->
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-house"></i>
+            <span>Beranda</span>
+        </a>
+
+        <!-- 2. Pilih Ujian -->
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-file-signature"></i>
+            <span>Pilih Ujian</span>
+        </a>
+
+        <!-- 3. Scan QR (Tetap di Tengah) -->
+        <a href="#" class="nav-item-center">
+            <div class="qr-button">
+                <i class="fa-solid fa-qrcode"></i>
+            </div>
+            <span class="qr-label">Scan QR</span>
+        </a>
+
+        <!-- 4. Buat Ujian -->
+        <a href="https://ujian.sman4barru.sch.id/dasbor/" class="nav-item">
+            <i class="fa-solid fa-file-circle-plus"></i>
+            <span>Buat Ujian</span>
+        </a>
+
+        <!-- 5. Token -->
+        <a href="#" class="nav-item active">
+            <i class="fa-solid fa-key"></i>
+            <span>Token</span>
+        </a>
+    </nav>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
