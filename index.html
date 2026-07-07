@@ -123,42 +123,49 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-color: rgba(0, 0, 0, 0.6);
+            background-color: rgba(0, 0, 0, 0.7);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 10000; /* Berada tinggi di atas segalanya */
-            padding: 20px;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
         }
 
         /* Kotak Jendela Popup Tengah */
         .modal-content {
             background-color: #ffffff;
-            width: 100%;
+            width: 90%;
             max-width: 450px;
             border-radius: 15px;
-            padding: 20px;
+            padding: 15px;
             position: relative;
-            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
         }
 
-        /* Tombol Keluar Silang (X) Kanan Atas */
+        .h3-close {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        .modal-content h3 {
+            font-weight: unset;
+            font-size: 18px;
+            margin: 0;
+            color: #222;
+        }
+
         .btn-close-modal {
-            position: absolute;
-            top: 12px;
-            right: 15px;
             background: none;
             border: none;
-            font-size: 24px;
+            font-size: 20px;
             color: #333333;
             cursor: pointer;
             line-height: 1;
             z-index: 10002;
             transition: color 0.2s ease;
-        }
-
-        .btn-close-modal:hover {
-            color: #dc3545;
+            padding: 0;
         }
 
         /* Kontainer Kamera Internal Box */
@@ -168,7 +175,6 @@
             overflow: hidden;
             background: #000000;
             color: #ffffff;
-            margin-top: 25px; /* Memberi ruang agar tidak menumpuk tombol silang */
             border: none !important;
         }
         
@@ -271,7 +277,10 @@
 
     <div id="qrModal" class="modal-overlay">
         <div class="modal-content">
-            <button class="btn-close-modal" id="btnCloseModal"><i class="fa-solid fa-xmark"></i></button>
+            <div class="h3-close">
+                <h3>Scan QR</h3>
+                <button class="btn-close-modal" id="btnCloseModal">✕</button>
+            </div>
             <div id="reader"></div>
         </div>
     </div>
