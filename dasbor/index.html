@@ -36,6 +36,78 @@
         }
 
         /* =========================================================================
+           STYLE GERBANG PENGAMAN PENGAWAS
+           ========================================================================= */
+        .gatekeeper-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100dvh;
+            background: rgb(26, 97, 153);
+            z-index: 99; /* Lapisan paling depan, menutup semua konten */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .gatekeeper-box {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 360px;
+            text-align: center;
+        }
+
+        .gatekeeper-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        .gatekeeper-title {
+            margin: 0 0 10px;
+            font-size: 20px;
+        }
+
+        .gatekeeper-desc {
+            margin-bottom: 20px;
+            color: #666666;
+            font-size: 14px;
+        }
+
+        #inputSandiGuru {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #666;
+            border-radius: 5px;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        #btnMasukGuru {
+            width: 100%;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .gatekeeper-error {
+            color: #dc3545;
+            font-size: 13px;
+            margin: 15px 0 0;
+            font-weight: bold;
+            display: none; /* Sembunyikan pesan salah di awal */
+        }
+
+        /* =========================================================================
            2. HEADER PANEL COMPONENT
            ========================================================================= */
         .header-panel {
@@ -370,6 +442,17 @@
 </head>
 <body>
 
+    <div id="gerbangPengawas" class="gatekeeper-overlay">
+        <div class="gatekeeper-box">
+            <div class="gatekeeper-icon">🔐</div>
+            <h2 class="gatekeeper-title">Akses Halaman Terbatas</h2>
+            <p class="gatekeeper-desc">Halaman ini khusus untuk Guru/Pengawas, masukkan password untuk melanjutkan.</p>
+            <input type="password" id="inputSandiGuru" placeholder="Masukkan Password...">
+            <button id="btnMasukGuru">Masuk</button>
+            <p id="pesanSandiSalah" class="gatekeeper-error">Password tidak valid!</p>
+        </div>
+    </div>
+
     <div class="header-panel">
         <div class="header-title">
             <img src="../logo-200.png" alt="Logo">
@@ -490,6 +573,50 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            // =========================================================================
+            // INTEGRASI GERBANG PENGAMAN (Taruh di paling atas DOMContentLoaded)
+            // =========================================================================
+            const PASSWORD_RAHASIA = "20262027"; // <-- GANTI PASSWORD DI SINI
+            const KUNCI_STORAGE = "status_login_pengawas";
+            const SATU_HARI_MS = 24 * 60 * 60 * 1000;
+
+            const layerGerbang = document.getElementById("gerbangPengawas");
+            const inputSandi = document.getElementById("inputSandiGuru");
+            const btnMasuk = document.getElementById("btnMasukGuru");
+            const pesanSalah = document.getElementById("pesanSandiSalah");
+
+            // Jalankan pengecekan riwayat login pengawas
+            const dataSesi = localStorage.getItem(KUNCI_STORAGE);
+            if (dataSesi) {
+                const dataTerurai = JSON.parse(dataSesi);
+                const waktuSekarang = Date.now();
+                if (waktuSekarang - dataTerurai.waktuLogin < SATU_HARI_MS) {
+                    layerGerbang.style.display = "none";
+                } else {
+                    layerGerbang.style.display = "flex";
+                }
+            } else {
+                layerGerbang.style.display = "flex";
+            }
+
+            function verifikasiSandiGuru() {
+                if (inputSandi.value === PASSWORD_RAHASIA) {
+                    const payloadSesi = { status: "LOLOS", waktuLogin: Date.now() };
+                    localStorage.setItem(KUNCI_STORAGE, JSON.stringify(payloadSesi));
+                    layerGerbang.style.display = "none";
+                    pesanSalah.style.display = "none";
+                } else {
+                    pesanSalah.style.display = "block";
+                    inputSandi.value = "";
+                    inputSandi.focus();
+                }
+            }
+
+            btnMasuk.addEventListener("click", verifikasiSandiGuru);
+            inputSandi.addEventListener("keypress", function(e) {
+                if (e.key === "Enter") { verifikasiSandiGuru(); }
+            });
+
             // Pengait Elemen HTML
             const modal = document.getElementById('modalFormUjian');
             const btnBukaForm = document.getElementById('btnBukaForm');
