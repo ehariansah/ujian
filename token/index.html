@@ -39,7 +39,7 @@
             width: 100%;
             height: 100dvh;
             background: rgb(26, 97, 153);
-            z-index: 99; /* Lapisan paling depan, menutup semua konten */
+            z-index: 99;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -161,7 +161,7 @@
             border: none !important;
         }
 
-        /* STYLE BRANDING DAN ELEMEN TOKEN */
+        /* STYLE BRANDING APP DAN ELEMEN TOKEN */
         .logo-sekolah {
             width: 100px;
             height: 100px;
@@ -352,6 +352,7 @@
         </div>
     </div>
 
+    <!-- POPUP KAMERA SCANNER -->
     <div id="qrModal" class="modal-overlay-scan">
         <div class="modal-content">
             <div class="h3-close">
@@ -361,20 +362,18 @@
             <div id="reader"></div>
         </div>
     </div>
-    
+
+    <!-- BRANDING APP DAN ELEMEN TOKEN -->
     <div class="logo-sekolah">
         <img src="../logo-200.png" alt="Logo SMAN 4 Barru">
     </div>
     <div class="token-card">
-        
         <h1>TOKEN MASUK UJIAN</h1>
         <p class="subtitle">Bagikan token ini kepada peserta untuk masuk sesi ujian.</p>
-
         <div class="token-display-box">
             <div class="token-label">Token Berlaku Saat Ini</div>
             <div class="token-code" id="kodeTokenTampil">------</div>
         </div>
-
         <div class="timer-container">
             <div class="timer-text">
                 Token diperbarui dalam: <span id="menitDetik">05:00</span>
@@ -383,36 +382,32 @@
                 <div class="progress-bar-fill" id="barProgress"></div>
             </div>
         </div>
-
         <div class="footer-note">
             *Token ini digenerate otomatis secara sinkron setiap 5 menit.<br>
             Pastikan jam pada gawai pengawas dan siswa sudah diatur otomatis (Internet).
         </div>
     </div>
-    
+
+    <!-- NAVIGASI BAWAH -->
     <nav class="bottom-nav">
         <a href="https://ujian.sman4barru.sch.id/" class="nav-item">
             <i class="fa-solid fa-house"></i>
             <span>Beranda</span>
         </a>
-
         <a href="https://ujian.sman4barru.sch.id/lobi/" class="nav-item">
             <i class="fa-solid fa-file-signature"></i>
             <span>Pilih Ujian</span>
         </a>
-
         <a id="btnToggleScan" class="nav-item-center">
             <div class="qr-button">
                 <i class="fa-solid fa-qrcode"></i>
             </div>
             <span class="qr-label">Scan QR</span>
         </a>
-
         <a href="https://ujian.sman4barru.sch.id/dasbor/" class="nav-item">
             <i class="fa-solid fa-file-circle-plus"></i>
             <span>Buat Ujian</span>
         </a>
-
         <a href="#" class="nav-item active">
             <i class="fa-solid fa-key"></i>
             <span>Token</span>
@@ -421,19 +416,14 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // =========================================================================
-            // INTEGRASI GERBANG PENGAMAN (Taruh di paling atas DOMContentLoaded)
-            // =========================================================================
+            // INTEGRASI GERBANG PENGAMAN
             const PASSWORD_RAHASIA = "20262027"; // <-- GANTI PASSWORD DI SINI
             const KUNCI_STORAGE = "status_login_pengawas";
             const SATU_HARI_MS = 24 * 60 * 60 * 1000;
-
             const layerGerbang = document.getElementById("gerbangPengawas");
             const inputSandi = document.getElementById("inputSandiGuru");
             const btnMasuk = document.getElementById("btnMasukGuru");
             const pesanSalah = document.getElementById("pesanSandiSalah");
-
-            // Jalankan pengecekan riwayat login pengawas
             const dataSesi = localStorage.getItem(KUNCI_STORAGE);
             if (dataSesi) {
                 const dataTerurai = JSON.parse(dataSesi);
@@ -446,7 +436,6 @@
             } else {
                 layerGerbang.style.display = "flex";
             }
-
             function verifikasiSandiGuru() {
                 if (inputSandi.value === PASSWORD_RAHASIA) {
                     const payloadSesi = { status: "LOLOS", waktuLogin: Date.now() };
@@ -459,7 +448,6 @@
                     inputSandi.focus();
                 }
             }
-
             btnMasuk.addEventListener("click", verifikasiSandiGuru);
             inputSandi.addEventListener("keypress", function(e) {
                 if (e.key === "Enter") { verifikasiSandiGuru(); }
@@ -472,7 +460,6 @@
             const btnCloseModal = document.getElementById('btnCloseModal');
             if (btnToggleScan) btnToggleScan.addEventListener('click', toggleScanner);
             if (btnCloseModal) btnCloseModal.addEventListener('click', stopScanner);
-
             function kirimKeViewer(url) {
                 let targetUrl = url.trim();
                 let encodedUrl = encodeURIComponent(targetUrl);
@@ -481,10 +468,8 @@
             }
             function toggleScanner() {
                 const modalDiv = document.getElementById('qrModal');
-
                 if (!html5QrcodeScanner) {
-                    modalDiv.style.display = 'flex'; // Menampilkan pembungkus popup dengan mode flex center
-
+                    modalDiv.style.display = 'flex';
                     html5QrcodeScanner = new Html5QrcodeScanner(
                         "reader", { fps: 10, qrbox: { width: 250, height: 250 } }, false
                     );
@@ -493,15 +478,12 @@
                     stopScanner();
                 }
             }
-
             function onScanSuccess(decodedText, decodedResult) {
                 stopScanner();
                 kirimKeViewer(decodedText);
             }
-
             function onScanFailure(error) {
             }
-
             function stopScanner() {
                 const modalDiv = document.getElementById('qrModal');
                 if (html5QrcodeScanner) {
@@ -513,22 +495,16 @@
                     });
                 }
             }
-            
+
+            // KODE ELEMEN TOKEN
             const tokenTampil = document.getElementById('kodeTokenTampil');
             const menitDetikTampil = document.getElementById('menitDetik');
             const barProgress = document.getElementById('barProgress');
-
-            const DURASI_LIMA_MENIT = 5 * 60; // 300 Detik
-
-            // Algoritma Generator String Token Acak 6 Digit Khas Aplikasi Ujian
+            const DURASI_LIMA_MENIT = 5 * 60;
             function produksiTokenAcak(stempelWaktuBlok) {
-                // Karakter yang mudah dibaca (menghilangkan 'I', 'O', '0', '1' agar siswa tidak salah ketik)
                 const alfabetKandidat = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-                
-                // Menggunakan stempel waktu blok sebagai seed pseudo-random sederhana
                 let nilaiSaran = stempelWaktuBlok;
                 let hasilToken = "";
-                
                 for (let i = 0; i < 6; i++) {
                     nilaiSaran = (nilaiSaran * 9301 + 49297) % 233280;
                     const indeksKarakter = Math.floor((nilaiSaran / 233280) * alfabetKandidat.length);
@@ -536,38 +512,21 @@
                 }
                 return hasilToken;
             }
-
             function siklusPenjagaToken() {
                 const detikUnixSekarang = Math.floor(Date.now() / 1000);
-                
-                // Cari awal mula blok 5 menit berjalan saat ini
                 const sisaDetikBlokBerjalan = detikUnixSekarang % DURASI_LIMA_MENIT;
                 const awalBlokLimaMenit = detikUnixSekarang - sisaDetikBlokBerjalan;
-                
-                // Generate token berdasarkan waktu blok saat ini
                 const tokenAktif = produksiTokenAcak(awalBlokLimaMenit);
                 tokenTampil.innerText = tokenAktif;
-
-                // Hitung sisa waktu mundur untuk blok ini
                 const sisaWaktuMundur = DURASI_LIMA_MENIT - sisaDetikBlokBerjalan;
-                
-                // Format menit dan detik teks
                 const menit = Math.floor(sisaWaktuMundur / 60);
                 const detik = sisaWaktuMundur % 60;
                 menitDetikTampil.innerText = `${menit.toString().padStart(2, '0')}:${detik.toString().padStart(2, '0')}`;
-
-                // Atur penyusutan Bar Progress secara visual (0% sampai 100%)
                 const persentaseSisa = (sisaWaktuMundur / DURASI_LIMA_MENIT) * 100;
                 barProgress.style.width = persentaseSisa + "%";
-
-                // Simpan token aktif saat ini ke LocalStorage agar Halaman D bisa membaca token yang sama
                 localStorage.setItem('token_ujian_aktif_sman4', tokenAktif);
             }
-
-            // Jalankan detak pertama kali halaman dibuka
             siklusPenjagaToken();
-
-            // Lakukan pembaruan rutin setiap 1 detik
             setInterval(siklusPenjagaToken, 1000);
         });
     </script>
