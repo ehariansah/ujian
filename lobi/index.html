@@ -6,6 +6,7 @@
     <title>Pilih Sesi Ujian - SMAN 4 Barru</title>
     <link rel="icon" type="image/png" href="../favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     
     <style>
         :root {
@@ -179,6 +180,66 @@
             font-weight: 500;
         }
 
+        .modal-overlay-scan {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100dvh;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000; /* Berada tinggi di atas segalanya */
+        }
+
+        /* Kotak Jendela Popup Tengah */
+        .modal-content {
+            background-color: #ffffff;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 15px;
+            padding: 15px;
+            position: relative;
+            box-shadow: rgba(0, 0, 0, 0.15) 0px 10px 25px;
+        }
+
+        .h3-close {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        .modal-content h3 {
+            font-weight: unset;
+            font-size: 18px;
+            margin: 0;
+            color: #222;
+        }
+
+        .btn-close-modal {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #333333;
+            cursor: pointer;
+            line-height: 1;
+            z-index: 10002;
+            padding: 0;
+        }
+
+        /* Kontainer Kamera Internal Box */
+        #reader {
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #000000;
+            color: #ffffff;
+            line-height: 1.5;
+            border: none !important;
+        }
+        
         /* MODAL TOKEN */
         .modal-overlay {
             position: fixed;
@@ -288,38 +349,43 @@
     </div>
     
     <nav class="bottom-nav">
-        <!-- 1. Beranda -->
         <a href="https://ujian.sman4barru.sch.id/" class="nav-item">
             <i class="fa-solid fa-house"></i>
             <span>Beranda</span>
         </a>
 
-        <!-- 2. Pilih Ujian -->
         <a href="#" class="nav-item active">
             <i class="fa-solid fa-file-signature"></i>
             <span>Pilih Ujian</span>
         </a>
 
-        <!-- 3. Scan QR (Tetap di Tengah) -->
-        <a href="#" class="nav-item-center">
+        <a id="btnToggleScan" class="nav-item-center">
             <div class="qr-button">
                 <i class="fa-solid fa-qrcode"></i>
             </div>
             <span class="qr-label">Scan QR</span>
         </a>
 
-        <!-- 4. Buat Ujian -->
         <a href="https://ujian.sman4barru.sch.id/dasbor/" class="nav-item">
             <i class="fa-solid fa-file-circle-plus"></i>
             <span>Buat Ujian</span>
         </a>
-
-        <!-- 5. Token -->
+        
         <a href="https://ujian.sman4barru.sch.id/token/" class="nav-item">
             <i class="fa-solid fa-key"></i>
             <span>Token</span>
         </a>
     </nav>
+
+    <div id="qrModal" class="modal-overlay-scan">
+        <div class="modal-content">
+            <div class="h3-close">
+                <h3>Scan QR</h3>
+                <button class="btn-close-modal" id="btnCloseModal">✕</button>
+            </div>
+            <div id="reader"></div>
+        </div>
+    </div>
 
     <div class="modal-overlay" id="tokenModal">
         <div class="modal-box">
@@ -485,6 +551,57 @@
                 }
             };
 
+            // =================================================================
+            // SCRIPT SCANNER QR
+            // =================================================================
+            let html5QrcodeScanner = null;
+            const halamanViewerUrl = "https://ujian.sman4barru.sch.id/run/";
+            const btnToggleScan = document.getElementById('btnToggleScan');
+            const btnCloseModal = document.getElementById('btnCloseModal');
+            if (btnToggleScan) btnToggleScan.addEventListener('click', toggleScanner);
+            if (btnCloseModal) btnCloseModal.addEventListener('click', stopScanner);
+
+            function kirimKeViewer(url) {
+                let targetUrl = url.trim();
+                let encodedUrl = encodeURIComponent(targetUrl);
+                const tokenWaktuAktif = Math.floor(Date.now() / 1000);
+                window.location.replace(halamanViewerUrl + "?url=" + encodedUrl + "&auth=" + tokenWaktuAktif);
+            }
+            function toggleScanner() {
+                const modalDiv = document.getElementById('qrModal');
+
+                if (!html5QrcodeScanner) {
+                    modalDiv.style.display = 'flex'; // Menampilkan pembungkus popup dengan mode flex center
+
+                    html5QrcodeScanner = new Html5QrcodeScanner(
+                        "reader", { fps: 10, qrbox: { width: 250, height: 250 } }, false
+                    );
+                    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+                } else {
+                    stopScanner();
+                }
+            }
+
+            function onScanSuccess(decodedText, decodedResult) {
+                stopScanner();
+                kirimKeViewer(decodedText);
+            }
+
+            function onScanFailure(error) {
+            }
+
+            function stopScanner() {
+                const modalDiv = document.getElementById('qrModal');
+                if (html5QrcodeScanner) {
+                    html5QrcodeScanner.clear().then(() => {
+                        html5QrcodeScanner = null;
+                        modalDiv.style.display = 'none'; // Menyembunyikan jendela popup kembali
+                    }).catch(err => {
+                        console.error(err);
+                    });
+                }
+            }
+            
             // Fitur Pencarian Sederhana
             searchInput.oninput = (e) => renderUjian(e.target.value);
 
