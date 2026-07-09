@@ -11,9 +11,6 @@
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     
     <style>
-        /* =========================================================================
-           1. VARIABEL GLOBAL & RESET STYLE
-           ========================================================================= */
         :root {
             --primary-color: #1a6199;
             --success-color: #28a745;
@@ -37,9 +34,7 @@
             min-height: 100dvh;
         }
 
-        /* =========================================================================
-           STYLE GERBANG PENGAMAN PENGAWAS
-           ========================================================================= */
+        /* STYLE GERBANG PENGAMAN PENGAWAS */
         .gatekeeper-overlay {
             position: fixed;
             top: 0;
@@ -47,7 +42,7 @@
             width: 100%;
             height: 100dvh;
             background: rgb(26, 97, 153);
-            z-index: 99; /* Lapisan paling depan, menutup semua konten */
+            z-index: 99;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -107,12 +102,10 @@
             font-size: 13px;
             margin: 15px 0 0;
             font-weight: bold;
-            display: none; /* Sembunyikan pesan salah di awal */
+            display: none;
         }
 
-        /* =========================================================================
-           2. HEADER PANEL COMPONENT
-           ========================================================================= */
+        /* BRANDING APP DAN HEADER PANEL */
         .header-panel {
             color: white;
             margin: 0 auto 20px;
@@ -135,9 +128,7 @@
             font-size: 14px;
         }
 
-        /* =========================================================================
-           3. STRUKTUR UTAMA & ACTION ELEMENT
-           ========================================================================= */
+        /* STRUKTUR UTAMA & ACTION ELEMENT */
         .container {
             max-width: 1000px;
             margin: 0 auto;
@@ -171,6 +162,7 @@
             padding: 12px;
         }
 
+        /* POPUP KAMERA SCANNER */
         .modal-overlay-scan {
             position: fixed;
             top: 0;
@@ -181,10 +173,9 @@
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 10000; /* Berada tinggi di atas segalanya */
+            z-index: 10000;
         }
-
-        /* Kotak Jendela Popup Tengah */
+        
         .modal-content {
             background-color: #ffffff;
             width: 90%;
@@ -220,7 +211,6 @@
             padding: 0;
         }
 
-        /* Kontainer Kamera Internal Box */
         #reader {
             width: 100%;
             border-radius: 10px;
@@ -231,9 +221,7 @@
             border: none !important;
         }
 
-        /* =========================================================================
-           4. MODAL DIALOG POP-UP MANAGEMENT
-           ========================================================================= */
+        /* MODAL DIALOG POP-UP MANAGEMENT ATAU TAMBAH UJIAN */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -271,9 +259,6 @@
             margin-bottom: 20px;
         }
 
-        /* =========================================================================
-           5. FORM CONTROLS & LAYOUTING
-           ========================================================================= */
         .form-group {
             margin-bottom: 16px;
         }
@@ -312,9 +297,7 @@
             padding-top: 15px;
         }
 
-        /* =========================================================================
-           6. DATATABLE COMPONENTS (DAFTAR UJIAN)
-           ========================================================================= */
+        /* DATA TABLE COMPONENTS (DAFTAR UJIAN) */
         .panel-data {
             background: white;
             border-radius: 15px;
@@ -349,9 +332,6 @@
 
         tr:hover { background-color: #fdfdfd; }
 
-        /* =========================================================================
-           7. TOGGLE SAKELAR & BADGES STATUS STYLE
-           ========================================================================= */
         .switch {
             position: relative;
             display: inline-block;
@@ -424,7 +404,7 @@
             font-style: italic;
         }
         
-        /* Container Utama Navigasi */
+        /* STYLE NAVIGASI BAWAH */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -442,7 +422,6 @@
             padding: 0 10px;
         }
 
-        /* Item Menu Biasa */
         .nav-item {
             display: flex;
             flex-direction: column;
@@ -459,18 +438,16 @@
 
         .nav-item i {
             font-size: 20px;
-            margin-bottom: 6px; /* Sedikit disesuaikan agar proporsional */
+            margin-bottom: 6px;
         }
 
-        /* Efek Aktif / Hover */
         .nav-item.active, .nav-item:hover {
             color: #1a6199;
         }
 
-        /* Tombol Tengah (Scan QR) yang Menonjol */
         .nav-item-center {
             position: relative;
-            top: -27px; /* Membuat tombol naik ke atas */
+            top: -27px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -498,13 +475,14 @@
         .qr-label {
             font-size: 12px;
             color: #757575;
-            margin-top: 10px; /* Menyesuaikan jarak teks karena tombolnya naik */
+            margin-top: 10px;
             font-weight: 500;
         }
     </style>
 </head>
 <body>
 
+    <!-- GERBANG PENGAWAS -->
     <div id="gerbangPengawas" class="gatekeeper-overlay">
         <div class="gatekeeper-box">
             <div class="gatekeeper-icon">🔐</div>
@@ -516,6 +494,7 @@
         </div>
     </div>
 
+    <!-- BRANDING WEB APPS DAN JUDUL -->
     <div class="header-panel">
         <div class="header-title">
             <img src="../logo-200.png" alt="Logo">
@@ -545,36 +524,34 @@
             <div id="emptyState">Belum ada daftar ujian. Silakan klik tombol "+ Tambah Ujian Baru" di atas.</div>
         </div>
     </div>
-    
+
+    <!-- NAVIGASI BAWAH -->
     <nav class="bottom-nav">
         <a href="https://ujian.sman4barru.sch.id/" class="nav-item">
             <i class="fa-solid fa-house"></i>
             <span>Beranda</span>
         </a>
-
         <a href="https://ujian.sman4barru.sch.id/lobi/" class="nav-item">
             <i class="fa-solid fa-file-signature"></i>
             <span>Pilih Ujian</span>
         </a>
-
         <a id="btnToggleScan" class="nav-item-center">
             <div class="qr-button">
                 <i class="fa-solid fa-qrcode"></i>
             </div>
             <span class="qr-label">Scan QR</span>
         </a>
-
         <a href="#" class="nav-item active">
             <i class="fa-solid fa-file-circle-plus"></i>
             <span>Buat Ujian</span>
         </a>
-
         <a href="https://ujian.sman4barru.sch.id/token/" class="nav-item">
             <i class="fa-solid fa-key"></i>
             <span>Token</span>
         </a>
     </nav>
 
+    <!-- POPUP KAMERA SCANNER -->
     <div id="qrModal" class="modal-overlay-scan">
         <div class="modal-content">
             <div class="h3-close">
@@ -585,32 +562,28 @@
         </div>
     </div>
 
+    <!-- POPUP TAMBAH DAN EDIT UJIAN -->
     <div class="modal-overlay" id="modalFormUjian">
         <div class="modal-box">
             <h3 id="modalTitleForm">Form Tambah Sesi Ujian</h3>
             <form id="formUjian">
                 <input type="hidden" id="ujianId">
-
                 <div class="form-group">
                     <label for="namaUjian">Nama Ujian</label>
                     <input type="text" id="namaUjian" placeholder="Contoh: Sumatif Akhir Semester (SAS)" required>
                 </div>
-
                 <div class="form-group">
                     <label for="mataPelajaran">Mata Pelajaran</label>
                     <input type="text" id="mataPelajaran" placeholder="Contoh: Sejarah / Geografi" required>
                 </div>
-
                 <div class="form-group">
                     <label for="guruPengampu">Guru Pengampu / Penanggung Jawab</label>
                     <input type="text" id="guruPengampu" placeholder="Contoh: Umar Bakri, S.Pd." required>
                 </div>
-
                 <div class="form-group">
                     <label for="kelasUjian">Kelas Target</label>
                     <input type="text" id="kelasUjian" placeholder="Contoh: X / XI / XII" required>
                 </div>
-
                 <div class="form-row">
                     <div class="form-group">
                         <label for="tanggalUjian">Tanggal</label>
@@ -625,12 +598,10 @@
                         <input type="time" id="jamSelesaiUjian" required>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label for="tautanSoal">Tautan Soal (Google Form / Quizizz / dll)</label>
                     <input type="url" id="tautanSoal" placeholder="https://docs.google.com/forms/d/..." required>
                 </div>
-
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" id="btnBatalForm">Batal</button>
                     <button type="submit" class="btn btn-primary" id="btnSimpanUjian">Simpan Sesi</button>
@@ -641,19 +612,14 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // =========================================================================
-            // INTEGRASI GERBANG PENGAMAN (Taruh di paling atas DOMContentLoaded)
-            // =========================================================================
+            // GERBANG PENGAMAN
             const PASSWORD_RAHASIA = "20262027"; // <-- GANTI PASSWORD DI SINI
             const KUNCI_STORAGE = "status_login_pengawas";
             const SATU_HARI_MS = 24 * 60 * 60 * 1000;
-
             const layerGerbang = document.getElementById("gerbangPengawas");
             const inputSandi = document.getElementById("inputSandiGuru");
             const btnMasuk = document.getElementById("btnMasukGuru");
             const pesanSalah = document.getElementById("pesanSandiSalah");
-
-            // Jalankan pengecekan riwayat login pengawas
             const dataSesi = localStorage.getItem(KUNCI_STORAGE);
             if (dataSesi) {
                 const dataTerurai = JSON.parse(dataSesi);
@@ -666,7 +632,6 @@
             } else {
                 layerGerbang.style.display = "flex";
             }
-
             function verifikasiSandiGuru() {
                 if (inputSandi.value === PASSWORD_RAHASIA) {
                     const payloadSesi = { status: "LOLOS", waktuLogin: Date.now() };
@@ -679,7 +644,6 @@
                     inputSandi.focus();
                 }
             }
-
             btnMasuk.addEventListener("click", verifikasiSandiGuru);
             inputSandi.addEventListener("keypress", function(e) {
                 if (e.key === "Enter") { verifikasiSandiGuru(); }
@@ -692,7 +656,6 @@
             const btnCloseModal = document.getElementById('btnCloseModal');
             if (btnToggleScan) btnToggleScan.addEventListener('click', toggleScanner);
             if (btnCloseModal) btnCloseModal.addEventListener('click', stopScanner);
-
             function kirimKeViewer(url) {
                 let targetUrl = url.trim();
                 let encodedUrl = encodeURIComponent(targetUrl);
@@ -701,10 +664,8 @@
             }
             function toggleScanner() {
                 const modalDiv = document.getElementById('qrModal');
-
                 if (!html5QrcodeScanner) {
-                    modalDiv.style.display = 'flex'; // Menampilkan pembungkus popup dengan mode flex center
-
+                    modalDiv.style.display = 'flex';
                     html5QrcodeScanner = new Html5QrcodeScanner(
                         "reader", { fps: 10, qrbox: { width: 250, height: 250 } }, false
                     );
@@ -713,15 +674,12 @@
                     stopScanner();
                 }
             }
-
             function onScanSuccess(decodedText, decodedResult) {
                 stopScanner();
                 kirimKeViewer(decodedText);
             }
-
             function onScanFailure(error) {
             }
-
             function stopScanner() {
                 const modalDiv = document.getElementById('qrModal');
                 if (html5QrcodeScanner) {
@@ -734,7 +692,7 @@
                 }
             }
 
-            // Pengait Elemen HTML
+            // PENGAIT ELEMEN HTML
             const modal = document.getElementById('modalFormUjian');
             const btnBukaForm = document.getElementById('btnBukaForm');
             const btnBatalForm = document.getElementById('btnBatalForm');
