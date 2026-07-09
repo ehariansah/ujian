@@ -31,9 +31,7 @@
             color: var(--dark-color);
         }
 
-        /* =========================================================================
-           STYLE GERBANG PENGAMAN PENGAWAS
-           ========================================================================= */
+        /* STYLE GERBANG PENGAMAN PENGAWAS */
         .gatekeeper-overlay {
             position: fixed;
             top: 0;
@@ -101,9 +99,10 @@
             font-size: 13px;
             margin: 15px 0 0;
             font-weight: bold;
-            display: none; /* Sembunyikan pesan salah di awal */
+            display: none;
         }
 
+        /* STYLE KAMERA SCANNER */
         .modal-overlay-scan {
             position: fixed;
             top: 0;
@@ -114,10 +113,9 @@
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 10000; /* Berada tinggi di atas segalanya */
+            z-index: 10000;
         }
 
-        /* Kotak Jendela Popup Tengah */
         .modal-content {
             background-color: #ffffff;
             width: 90%;
@@ -152,8 +150,7 @@
             z-index: 10002;
             padding: 0;
         }
-
-        /* Kontainer Kamera Internal Box */
+        
         #reader {
             width: 100%;
             border-radius: 10px;
@@ -164,6 +161,7 @@
             border: none !important;
         }
 
+        /* STYLE BRANDING DAN ELEMEN TOKEN */
         .logo-sekolah {
             width: 100px;
             height: 100px;
@@ -198,7 +196,6 @@
             margin: 0 0 20px;
         }
 
-        /* Tampilan Utama Blok Token */
         .token-display-box {
             background: #f1f3f5;
             padding: 25px 10px;
@@ -227,7 +224,6 @@
             user-select: all;
         }
 
-        /* Komponen Hitung Mundur & Progress Bar */
         .timer-container {
             margin-top: 20px;
         }
@@ -260,7 +256,6 @@
             transition: width 1s linear;
         }
 
-        /* Catatan Kaki */
         .footer-note {
             margin-top: 20px;
             font-size: 11px;
@@ -268,7 +263,7 @@
             line-height: 1.5;
         }
         
-        /* Container Utama Navigasi */
+        /* STYLE NAVIGASI BAWAH */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -286,7 +281,6 @@
             padding: 0 10px;
         }
 
-        /* Item Menu Biasa */
         .nav-item {
             display: flex;
             flex-direction: column;
@@ -303,18 +297,16 @@
 
         .nav-item i {
             font-size: 20px;
-            margin-bottom: 6px; /* Sedikit disesuaikan agar proporsional */
+            margin-bottom: 6px;
         }
 
-        /* Efek Aktif / Hover */
         .nav-item.active, .nav-item:hover {
             color: #1a6199;
         }
 
-        /* Tombol Tengah (Scan QR) yang Menonjol */
         .nav-item-center {
             position: relative;
-            top: -27px; /* Membuat tombol naik ke atas */
+            top: -27px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -342,13 +334,13 @@
         .qr-label {
             font-size: 12px;
             color: #757575;
-            margin-top: 10px; /* Menyesuaikan jarak teks karena tombolnya naik */
+            margin-top: 10px;
             font-weight: 500;
         }
     </style>
 </head>
 <body>
-
+    <!-- GERBANG PENGAWAS -->
     <div id="gerbangPengawas" class="gatekeeper-overlay">
         <div class="gatekeeper-box">
             <div class="gatekeeper-icon">🔐</div>
