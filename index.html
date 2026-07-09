@@ -22,9 +22,6 @@
     </script>
 
     <style>
-        /* =========================================================================
-           1. RESET & LAYOUT DASAR
-           ========================================================================= */
         *, ::before, ::after {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
@@ -38,9 +35,7 @@
             margin: 0;
         }
 
-        /* =========================================================================
-           2. ELEMEN BRANDING (LOGO)
-           ========================================================================= */
+        /* ELEMEN BRANDING WEB APP */
         .gambar-kepala {
             width: 100px;
             height: 100px;
@@ -53,9 +48,7 @@
             margin: 0;
         }
 
-        /* =========================================================================
-           3. CONTAINER UTAMA & FORM INPUT
-           ========================================================================= */
+        /* CONTAINER UTAMA & FORM INPUT */
         .scanner-container {
             max-width: 500px;
             margin: 0 auto;
@@ -97,9 +90,6 @@
             width: 75%;
         }
 
-        /* =========================================================================
-           4. TOMBOL AKSI & JENDELA POPUP (MODAL SCANNER)
-           ========================================================================= */
         .btn-action {
             display: flex;
             align-items: center;
@@ -116,7 +106,7 @@
             text-decoration: none;
         }
 
-        /* Background Hitam Transparan Overly */
+        /* POPUP KAMERA SCAN */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -127,10 +117,9 @@
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 10000; /* Berada tinggi di atas segalanya */
+            z-index: 10000;
         }
 
-        /* Kotak Jendela Popup Tengah */
         .modal-content {
             background-color: #ffffff;
             width: 90%;
@@ -166,7 +155,6 @@
             padding: 0;
         }
 
-        /* Kontainer Kamera Internal Box */
         #reader {
             width: 100%;
             border-radius: 10px;
@@ -177,7 +165,7 @@
             border: none !important;
         }
         
-        /* Container Utama Navigasi */
+        /* TOMBOL NAVIGASI BAWAH */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -195,7 +183,6 @@
             padding: 0 10px;
         }
 
-        /* Item Menu Biasa */
         .nav-item {
             display: flex;
             flex-direction: column;
@@ -215,12 +202,10 @@
             margin-bottom: 6px;
         }
 
-        /* Efek Aktif / Hover */
         .nav-item.active, .nav-item:hover {
             color: #1a6199;
         }
 
-        /* Tombol Tengah (Scan QR) yang Menonjol */
         .nav-item-center {
             position: relative;
             top: -27px;
@@ -257,15 +242,16 @@
     </style>
 </head>
 <body>
-    
+
+    <!-- ELEMEN BRANDING APP WEB -->
     <div class="gambar-kepala">
         <img src="./logo-200.png" alt="Logo Sekolah" />
     </div>
 
+    <!-- KONTAINER UTAMA DAN FORM INPUT TAUTAN -->
     <div class="scanner-container">
         <h1>E-UJIAN SMAN 4 BARRU</h1>
         <p>Masukkan tautan, pilih ujian aktif, atau scan QR Code untuk membuka halaman ujian.</p>
-            
         <div class="box-input">
             <div class="input-group">
                 <input id="urlInput" placeholder="Masukkan tautan ujian..." type="url" />
@@ -274,6 +260,7 @@
         </div>
     </div>
 
+    <!-- POPUP KAMERA SCANNER -->
     <div id="qrModal" class="modal-overlay">
         <div class="modal-content">
             <div class="h3-close">
@@ -283,30 +270,27 @@
             <div id="reader"></div>
         </div>
     </div>
-    
+
+    <!-- TOMBOL NAVIGASI BAWAH -->
     <nav class="bottom-nav">
         <a href="#" class="nav-item active">
             <i class="fa-solid fa-house"></i>
             <span>Beranda</span>
         </a>
-
         <a href="https://ujian.sman4barru.sch.id/lobi/" class="nav-item">
             <i class="fa-solid fa-file-signature"></i>
             <span>Pilih Ujian</span>
         </a>
-
         <a id="btnToggleScan" class="nav-item-center">
             <div class="qr-button">
                 <i class="fa-solid fa-qrcode"></i>
             </div>
             <span class="qr-label">Scan QR</span>
         </a>
-
         <a href="https://ujian.sman4barru.sch.id/dasbor/" class="nav-item">
             <i class="fa-solid fa-file-circle-plus"></i>
             <span>Buat Ujian</span>
         </a>
-
         <a href="https://ujian.sman4barru.sch.id/token/" class="nav-item">
             <i class="fa-solid fa-key"></i>
             <span>Token</span>
@@ -314,9 +298,7 @@
     </nav>
 
     <script>
-        // =========================================================================
-        // 1. ENGINE ROUTING, QR SCANNER, DAN PEMBUATAN TOKEN OTENTIKASI
-        // =========================================================================
+        // ENGINE ROUTING, QR SCANNER, DAN PEMBUATAN TOKEN OTENTIKASI
         document.addEventListener("DOMContentLoaded", function() {
             let html5QrcodeScanner = null;
             const halamanViewerUrl = "https://ujian.sman4barru.sch.id/run/";
@@ -378,7 +360,7 @@
                 if (html5QrcodeScanner) {
                     html5QrcodeScanner.clear().then(() => {
                         html5QrcodeScanner = null;
-                        modalDiv.style.display = 'none'; // Menyembunyikan jendela popup kembali
+                        modalDiv.style.display = 'none';
                     }).catch(err => {
                         console.error(err);
                     });
@@ -386,9 +368,7 @@
             }
         });
           
-        // =========================================================================
-        // 2. SISTEM ANTI-BACK TOTAL (PENGUNCI GERBANG UTAMA)
-        // =========================================================================
+        // SISTEM ANTI-BACK TOTAL (PENGUNCI GERBANG UTAMA)
         (function () {
             function kunciRiwayat() {
                 window.history.pushState(null, null, window.location.href);
