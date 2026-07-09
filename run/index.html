@@ -8,9 +8,6 @@
     <link rel="apple-touch-icon" href="../favicon.png">
 
     <style>
-        /* =========================================================================
-           1. RESET & LAYOUT DASAR
-           ========================================================================= */
         *, ::before, ::after {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
@@ -24,9 +21,7 @@
             min-height: 100dvh;
         }
 
-        /* =========================================================================
-           2. GERBANG TATA TERTIB
-           ========================================================================= */
+        /* GERBANG TATA TERTIB */
         #gerbangTatib {
             align-items: center;
             font-family: sans-serif;
@@ -100,9 +95,7 @@
             width: 100%;
         }
 
-        /* =========================================================================
-           3. AREA LAYAR UJIAN & STATUS BAR
-           ========================================================================= */
+        /* AREA LAYAR UJIAN */
         #layar_Ujian {
             background: rgb(17, 17, 17);
             display: none;
@@ -115,6 +108,7 @@
             z-index: 99998;
         }
 
+        /* STATUS BAR */
         #customStatusBar {
             align-items: center;
             background-color: #1a6199;
@@ -157,9 +151,7 @@
             #statBaterai { flex: unset; }
         }
 
-        /* =========================================================================
-           4. CONTAINER IFRAME
-           ========================================================================= */
+        /* CONTAINER IFRAME */
         .app-container {
             height: calc(100vh - 35px - 60px);
             margin-top: 35px;
@@ -217,9 +209,7 @@
             will-change: transform;
         }
 
-        /* =========================================================================
-           5. NAVIGASI BAWAH & PANEL KAMERA
-           ========================================================================= */
+        /* NAVIGASI BAWAH */
         .bottom-navbar {
             position: fixed;
             bottom: 0;
@@ -261,6 +251,7 @@
             background: #dc3545;
         }
 
+        /* PANEL KAMERA PENGAWAS */
         .kamera-pengawas {
             background: rgb(34, 34, 34);
             border-radius: 5px;
@@ -286,9 +277,7 @@
             pointer-events: none;
         }
 
-        /* =========================================================================
-           6. KUSTOM MODAL DIALOG
-           ========================================================================= */
+        /* POPUP KOMFIRMASI */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -349,15 +338,14 @@
 </head>
 <body>
 
+    <!-- GERBANG TATA TERTIB -->
     <div id="gerbangTatib">
         <div class="gambar-kepala">
             <img src="../logo-200.png" alt="Logo Sekolah">
         </div>
-        
         <div class="area-tatib">
             <h1 class="judul-tatib">TATA TERTIB E-UJIAN</h1>
             <p class="sub-tatib">Baca terlebih dahulu sebelum melanjutkan</p>
-            
             <div class="area-tulisan">
                 <ol class="list-tatib">
                     <li class="item-tatib">Selama sesi ujian berlangsung, <b>DILARANG:</b> Keluar dari aplikasi, keluar dari mode <i>full screen</i>, menekan tombol navigasi (<i>recent/home/back</i>), menarik turun bilah notifikasi, mengaktifkan <i>floating apps</i>, membagi layar (<i>split screen</i>), merotasi layar, atau mematikan layar.</li>
@@ -365,19 +353,19 @@
                     <li class="item-tatib"><b>SANKSI:</b> Sistem akan membatalkan sesi ujian secara otomatis dan mengembalikan Anda ke halaman utama.</li>
                 </ol>
             </div>
-            
             <button id="btnMulaiUjian">Saya Mengerti & Mulai Ujian</button>
         </div>
     </div>
 
+    <!-- AREA LAYAR UJIAN -->
     <div id="layar_Ujian">
-        
+        <!-- STATUS BAR -->
         <div id="customStatusBar">
             <div id="statBaterai">🔋 --%</div>
             <div id="statJam">00:00</div>
             <div id="statJaringan">📶 ONLINE</div>
         </div>
-
+        <!-- KONTAINER IFRAME -->
         <div class="app-container">
             <div id="loaderIframe" class="iframe-loader">
                 <div class="spinner"></div>
@@ -385,20 +373,20 @@
             </div>
             <iframe allowfullscreen="" id="contentFrame" onload="matikanLoaderIframe()" sandbox="allow-scripts allow-forms allow-same-origin" src=""></iframe>
         </div>
-
+        <!-- NAVIGASI BAWAH -->
         <nav class="bottom-navbar">
             <button class="nav-btn" id="btnRefresh"><span>Muat Ulang</span></button>
             <button class="nav-btn btn-zoom" id="btnZoomOut"><span>A-</span></button>
             <button class="nav-btn btn-zoom" id="btnZoomIn"><span>A+</span></button>
             <button class="nav-btn btn-exit" id="btnExit"><span>Keluar Sesi</span></button>
         </nav>
-
+        <!-- PANEL KAMERA PENGAWAS -->
         <div class="kamera-pengawas" id="kameraPengawas">
             <video autoplay id="webcamPreview" muted playsinline class="video-render"></video>
         </div>
-
     </div>
 
+    <!-- POPUP KONFIRMASI -->
     <div class="modal-overlay" id="customModal">
         <div class="modal-box">
             <h3 id="modalTitle"></h3>
@@ -411,9 +399,7 @@
     </div>
 
     <script>
-        // =========================================================================
-        // 1. VALIDASI TOKEN GERBANG UTAMA (IIFE - PRIORITAS TINGGI)
-        // =========================================================================
+        // VALIDASI TOKEN GERBANG UTAMA (IIFE - PRIORITAS TINGGI)
         (function() {
             const urlParams = new URLSearchParams(window.location.search);
             const tokenSiswa = urlParams.get('auth');
@@ -433,9 +419,7 @@
             }
         })();
           
-        // =========================================================================
-        // 2. LOGIKA UTAMA & AKTIVASI ENGINE RADAR
-        // =========================================================================
+        // LOGIKA UTAMA & AKTIVASI ENGINE RADAR
         document.addEventListener("DOMContentLoaded", function() {
             const halamanUtamaUrl = "https://ujian.sman4barru.sch.id/";
             const urlParams = new URLSearchParams(window.location.search);
@@ -493,9 +477,7 @@
                 }, 300);
             });
 
-            // =========================================================================
-            // 3. FITUR KONTROL UKURAN SKALA ZOOM IFRAME
-            // =========================================================================
+            // FITUR KONTROL UKURAN SKALA ZOOM IFRAME
             let currentScale = 1.0;
             const scaleStep = 0.08;       
             const maxScale = 1.5;         
@@ -533,9 +515,7 @@
                 e.preventDefault(); 
             });
 
-            // =========================================================================
-            // 4. SISTEM PATROLI & KRETERIA PENINDAKAN RADAR KECURANGAN
-            // =========================================================================
+            // SISTEM PATROLI & KRETERIA PENINDAKAN RADAR KECURANGAN
             function eksekusiKeluarPaksa() {
                 if (!radarUjianAktif || sedangZoom || dalamKonfirmasi || sudahKeluar) return; 
                 
@@ -668,9 +648,7 @@
                 }
             })();
 
-            // =========================================================================
-            // 5. MANAJEMEN KONTROL KUSTOM MODAL DIALOG BAR BAWAH
-            // =========================================================================
+            // MANAJEMEN KONTROL KUSTOM MODAL DIALOG BAR BAWAH
             const modal = document.getElementById('customModal');
             const modalTitle = document.getElementById('modalTitle');
             const modalMessage = document.getElementById('modalMessage');
@@ -712,9 +690,7 @@
                 }
             });
 
-            // =========================================================================
-            // EXTRA: ENGINE DRAG-TO-MOVE UNTUK KAMERA PENGAWAS
-            // =========================================================================
+            // ENGINE DRAG-TO-MOVE UNTUK KAMERA PENGAWAS
             (function() {
                 const elKamera = document.getElementById("kameraPengawas");
                 let isDragging = false;
@@ -750,7 +726,7 @@
 
                 function drag(e) {
                     if (!isDragging) return;
-                    e.preventDefault(); // Mengunci pergerakan halaman agar tidak scroll otomatis
+                    e.preventDefault();
 
                     if (e.type === "touchmove") {
                         currentX = e.touches[0].clientX - initialX;
@@ -792,9 +768,7 @@
             })();
         });
 
-        // =========================================================================
-        // 6. UTILITY ENGINE: DATA REALTIME PADA STATUS BAR ATAS
-        // =========================================================================
+        // UTILITY ENGINE: DATA REALTIME PADA STATUS BAR ATAS
         function jamPad(n) { return n.toString().padStart(2, '0'); }
 
         function aktifkanJamMati() {
