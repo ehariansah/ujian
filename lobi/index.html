@@ -95,7 +95,6 @@
             margin-top: 8px;
         }
 
-        /* Empty State */
         #noExam {
             text-align: center;
             padding: 50px 20px;
@@ -120,7 +119,6 @@
             padding: 0 10px;
         }
 
-        /* Item Menu Biasa */
         .nav-item {
             display: flex;
             flex-direction: column;
@@ -137,18 +135,16 @@
 
         .nav-item i {
             font-size: 20px;
-            margin-bottom: 6px; /* Sedikit disesuaikan agar proporsional */
+            margin-bottom: 6px;
         }
 
-        /* Efek Aktif / Hover */
         .nav-item.active, .nav-item:hover {
             color: #1a6199;
         }
 
-        /* Tombol Tengah (Scan QR) yang Menonjol */
         .nav-item-center {
             position: relative;
-            top: -27px; /* Membuat tombol naik ke atas */
+            top: -27px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -176,10 +172,11 @@
         .qr-label {
             font-size: 12px;
             color: #757575;
-            margin-top: 10px; /* Menyesuaikan jarak teks karena tombolnya naik */
+            margin-top: 10px;
             font-weight: 500;
         }
 
+        /* POPUP KAMERA SCAN */
         .modal-overlay-scan {
             position: fixed;
             top: 0;
@@ -190,10 +187,9 @@
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 10000; /* Berada tinggi di atas segalanya */
+            z-index: 10000;
         }
 
-        /* Kotak Jendela Popup Tengah */
         .modal-content {
             background-color: #ffffff;
             width: 90%;
@@ -229,7 +225,6 @@
             padding: 0;
         }
 
-        /* Kontainer Kamera Internal Box */
         #reader {
             width: 100%;
             border-radius: 10px;
@@ -240,7 +235,7 @@
             border: none !important;
         }
         
-        /* MODAL TOKEN */
+        /* POPUP TOKEN */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100dvh;
@@ -374,6 +369,7 @@
         </a>
     </nav>
 
+    <!-- POPUP KAMERA SCAN -->
     <div id="qrModal" class="modal-overlay-scan">
         <div class="modal-content">
             <div class="h3-close">
@@ -384,6 +380,7 @@
         </div>
     </div>
 
+    <!-- POPUP TOKEN -->
     <div class="modal-overlay" id="tokenModal">
         <div class="modal-box">
             <div class="close-group">
@@ -407,9 +404,7 @@
             const inputToken = document.getElementById('inputToken');
             const errorToken = document.getElementById('errorToken');
             
-            // =================================================================
             // KONFIGURASI FIREBASE (Menyambungkan Lobi Siswa ke Internet)
-            // =================================================================
             const firebaseConfig = {
               apiKey: "AIzaSyArpngNXmHc_H7_G69iAvpMb0UWLjrr4tw",
               authDomain: "ujicoba-ujian.firebaseapp.com",
@@ -443,9 +438,7 @@
                 renderUjian(searchInput.value); // Tetap mempertahankan filter pencarian saat reload data otomatis
             });
 
-            // =================================================================
             // FUNGSI RENDER
-            // =================================================================
             function renderUjian(filter = "") {
                 examListContainer.innerHTML = "";
                 
@@ -548,16 +541,13 @@
                 }
             };
 
-            // =================================================================
             // SCRIPT SCANNER QR
-            // =================================================================
             let html5QrcodeScanner = null;
             const halamanViewerUrl = "https://ujian.sman4barru.sch.id/run/";
             const btnToggleScan = document.getElementById('btnToggleScan');
             const btnCloseModal = document.getElementById('btnCloseModal');
             if (btnToggleScan) btnToggleScan.addEventListener('click', toggleScanner);
             if (btnCloseModal) btnCloseModal.addEventListener('click', stopScanner);
-
             function kirimKeViewer(url) {
                 let targetUrl = url.trim();
                 let encodedUrl = encodeURIComponent(targetUrl);
@@ -566,10 +556,8 @@
             }
             function toggleScanner() {
                 const modalDiv = document.getElementById('qrModal');
-
                 if (!html5QrcodeScanner) {
-                    modalDiv.style.display = 'flex'; // Menampilkan pembungkus popup dengan mode flex center
-
+                    modalDiv.style.display = 'flex';
                     html5QrcodeScanner = new Html5QrcodeScanner(
                         "reader", { fps: 10, qrbox: { width: 250, height: 250 } }, false
                     );
@@ -578,15 +566,12 @@
                     stopScanner();
                 }
             }
-
             function onScanSuccess(decodedText, decodedResult) {
                 stopScanner();
                 kirimKeViewer(decodedText);
             }
-
             function onScanFailure(error) {
             }
-
             function stopScanner() {
                 const modalDiv = document.getElementById('qrModal');
                 if (html5QrcodeScanner) {
