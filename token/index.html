@@ -460,7 +460,15 @@
                 if (!html5QrcodeScanner) {
                     modalDiv.style.display = 'flex';
                     html5QrcodeScanner = new Html5QrcodeScanner(
-                        "reader", { fps: 10, qrbox: { width: 250, height: 250 } }, false
+                        "reader", 
+                        { 
+                            fps: 10, 
+                            qrbox: { width: 250, height: 250 },
+                            videoConstraints: {
+                                facingMode: { exact: "environment" } // Memaksa kamera belakang
+                            }
+                        }, 
+                        false
                     );
                     html5QrcodeScanner.render(onScanSuccess, onScanFailure);
                 } else {
