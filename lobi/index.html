@@ -20,6 +20,11 @@
         *, ::before, ::after {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
+            font-size: 14px;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-size: 20px;
         }
 
         body {
@@ -39,8 +44,8 @@
         }
 
         header img { width: 100px; height: 100px; margin-bottom: 20px; }
-        header h1 { margin: 0 0 10px; font-size: 20px; text-transform: uppercase; }
-        header p { margin: 0; font-size: 14px; }
+        header h1 { margin: 0 0 10px; text-transform: uppercase; }
+        header p { margin: 0; }
 
         /* KONTEN UTAMA */
         .container {
@@ -62,7 +67,6 @@
             padding: 11px;
             border: 1px solid #666;
             border-radius: 5px;
-            font-size: 14px;
         }
 
         .exam-list {
@@ -83,7 +87,7 @@
         }
 
         .exam-info h3 { margin: 0; font-size: 18px; color: var(--primary); }
-        .exam-info p { margin: 5px 0 0; font-size: 14px; color: #666; line-height: 1.4; }
+        .exam-info p { margin: 5px 0 0; color: #666; line-height: 1.4; }
         
         .badge-kelas {
             background: #eef6ff;
@@ -307,12 +311,10 @@
             border-radius: 5px;
             font-weight: bold;
             cursor: pointer;
-            font-size: 14px;
         }
 
         .error-message {
             color: #dc3545;
-            font-size: 13px;
             font-weight: 600;
             margin-top: 15px;
             display: none;
