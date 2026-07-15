@@ -11,16 +11,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./service-worker.js')
-                    .then((reg) => console.log('Service Worker terdaftar!', reg))
-                    .catch((err) => console.log('Gagal mendaftarkan Service Worker', err));
-            });
-        }
-    </script>
-
     <style>
         *, ::before, ::after {
             box-sizing: border-box;
@@ -298,6 +288,15 @@
     </nav>
 
     <script>
+        // SCRIPT PENDAFTARAN
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then((reg) => console.log('Service Worker terdaftar!', reg))
+                    .catch((err) => console.log('Gagal mendaftarkan Service Worker', err));
+            });
+        }
+        
         // ENGINE ROUTING, QR SCANNER, DAN PEMBUATAN TOKEN OTENTIKASI
         document.addEventListener("DOMContentLoaded", function() {
             let html5QrcodeScanner = null;
