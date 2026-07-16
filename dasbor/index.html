@@ -840,7 +840,7 @@
                         <td><strong>${ujian.namaUjian}</strong></td>
                         <td><strong>${ujian.mataPelajaran}</strong><br><small style="color:#666666; font-style:italic;">Guru: ${ujian.guruPengampu || '-'}</small></td>
                         <td><span style="background:#e3f2fd; color:#0d47a1; padding:5px; border-radius:5px; font-weight:bold; font-size:14px;">${ujian.kelasUjian}</span></td>
-                        <td>📅 ${formatTgl}<br>⏰ ${ujian.jamUjian} s.d ${ujian.jamSelesaiUjian || '-'}</td>
+                        <td><i class="fa-solid fa-calendar-days"></i> ${formatTgl}<br><i class="fa-solid fa-alarm-clock"></i> ${ujian.jamUjian} s.d ${ujian.jamSelesaiUjian || '-'}</td>
                         <td style="text-align:center;">
                             <label class="switch">
                                 <input type="checkbox" class="toggle-status" data-id="${ujian.id}" ${ujian.statusAktif ? 'checked' : ''}>
