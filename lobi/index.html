@@ -470,7 +470,7 @@
                             <h3>${ujian.namaUjian || 'Ujian Tanpa Nama'}</h3>
                             <p>Mata Pelajaran: <strong>${ujian.mataPelajaran || '-'}</strong></p>
                             <p><small style="color:#666; font-style:italic;">Guru: ${ujian.guruPengampu || '-'}</small></p>
-                            <p>📅 ${formatTgl} | ⏰ ${ujian.jamUjian || '-'} s.d ${ujian.jamSelesaiUjian || '-'}</p>
+                            <p><i class="fa-solid fa-calendar-days"></i> ${formatTgl} | <i class="fa-solid fa-alarm-clock"></i> ${ujian.jamUjian || '-'} s.d ${ujian.jamSelesaiUjian || '-'}</p>
                             <div class="badge-kelas">Kelas: ${ujian.kelasUjian || '-'}</div>
                         </div>
                     `;
