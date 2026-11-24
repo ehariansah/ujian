@@ -497,8 +497,8 @@
             function siklusPenjagaToken() {
                 const detikUnixSekarang = Math.floor(Date.now() / 1000);
                 const sisaDetikBlokBerjalan = detikUnixSekarang % DURASI_SEPULUH_MENIT;
-                const awalBlokLimaMenit = detikUnixSekarang - sisaDetikBlokBerjalan;
-                const tokenAktif = produksiTokenAcak(awalBlokLimaMenit);
+                const awalBlokSepuluhMenit = detikUnixSekarang - sisaDetikBlokBerjalan;
+                const tokenAktif = produksiTokenAcak(awalBlokSepuluhMenit);
                 tokenTampil.innerText = tokenAktif;
                 const sisaWaktuMundur = DURASI_SEPULUH_MENIT - sisaDetikBlokBerjalan;
                 const menit = Math.floor(sisaWaktuMundur / 60);
