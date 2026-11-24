@@ -506,10 +506,10 @@
                 const tokenInputSiswa = inputToken.value.toUpperCase().trim();
                 
                 // --- RUMUS SINKRONISASI WAKTU OTOMATIS ---
-                const DURASI_LIMA_MENIT = 5 * 60;
+                const DURASI_SEPULUH_MENIT = 10 * 60;
                 const detikUnixSekarang = Math.floor(Date.now() / 1000);
-                const sisaDetikBlokBerjalan = detikUnixSekarang % DURASI_LIMA_MENIT;
-                const awalBlokLimaMenit = detikUnixSekarang - sisaDetikBlokBerjalan;
+                const sisaDetikBlokBerjalan = detikUnixSekarang % DURASI_SEPULUH_MENIT;
+                const awalBlokSepuluhMenit = detikUnixSekarang - sisaDetikBlokBerjalan;
 
                 function hitungTokenLokal(seedWaktu) {
                     const alfabetKandidat = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -523,7 +523,7 @@
                     return hasilToken;
                 }
 
-                const tokenSahSaatIni = hitungTokenLokal(awalBlokLimaMenit);
+                const tokenSahSaatIni = hitungTokenLokal(awalBlokSepuluhMenit);
                 // -----------------------------------------------------------------
 
                 // Jalankan Verifikasi Pencocokan
