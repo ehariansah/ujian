@@ -362,7 +362,7 @@
         </div>
         <div class="timer-container">
             <div class="timer-text">
-                Token diperbarui dalam: <span id="menitDetik">05:00</span>
+                Token diperbarui dalam: <span id="menitDetik">10:00</span>
             </div>
             <div class="progress-bar-bg">
                 <div class="progress-bar-fill" id="barProgress"></div>
@@ -482,7 +482,7 @@
             const tokenTampil = document.getElementById('kodeTokenTampil');
             const menitDetikTampil = document.getElementById('menitDetik');
             const barProgress = document.getElementById('barProgress');
-            const DURASI_LIMA_MENIT = 5 * 60;
+            const DURASI_SEPULUH_MENIT = 10 * 60;
             function produksiTokenAcak(stempelWaktuBlok) {
                 const alfabetKandidat = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
                 let nilaiSaran = stempelWaktuBlok;
@@ -496,15 +496,15 @@
             }
             function siklusPenjagaToken() {
                 const detikUnixSekarang = Math.floor(Date.now() / 1000);
-                const sisaDetikBlokBerjalan = detikUnixSekarang % DURASI_LIMA_MENIT;
+                const sisaDetikBlokBerjalan = detikUnixSekarang % DURASI_SEPULUH_MENIT;
                 const awalBlokLimaMenit = detikUnixSekarang - sisaDetikBlokBerjalan;
                 const tokenAktif = produksiTokenAcak(awalBlokLimaMenit);
                 tokenTampil.innerText = tokenAktif;
-                const sisaWaktuMundur = DURASI_LIMA_MENIT - sisaDetikBlokBerjalan;
+                const sisaWaktuMundur = DURASI_SEPULUH_MENIT - sisaDetikBlokBerjalan;
                 const menit = Math.floor(sisaWaktuMundur / 60);
                 const detik = sisaWaktuMundur % 60;
                 menitDetikTampil.innerText = `${menit.toString().padStart(2, '0')}:${detik.toString().padStart(2, '0')}`;
-                const persentaseSisa = (sisaWaktuMundur / DURASI_LIMA_MENIT) * 100;
+                const persentaseSisa = (sisaWaktuMundur / DURASI_SEPULUH_MENIT) * 100;
                 barProgress.style.width = persentaseSisa + "%";
                 localStorage.setItem('token_ujian_aktif_sman4', tokenAktif);
             }
